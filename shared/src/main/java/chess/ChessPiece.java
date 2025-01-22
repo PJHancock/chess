@@ -51,6 +51,8 @@ public class ChessPiece {
      *
      * @return Collection of valid moves
      */
+
+
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
          if (getPieceType() == PieceType.QUEEN) {
              return queenMoves(board, myPosition);
@@ -77,6 +79,46 @@ public class ChessPiece {
 
     public Collection<ChessMove> bishopMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> validMoves = new ArrayList<>();
+        // add moves diagonally up to the right
+        for (int i = myPosition.getRow(); i <= 8; i++) {
+            for (int j = myPosition.getColumn(); j <= 8; j++) {
+                if (board.getPiece(new ChessPosition(i,j)) != null) {
+                    break;
+                } else {
+                    validMoves.add(new ChessMove(myPosition, new ChessPosition(i,j), null));
+                }
+            }
+        }
+        // add moves diagonally up to the left
+        for (int i = myPosition.getRow(); i <= 8; i++) {
+            for (int j = myPosition.getColumn(); j >= 1; j--) {
+                if (board.getPiece(new ChessPosition(i,j)) != null) {
+                    break;
+                } else {
+                    validMoves.add(new ChessMove(myPosition, new ChessPosition(i,j), null));
+                }
+            }
+        }
+        // add moves diagonally down to the right
+        for (int i = myPosition.getRow(); i >= 1; i--) {
+            for (int j = myPosition.getColumn(); j <= 8; j++) {
+                if (board.getPiece(new ChessPosition(i,j)) != null) {
+                    break;
+                } else {
+                    validMoves.add(new ChessMove(myPosition, new ChessPosition(i,j), null));
+                }
+            }
+        }
+        // add moves diagonally down to the left
+        for (int i = myPosition.getRow(); i >= 1; i--) {
+            for (int j = myPosition.getColumn(); j >= 1; j--) {
+                if (board.getPiece(new ChessPosition(i,j)) != null) {
+                    break;
+                } else {
+                    validMoves.add(new ChessMove(myPosition, new ChessPosition(i,j), null));
+                }
+            }
+        }
         return validMoves;
     }
 
