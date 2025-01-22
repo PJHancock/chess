@@ -73,50 +73,35 @@ public class ChessPiece {
         Collection<ChessMove> validMoves = new ArrayList<>();
         validMoves.addAll(bishopMoves(board, myPosition));
         validMoves.addAll(rookMoves(board, myPosition));
-        validMoves.addAll(kingMoves(board, myPosition));
         return validMoves;
     }
 
     public Collection<ChessMove> bishopMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> validMoves = new ArrayList<>();
-        // add moves diagonally up to the right
-        for (int i = myPosition.getRow(); i <= 8; i++) {
-            for (int j = myPosition.getColumn(); j <= 8; j++) {
-                if (board.getPiece(new ChessPosition(i,j)) != null) {
+        int [][] directions = {{-1,-1}, {-1,1},{1,1},{1,-1}};
+        for (int[] direction : directions) {
+            int row = myPosition.getRow();
+            int col = myPosition.getColumn();
+
+            while (true) {
+                row += direction[0];
+                col += direction[1];
+
+                // Check to see if out of range
+                if (row < 1 || row > 8 || col < 1 || col > 8) {
                     break;
-                } else {
-                    validMoves.add(new ChessMove(myPosition, new ChessPosition(i,j), null));
                 }
-            }
-        }
-        // add moves diagonally up to the left
-        for (int i = myPosition.getRow(); i <= 8; i++) {
-            for (int j = myPosition.getColumn(); j >= 1; j--) {
-                if (board.getPiece(new ChessPosition(i,j)) != null) {
+
+                ChessPosition newPosition = new ChessPosition(row, col);
+
+                // Check for pieces in the way
+                if (board.getPiece(newPosition) != null) {
+                    if (board.getPiece(newPosition).pieceColor != (board.getPiece(myPosition).getTeamColor())) {
+                        validMoves.add(new ChessMove(myPosition, newPosition, null));
+                    }
                     break;
-                } else {
-                    validMoves.add(new ChessMove(myPosition, new ChessPosition(i,j), null));
                 }
-            }
-        }
-        // add moves diagonally down to the right
-        for (int i = myPosition.getRow(); i >= 1; i--) {
-            for (int j = myPosition.getColumn(); j <= 8; j++) {
-                if (board.getPiece(new ChessPosition(i,j)) != null) {
-                    break;
-                } else {
-                    validMoves.add(new ChessMove(myPosition, new ChessPosition(i,j), null));
-                }
-            }
-        }
-        // add moves diagonally down to the left
-        for (int i = myPosition.getRow(); i >= 1; i--) {
-            for (int j = myPosition.getColumn(); j >= 1; j--) {
-                if (board.getPiece(new ChessPosition(i,j)) != null) {
-                    break;
-                } else {
-                    validMoves.add(new ChessMove(myPosition, new ChessPosition(i,j), null));
-                }
+                validMoves.add(new ChessMove(myPosition, newPosition, null));
             }
         }
         return validMoves;
@@ -124,21 +109,105 @@ public class ChessPiece {
 
     public Collection<ChessMove> knightMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> validMoves = new ArrayList<>();
+        int [][] directions = {{-2,1}, {-2,-1},{2,1},{2,-1},{1,-2},{1,2},{-1,-2},{-1,2}};
+        for (int[] direction : directions) {
+
+            int row = myPosition.getRow();
+            int col = myPosition.getColumn();
+
+            row += direction[0];
+            col += direction[1];
+
+            // Check to see if out of range
+            if (row < 1 || row > 8 || col < 1 || col > 8) {
+                continue;
+            }
+
+            ChessPosition newPosition = new ChessPosition(row, col);
+
+            // Check for pieces in the way
+            if (board.getPiece(newPosition) != null) {
+                if (board.getPiece(newPosition).pieceColor != (board.getPiece(myPosition).getTeamColor())) {
+                    validMoves.add(new ChessMove(myPosition, newPosition, null));
+                }
+                continue;
+            }
+            validMoves.add(new ChessMove(myPosition, newPosition, null));
+            }
         return validMoves;
     }
 
     public Collection<ChessMove> rookMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> validMoves = new ArrayList<>();
+        int [][] directions = {{-1,0}, {1,0},{0,1},{0,-1}};
+        for (int[] direction : directions) {
+            int row = myPosition.getRow();
+            int col = myPosition.getColumn();
+
+            while (true) {
+                row += direction[0];
+                col += direction[1];
+
+                // Check to see if out of range
+                if (row < 1 || row > 8 || col < 1 || col > 8) {
+                    break;
+                }
+
+                ChessPosition newPosition = new ChessPosition(row, col);
+
+                // Check for pieces in the way
+                if (board.getPiece(newPosition) != null) {
+                    if (board.getPiece(newPosition).pieceColor != (board.getPiece(myPosition).getTeamColor())) {
+                        validMoves.add(new ChessMove(myPosition, newPosition, null));
+                    }
+                    break;
+                }
+                validMoves.add(new ChessMove(myPosition, newPosition, null));
+            }
+        }
         return validMoves;
     }
 
     public Collection<ChessMove> pawnMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> validMoves = new ArrayList<>();
+        int row = myPosition.getRow();
+        int col = myPosition.getColumn();
+        // Case 1: first move
+        // White pawns
+        // Black pawns
+        // Case 2: normal move
+        // White pawns
+        // Black pawns
+        // Check to see if out of range
         return validMoves;
     }
 
     public Collection<ChessMove> kingMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> validMoves = new ArrayList<>();
+        int [][] directions = {{-1,1},{0,1},{1,1},{1,0},{1,-1},{0,-1},{-1,-1}, {-1,0}};
+        for (int[] direction : directions) {
+            int row = myPosition.getRow();
+            int col = myPosition.getColumn();
+
+            row += direction[0];
+            col += direction[1];
+
+            // Check to see if out of range
+            if (row < 1 || row > 8 || col < 1 || col > 8) {
+                continue;
+            }
+
+            ChessPosition newPosition = new ChessPosition(row, col);
+
+            // Check for pieces in the way
+            if (board.getPiece(newPosition) != null) {
+                if (board.getPiece(newPosition).pieceColor != (board.getPiece(myPosition).getTeamColor())) {
+                    validMoves.add(new ChessMove(myPosition, newPosition, null));
+                }
+                continue;
+            }
+            validMoves.add(new ChessMove(myPosition, newPosition, null));
+        }
         return validMoves;
     }
 }
