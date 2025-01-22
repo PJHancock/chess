@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -10,9 +11,9 @@ import java.util.Collection;
  */
 public class ChessPiece {
     private final ChessGame.TeamColor pieceColor;
-    private final ChessPiece.PieceType type;
+    private final PieceType type;
 
-    public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
+    public ChessPiece(ChessGame.TeamColor pieceColor, PieceType type) {
         this.pieceColor = pieceColor;
         this.type = type;
     }
@@ -51,6 +52,51 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not implemented");
+         if (getPieceType() == PieceType.QUEEN) {
+             return queenMoves(board, myPosition);
+         } else if (getPieceType() == PieceType.BISHOP) {
+             return bishopMoves(board, myPosition);
+         } else if (getPieceType() == PieceType.KNIGHT) {
+             return knightMoves(board, myPosition);
+         } else if (getPieceType() == PieceType.ROOK) {
+             return rookMoves(board, myPosition);
+         } else if (getPieceType() == PieceType.PAWN) {
+             return pawnMoves(board, myPosition);
+         } else {
+             return kingMoves(board, myPosition);
+         }
+    }
+
+    public Collection<ChessMove> queenMoves(ChessBoard board, ChessPosition myPosition) {
+        Collection<ChessMove> validMoves = new ArrayList<>();
+        validMoves.addAll(bishopMoves(board, myPosition));
+        validMoves.addAll(rookMoves(board, myPosition));
+        validMoves.addAll(kingMoves(board, myPosition));
+        return validMoves;
+    }
+
+    public Collection<ChessMove> bishopMoves(ChessBoard board, ChessPosition myPosition) {
+        Collection<ChessMove> validMoves = new ArrayList<>();
+        return validMoves;
+    }
+
+    public Collection<ChessMove> knightMoves(ChessBoard board, ChessPosition myPosition) {
+        Collection<ChessMove> validMoves = new ArrayList<>();
+        return validMoves;
+    }
+
+    public Collection<ChessMove> rookMoves(ChessBoard board, ChessPosition myPosition) {
+        Collection<ChessMove> validMoves = new ArrayList<>();
+        return validMoves;
+    }
+
+    public Collection<ChessMove> pawnMoves(ChessBoard board, ChessPosition myPosition) {
+        Collection<ChessMove> validMoves = new ArrayList<>();
+        return validMoves;
+    }
+
+    public Collection<ChessMove> kingMoves(ChessBoard board, ChessPosition myPosition) {
+        Collection<ChessMove> validMoves = new ArrayList<>();
+        return validMoves;
     }
 }
