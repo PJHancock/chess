@@ -9,7 +9,7 @@ import java.util.Collection;
  * signature of the existing methods.
  */
 public class ChessGame {
-    private final TeamColor TeamTurn = TeamColor.WHITE;
+    private final TeamColor teamTurn = TeamColor.WHITE;
 
     public ChessGame() {
 
@@ -19,7 +19,7 @@ public class ChessGame {
      * @return Which team's turn it is
      */
     public TeamColor getTeamTurn() {
-        return TeamTurn;
+        return teamTurn;
     }
 
     /**
