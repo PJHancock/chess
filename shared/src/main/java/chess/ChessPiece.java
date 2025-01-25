@@ -70,7 +70,7 @@ public class ChessPiece {
     }
 
     Collection<ChessMove> calculateMoves(ChessBoard board, ChessPosition myPosition, int[][] directions, boolean continuous){
-        Collection<ChessMove> validMoves = new ArrayList<ChessMove>();
+        Collection<ChessMove> validMoves = new ArrayList<>();
         for (int[] direction : directions) {
 
             int row = myPosition.getRow();
@@ -117,7 +117,7 @@ public class ChessPiece {
     }
 
     Collection<ChessMove> queenMoves(ChessBoard board, ChessPosition myPosition){
-        Collection<ChessMove> validMoves = new ArrayList<ChessMove>();
+        Collection<ChessMove> validMoves = new ArrayList<>();
         validMoves.addAll(rookMoves(board, myPosition));
         validMoves.addAll(bishopMoves(board, myPosition));
         return validMoves;
