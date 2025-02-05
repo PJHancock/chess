@@ -80,7 +80,11 @@ public class ChessGame {
         if ((piece != null) && (piece.getTeamColor() == getTeamTurn())) {
             if (validMoves(move.getStartPosition()).contains(move)) {
                 gameBoard.addPiece(move.getStartPosition(), null);
-                gameBoard.addPiece(move.getEndPosition(), piece);
+                if (move.getPromotionPiece() != null) {
+                    gameBoard.addPiece(move.getEndPosition(), new ChessPiece(getTeamTurn(), move.getPromotionPiece()));
+                } else {
+                    gameBoard.addPiece(move.getEndPosition(), piece);
+                }
                 if (piece.getTeamColor() == TeamColor.WHITE) {
                     setTeamTurn(TeamColor.BLACK);
                 } else {
