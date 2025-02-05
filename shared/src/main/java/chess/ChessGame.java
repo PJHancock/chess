@@ -109,9 +109,9 @@ public class ChessGame {
         Collection<ChessMove> possibleOpponentMoves = new ArrayList<>();
         Collection<ChessPosition> opponentEndPositions = new ArrayList<>();
         if (teamColor == TeamColor.WHITE) {
-            possibleOpponentMoves.addAll(possibleMoves(TeamColor.BLACK));
+            possibleOpponentMoves.addAll(allPossibleMoves(TeamColor.BLACK));
         } else {
-            possibleOpponentMoves.addAll(possibleMoves(TeamColor.WHITE));
+            possibleOpponentMoves.addAll(allPossibleMoves(TeamColor.WHITE));
         }
         for (ChessMove chessMove : possibleOpponentMoves) {
             opponentEndPositions.add(chessMove.getEndPosition());
@@ -126,10 +126,7 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        if (isInCheck(teamColor)) {
-            return true;
-        }
-        return false;
+        throw new RuntimeException("Not implemented");
     }
 
     /**
@@ -140,10 +137,11 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        return allValidMoves(teamColor).isEmpty() && !isInCheck(teamColor);
     }
 
-    public Collection<ChessMove> possibleMoves(TeamColor teamColor) {
+    // Helper function
+    public Collection<ChessMove> allPossibleMoves(TeamColor teamColor) {
         Collection<ChessMove> possibleMoves = new ArrayList<>();
         for (int row = 1; row <= 8; row++) {
             for (int col = 1; col <= 8; col++) {
@@ -158,6 +156,23 @@ public class ChessGame {
         return possibleMoves;
     }
 
+    // Helper function
+    public Collection<ChessMove> allValidMoves(TeamColor teamColor) {
+        Collection<ChessMove> allValidMoves = new ArrayList<>();
+        for (int row = 1; row <= 8; row++) {
+            for (int col = 1; col <= 8; col++) {
+                ChessPosition currPosition = new ChessPosition(row, col);
+                if (gameBoard.getPiece(currPosition) != null) {
+                    if (gameBoard.getPiece(currPosition).getTeamColor() == teamColor) {
+                        allValidMoves.addAll(validMoves(currPosition));
+                    }
+                }
+            }
+        }
+        return allValidMoves;
+    }
+
+    // Helper function
     private ChessPosition findKingPosition(TeamColor teamColor) {
         ChessPosition kingPosition = null;
         for (int row = 1; row <= 8; row++) {
