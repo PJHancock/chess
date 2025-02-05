@@ -94,10 +94,10 @@ public class ChessGame {
                     setTeamTurn(TeamColor.WHITE);
                 }
             } else {
-                throw new InvalidMoveException();
+                throw new InvalidMoveException("Error: Invalid move");
             }
         } else {
-            throw new InvalidMoveException();
+            throw new InvalidMoveException("Error: Invalid move");
         }
     }
 
