@@ -11,7 +11,7 @@ import java.util.Iterator;
  * signature of the existing methods.
  */
 public class ChessGame {
-    private static TeamColor teamTurn;
+    private static TeamColor teamTurn = TeamColor.WHITE;
     public static ChessBoard gameBoard = new ChessBoard();
 
     public ChessGame() {
