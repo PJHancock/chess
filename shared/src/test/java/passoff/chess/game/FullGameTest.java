@@ -24,6 +24,7 @@ public class FullGameTest {
                 |P|P|P|P| |P|P|P|
                 |R|N|B|Q|K|B|N|R|
          */
+        System.out.println("test string");
         game.makeMove(new ChessMove(new ChessPosition(7, 5), new ChessPosition(5, 5), null));
         /*
                 |r|n|b|q|k|b|n|r|
