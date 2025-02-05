@@ -11,10 +11,13 @@ import java.util.Iterator;
  * signature of the existing methods.
  */
 public class ChessGame {
-    private static TeamColor teamTurn = TeamColor.WHITE;
-    private static ChessBoard gameBoard;
+    private static TeamColor teamTurn;
+    public static ChessBoard gameBoard = new ChessBoard();
 
-    public ChessGame() {}
+    public ChessGame() {
+        gameBoard.resetBoard();
+        setTeamTurn(TeamColor.WHITE);
+    }
 
     /**
      * @return Which team's turn it is
@@ -126,7 +129,7 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        return allValidMoves(teamColor).isEmpty() && isInCheck(teamColor);
     }
 
     /**
