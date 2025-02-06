@@ -53,8 +53,8 @@ public class ChessGame {
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         ChessPiece piece = gameBoard.getPiece(startPosition);
         if (piece != null) {
-            Collection<ChessMove> validMoves = piece.pieceMoves(gameBoard, startPosition);
-            Iterator<ChessMove> iterator = validMoves.iterator();
+            Collection<ChessMove> allValidMoves = piece.pieceMoves(gameBoard, startPosition);
+            Iterator<ChessMove> iterator = allValidMoves.iterator();
             while (iterator.hasNext()) {
                 ChessMove possibleMove = iterator.next();
                 ChessPiece opponentPiece = gameBoard.getPiece(possibleMove.getEndPosition());
@@ -66,7 +66,7 @@ public class ChessGame {
                 gameBoard.addPiece(possibleMove.getStartPosition(), piece);
                 gameBoard.addPiece(possibleMove.getEndPosition(), opponentPiece);
             }
-            return validMoves;
+            return allValidMoves;
         } else {
             return null;
         }
@@ -80,7 +80,7 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
         ChessPiece piece = gameBoard.getPiece(move.getStartPosition());
-        if ((piece != null) && (piece.getTeamColor() == getTeamTurn())) {
+        if (piece != null && piece.getTeamColor() == getTeamTurn()) {
             if (validMoves(move.getStartPosition()).contains(move)) {
                 gameBoard.addPiece(move.getStartPosition(), null);
                 if (move.getPromotionPiece() != null) {
@@ -94,7 +94,7 @@ public class ChessGame {
                     setTeamTurn(TeamColor.WHITE);
                 }
             } else {
-                throw new InvalidMoveException("Error: Invalid move" + allValidMoves(getTeamTurn()));
+                throw new InvalidMoveException("Error: Invalid move" + findKingPosition(getTeamTurn()));
             }
         } else {
             throw new InvalidMoveException("Error: Invalid move");
