@@ -11,8 +11,8 @@ import java.util.Iterator;
  * signature of the existing methods.
  */
 public class ChessGame {
-    private static TeamColor teamTurn = TeamColor.WHITE;
-    public static ChessBoard gameBoard = new ChessBoard();
+    private TeamColor teamTurn = TeamColor.WHITE;
+    public ChessBoard gameBoard = new ChessBoard();
 
     public ChessGame() {
         gameBoard.resetBoard();
@@ -94,7 +94,7 @@ public class ChessGame {
                     setTeamTurn(TeamColor.WHITE);
                 }
             } else {
-                throw new InvalidMoveException("Error: Invalid move. allValidMoves: " + allValidMoves(getTeamTurn()) + "move called:" + move);
+                throw new InvalidMoveException("Error: Invalid move");
             }
         } else {
             throw new InvalidMoveException("Error: Invalid move");
