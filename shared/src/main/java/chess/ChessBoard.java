@@ -10,7 +10,7 @@ import java.util.Arrays;
  */
 public class ChessBoard {
     // Initialized a chessboard of ChessPiece types
-    private static ChessPiece[][] squares;
+    private final ChessPiece[][] squares;
     public ChessBoard() {
         squares = new ChessPiece[8][8];
     }
