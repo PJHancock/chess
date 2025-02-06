@@ -238,4 +238,9 @@ public class ChessPiece {
         validMoves.add(new ChessMove(myPosition, newPosition, PieceType.BISHOP));
         return validMoves;
     }
+
+    @Override
+    public String toString() {
+        return "[" + pieceColor + ' ' + type.name() + ']';
+    }
 }
