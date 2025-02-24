@@ -1,13 +1,14 @@
 package dataaccess;
 
-import model.*;
+import model.AuthData;
 import dataaccess.DataAccessException;
 
 import java.util.UUID;
 
 public class AuthDAO {
 
-    void clear() {
+    public void clear() {
+
     }
 
     // unsure if this should be here in the model class
@@ -15,10 +16,10 @@ public class AuthDAO {
         return UUID.randomUUID().toString();
     }
 
-    void getAuth(String authToken) {
+    public void getAuth(String authToken) {
     }
 
-    void deleteAuth() {
+    public void deleteAuth() {
     }
 
 }
