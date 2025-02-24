@@ -42,12 +42,67 @@ public class Server {
         return gson.toJson(result);
     }
 
+    private static Object register(Request req, Response res) {
+        Gson gson = new Gson();
+        RegisterRequest request = gson.fromJson(req.body(), RegisterRequest.class);
+
+        UserService service = new UserService();
+        RegisterResult result = service.register(request);
+
+        res.type("application/json");
+        return gson.toJson(result);
+    }
+
     private static Object login(Request req, Response res) {
         Gson gson = new Gson();
         LoginRequest request = gson.fromJson(req.body(), LoginRequest.class);
 
         UserService service = new UserService();
         LoginResult result = service.login(request);
+
+        res.type("application/json");
+        return gson.toJson(result);
+    }
+
+    private static Object logout(Request req, Response res) {
+        Gson gson = new Gson();
+        LogoutRequest request = gson.fromJson(req.body(), LogoutRequest.class);
+
+        UserService service = new UserService();
+        LogoutResult result = service.logout(request);
+
+        res.type("application/json");
+        return gson.toJson(result);
+    }
+
+    private static Object listGames(Request req, Response res) {
+        Gson gson = new Gson();
+        ListGamesRequest request = gson.fromJson(req.body(), ListGamesRequest.class);
+
+        GameService service = new GameService();
+        ListGamesResult result = service.listGames(request);
+
+        res.type("application/json");
+        return gson.toJson(result);
+    }
+
+    private static Object createGame(Request req, Response res) {
+        Gson gson = new Gson();
+        CreateGameRequest request = gson.fromJson(req.body(), CreateGameRequest.class);
+
+        GameService service = new GameService();
+        CreateGameResult result = service.createGame(request);
+
+        res.type("application/json");
+        return gson.toJson(result);
+    }
+
+    private static Object joinGame(Request req, Response res) {
+        Gson gson = new Gson();
+        JoinGameRequest request = gson.fromJson(req.body(), JoinGameRequest.class);
+
+        GameService service = new GameService();
+        JoinGameResult result = service.joinGame(request);
 
         res.type("application/json");
         return gson.toJson(result);

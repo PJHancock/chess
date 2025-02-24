@@ -1,4 +1,3 @@
 package service.results;
 
-public record LogoutResult() {
-}
+public record LogoutResult() {}

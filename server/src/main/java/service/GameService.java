@@ -4,6 +4,7 @@ import service.requests.CreateGameRequest;
 import service.requests.JoinGameRequest;
 import service.requests.ListGamesRequest;
 import service.results.CreateGameResult;
+import service.results.JoinGameResult;
 import service.results.ListGamesResult;
 
 public class GameService {
@@ -16,5 +17,7 @@ public class GameService {
         throw new UnsupportedOperationException("This method has not been implemented yet");
     }
 
-    public void joinGame(JoinGameRequest joinGameRequest) {}
+    public JoinGameResult joinGame(JoinGameRequest joinGameRequest) {
+        throw new UnsupportedOperationException("This method has not been implemented yet");
+    }
 }

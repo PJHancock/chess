@@ -4,6 +4,7 @@ import service.requests.LoginRequest;
 import service.requests.LogoutRequest;
 import service.requests.RegisterRequest;
 import service.results.LoginResult;
+import service.results.LogoutResult;
 import service.results.RegisterResult;
 
 public class UserService {
@@ -15,5 +16,7 @@ public class UserService {
         throw new UnsupportedOperationException("This method has not been implemented yet");
     }
 
-    public void logout(LogoutRequest logoutRequest) {}
+    public LogoutResult logout(LogoutRequest logoutRequest) {
+        throw new UnsupportedOperationException("This method has not been implemented yet");
+    }
 }
