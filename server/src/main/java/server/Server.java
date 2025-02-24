@@ -31,6 +31,17 @@ public class Server {
         return Spark.port();
     }
 
+    private static Object clear(Request req, Response res) {
+        Gson gson = new Gson();
+        ClearRequest request = gson.fromJson(req.body(), ClearRequest.class);
+
+        ClearService service = new ClearService();
+        ClearResult result = service.clear(request);
+
+        res.type("application/json");
+        return gson.toJson(result);
+    }
+
     private static Object login(Request req, Response res) {
         Gson gson = new Gson();
         LoginRequest request = gson.fromJson(req.body(), LoginRequest.class);
