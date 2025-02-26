@@ -1,26 +1,15 @@
 package dataaccess;
-
-import model.AuthData;
-import dataaccess.DataAccessException;
-
 import java.util.UUID;
 
-public class AuthDAO {
+public interface AuthDAO {
 
-    public void clear() {
+    void clear() throws DataAccessException;
 
-    }
+    String generateToken() throws DataAccessException;
 
-    // unsure if this should be here in the model class
-    public static String generateToken() {
-        return UUID.randomUUID().toString();
-    }
+    void getAuth(String authToken) throws DataAccessException;
 
-    public void getAuth(String authToken) {
-    }
-
-    public void deleteAuth() {
-    }
+    void deleteAuth() throws DataAccessException;
 
 }
 

@@ -4,21 +4,16 @@ import chess.ChessGame;
 import model.GameData;
 import dataaccess.DataAccessException;
 
-public class GameDAO {
+public interface GameDAO {
 
-    public void clear() {
-    }
+    void clear() throws DataAccessException;
 
-    public void createGame(String gameName) throws DataAccessException {
-    }
+    void createGame(String gameName) throws DataAccessException;
 
-    public void getGame(String gameID) throws DataAccessException {
-    }
+    void getGame(String gameID) throws DataAccessException;
 
-    public void listGames() {
-    }
+    void listGames() throws DataAccessException;;
 
-    public void updateGame(ChessGame.TeamColor teamColor, String gameName) {
-    }
+    void updateGame(ChessGame.TeamColor teamColor, String gameName) throws DataAccessException;;
 
 }
