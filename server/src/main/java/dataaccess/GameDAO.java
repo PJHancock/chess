@@ -6,7 +6,7 @@ import dataaccess.DataAccessException;
 
 public interface GameDAO {
 
-    void clear() throws DataAccessException;
+    void clear();
 
     void createGame(String gameName) throws DataAccessException;
 

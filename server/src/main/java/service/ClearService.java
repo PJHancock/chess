@@ -1,16 +1,16 @@
 package service;
 
+import dataaccess.Memory.*;
 import service.requests.ClearRequest;
 import service.results.ClearResult;
-import dataaccess.*;
 
 public class ClearService {
     public ClearResult clear(ClearRequest request) {
-        AuthDAO auth = new AuthDAO();
+        MemoryAuthDAO auth = new MemoryAuthDAO();
         auth.clear();
-        GameDAO game = new GameDAO();
+        MemoryGameDAO game = new MemoryGameDAO();
         game.clear();
-        UserDAO user = new UserDAO();
+        MemoryUserDAO user = new MemoryUserDAO();
         user.clear();
         return null;
     }

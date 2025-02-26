@@ -1,9 +1,8 @@
 package dataaccess;
-import java.util.UUID;
 
 public interface AuthDAO {
 
-    void clear() throws DataAccessException;
+    void clear();
 
     String generateToken() throws DataAccessException;
 
