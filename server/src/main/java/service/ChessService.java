@@ -31,7 +31,7 @@ public class ChessService {
     }
 
     public CreateGameResult createGame(CreateGameRequest createGameRequest) throws DataAccessException {
-        if (!auth.getAuth(createGameRequest.authToken())) {
+        if (auth.getAuth(createGameRequest.authToken())) {
             throw new DataAccessException("Error: unauthorized");
         }
         int gameID = game.createGame(createGameRequest.gameName());
@@ -39,7 +39,7 @@ public class ChessService {
     }
 
     public JoinGameResult joinGame(JoinGameRequest joinGameRequest) throws DataAccessException {
-        if (!auth.getAuth(joinGameRequest.authToken())) {
+        if (auth.getAuth(joinGameRequest.authToken())) {
             throw new DataAccessException("Error: unauthorized");
         }
         String username = auth.getUser(joinGameRequest.authToken());
@@ -65,7 +65,7 @@ public class ChessService {
     }
 
     public LogoutResult logout(LogoutRequest logoutRequest) throws DataAccessException {
-        if (!auth.getAuth(logoutRequest.authToken())) {
+        if (auth.getAuth(logoutRequest.authToken())) {
             throw new DataAccessException("Error: unauthorized");
         }
         auth.deleteAuth(logoutRequest.authToken());
