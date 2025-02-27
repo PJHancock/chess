@@ -1,5 +1,6 @@
 package server;
 
+import dataaccess.DataAccessException;
 import service.requests.*;
 import service.results.*;
 import service.*;
@@ -23,6 +24,7 @@ public class Server {
         Spark.get("/game", Server::listGamesHandler);
         Spark.post("/game", Server::createGameHandler);
         Spark.put("/game", Server::joinGameHandler);
+//        Spark.exception(DataAccessException.class, Server::exceptionHandler);
 
         //This line initializes the server and can be removed once you have a functioning endpoint
         Spark.init();
@@ -30,6 +32,11 @@ public class Server {
         Spark.awaitInitialization();
         return Spark.port();
     }
+
+//    private static void exceptionHandler(DataAccessException ex, Request req, Response res) {
+//        res.status(ex.StatusCode());
+//        res.body(ex.toJson());
+//    }
 
     private static Object clearHandler(Request req, Response res) {
         Gson gson = new Gson();
@@ -42,7 +49,7 @@ public class Server {
         return gson.toJson(result);
     }
 
-    private static Object registerHandler(Request req, Response res) {
+    private static Object registerHandler(Request req, Response res) throws DataAccessException {
         Gson gson = new Gson();
         RegisterRequest request = gson.fromJson(req.body(), RegisterRequest.class);
 
