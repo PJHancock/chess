@@ -65,7 +65,7 @@ public class ChessService {
     }
 
     public LogoutResult logout(LogoutRequest logoutRequest) throws DataAccessException {
-        if (auth.getAuth(logoutRequest.authToken())) {
+        if (!auth.getAuth(logoutRequest.authToken())) {
             throw new DataAccessException("Error: unauthorized");
         }
         auth.deleteAuth(logoutRequest.authToken());
