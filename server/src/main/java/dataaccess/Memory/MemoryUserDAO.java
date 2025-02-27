@@ -21,6 +21,22 @@ public class MemoryUserDAO implements UserDAO {
     }
 
     public boolean getUser(String username) throws DataAccessException {
-        return users.containsValue(username);
+        for (UserData user : users.values()) {
+            if (user.username().equals(username)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean verifyUser(String username, String password) throws DataAccessException {
+        if (getUser(username)) {
+            for (UserData user : users.values()) {
+                if (user.password().equals(password)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

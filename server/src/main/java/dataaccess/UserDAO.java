@@ -10,4 +10,6 @@ public interface UserDAO {
 
     boolean getUser(String username) throws DataAccessException;
 
+    boolean verifyUser(String username, String password) throws DataAccessException;
+
 }

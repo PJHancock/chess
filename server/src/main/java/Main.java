@@ -1,5 +1,7 @@
 import chess.*;
 import server.Server;
+import service.ChessService;
+
 import static spark.Spark.*;
 
 public class Main {

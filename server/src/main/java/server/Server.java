@@ -1,15 +1,21 @@
 package server;
 
+import chess.ChessGame;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import dataaccess.DataAccessException;
+import service.ChessService;
 import service.requests.*;
 import service.results.*;
-import service.*;
 import spark.*;
 import spark.Request;
 import spark.Response;
 import com.google.gson.Gson;
 
+import java.io.Reader;
+
 public class Server {
+    private static final ChessService service = new ChessService();
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
@@ -33,6 +39,11 @@ public class Server {
         return Spark.port();
     }
 
+    public void stop() {
+        Spark.stop();
+        Spark.awaitStop();
+    }
+
 //    private static void exceptionHandler(DataAccessException ex, Request req, Response res) {
 //        res.status(ex.StatusCode());
 //        res.body(ex.toJson());
@@ -42,7 +53,6 @@ public class Server {
         Gson gson = new Gson();
         ClearRequest request = gson.fromJson(req.body(), ClearRequest.class);
 
-        ClearService service = new ClearService();
         ClearResult result = service.clear(request);
 
         res.type("application/json");
@@ -53,70 +63,67 @@ public class Server {
         Gson gson = new Gson();
         RegisterRequest request = gson.fromJson(req.body(), RegisterRequest.class);
 
-        UserService service = new UserService();
         RegisterResult result = service.register(request);
 
         res.type("application/json");
         return gson.toJson(result);
     }
 
-    private static Object loginHandler(Request req, Response res) {
+    private static Object loginHandler(Request req, Response res) throws DataAccessException {
         Gson gson = new Gson();
         LoginRequest request = gson.fromJson(req.body(), LoginRequest.class);
 
-        UserService service = new UserService();
         LoginResult result = service.login(request);
 
         res.type("application/json");
         return gson.toJson(result);
     }
 
-    private static Object logoutHandler(Request req, Response res) {
+    private static Object logoutHandler(Request req, Response res) throws DataAccessException {
         Gson gson = new Gson();
-        LogoutRequest request = gson.fromJson(req.body(), LogoutRequest.class);
-
-        UserService service = new UserService();
+        String authToken = req.headers("authorization");
+        LogoutRequest request = new LogoutRequest(authToken);
         LogoutResult result = service.logout(request);
 
         res.type("application/json");
         return gson.toJson(result);
     }
 
-    private static Object listGamesHandler(Request req, Response res) {
+    private static Object listGamesHandler(Request req, Response res) throws DataAccessException {
         Gson gson = new Gson();
-        ListGamesRequest request = gson.fromJson(req.body(), ListGamesRequest.class);
-
-        GameService service = new GameService();
+        String authToken = req.headers("authorization");
+        ListGamesRequest request = new ListGamesRequest(authToken);
         ListGamesResult result = service.listGames(request);
 
         res.type("application/json");
         return gson.toJson(result);
     }
 
-    private static Object createGameHandler(Request req, Response res) {
+    private static Object createGameHandler(Request req, Response res) throws DataAccessException {
         Gson gson = new Gson();
-        CreateGameRequest request = gson.fromJson(req.body(), CreateGameRequest.class);
 
-        GameService service = new GameService();
+        JsonObject jsonObject = JsonParser.parseString(req.body()).getAsJsonObject();
+        String gameName = jsonObject.get("gameName").getAsString();
+        String authToken = req.headers("authorization");
+
+        CreateGameRequest request = new CreateGameRequest(gameName, authToken);
         CreateGameResult result = service.createGame(request);
 
         res.type("application/json");
         return gson.toJson(result);
     }
 
-    private static Object joinGameHandler(Request req, Response res) {
+    private static Object joinGameHandler(Request req, Response res) throws DataAccessException {
         Gson gson = new Gson();
-        JoinGameRequest request = gson.fromJson(req.body(), JoinGameRequest.class);
+        JsonObject jsonObject = JsonParser.parseString(req.body()).getAsJsonObject();
+        ChessGame.TeamColor playerColor = ChessGame.TeamColor.valueOf(jsonObject.get("playerColor").getAsString());
+        int gameID = jsonObject.get("gameID").getAsInt();
+        String authToken = req.headers("authorization");
+        JoinGameRequest request = new JoinGameRequest(playerColor, gameID, authToken);
 
-        GameService service = new GameService();
         JoinGameResult result = service.joinGame(request);
 
         res.type("application/json");
         return gson.toJson(result);
-    }
-
-    public void stop() {
-        Spark.stop();
-        Spark.awaitStop();
     }
 }
