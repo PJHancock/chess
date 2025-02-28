@@ -4,7 +4,7 @@ import chess.ChessGame;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import model.GameData;
-import model.UserData;
+import service.results.ListGamesData;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,10 +35,13 @@ public class MemoryGameDAO implements GameDAO {
         return false;
     }
 
-    public Collection<GameData> listGames() throws DataAccessException {
-        Collection<GameData> game_list = new ArrayList<>();
+    public Collection<ListGamesData> listGames() throws DataAccessException {
+        Collection<ListGamesData> game_list = new ArrayList<>();
         for (HashMap.Entry<Integer, GameData> game : games.entrySet()) {
-            game_list.add(game.getValue());
+            GameData originalGame = game.getValue();
+            ListGamesData modifiedGame = new ListGamesData(originalGame.gameID(), originalGame.whiteUsername(),
+                                                           originalGame.blackUsername(), originalGame.gameName());
+            game_list.add(modifiedGame);
         }
         return game_list;
     }

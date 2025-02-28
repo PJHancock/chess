@@ -25,7 +25,7 @@ public class ChessService {
         if (!auth.getAuth(listGamesRequest.authToken())) {
             throw new DataAccessException("Error: unauthorized");
         }
-        Collection<GameData> games = game.listGames();
+        Collection<ListGamesData> games = game.listGames();
 
         return new ListGamesResult(games);
     }
