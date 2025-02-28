@@ -1,5 +1,6 @@
 package service;
 
+import chess.ChessGame;
 import dataaccess.DataAccessException;
 import dataaccess.Memory.*;
 import model.GameData;
@@ -8,6 +9,7 @@ import service.requests.*;
 import service.results.*;
 
 import java.util.Collection;
+import java.util.Objects;
 
 public class ChessService {
     private final MemoryAuthDAO auth = new MemoryAuthDAO();
@@ -31,6 +33,9 @@ public class ChessService {
     }
 
     public CreateGameResult createGame(CreateGameRequest createGameRequest) throws DataAccessException {
+        if (createGameRequest == null || createGameRequest.gameName() == null || createGameRequest.gameName().isEmpty()) {
+            throw new DataAccessException("Error: bad request");
+        }
         if (!auth.getAuth(createGameRequest.authToken())) {
             throw new DataAccessException("Error: unauthorized");
         }
@@ -39,6 +44,11 @@ public class ChessService {
     }
 
     public JoinGameResult joinGame(JoinGameRequest joinGameRequest) throws DataAccessException {
+        if (joinGameRequest == null || joinGameRequest.gameID() <= 0 ||
+                joinGameRequest.playerColor() == null ||
+                (joinGameRequest.playerColor() != ChessGame.TeamColor.WHITE && joinGameRequest.playerColor() != ChessGame.TeamColor.BLACK)) {
+            throw new DataAccessException("Error: bad request");
+        }
         if (!auth.getAuth(joinGameRequest.authToken())) {
             throw new DataAccessException("Error: unauthorized");
         }
@@ -48,6 +58,12 @@ public class ChessService {
     }
 
     public RegisterResult register(RegisterRequest registerRequest) throws DataAccessException {
+        if (registerRequest == null ||
+                registerRequest.username() == null || registerRequest.username().isEmpty() ||
+                registerRequest.password() == null || registerRequest.password().isEmpty() ||
+                registerRequest.email() == null || registerRequest.email().isEmpty()) {
+            throw new DataAccessException("Error: bad request");
+        }
         if (user.getUser(registerRequest.username())) {
             throw new DataAccessException("Error: already taken");
         }

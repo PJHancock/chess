@@ -13,6 +13,7 @@ import spark.Response;
 import com.google.gson.Gson;
 
 import java.io.Reader;
+import java.util.Objects;
 
 public class Server {
     private static final ChessService service = new ChessService();
@@ -61,69 +62,128 @@ public class Server {
 
     private static Object registerHandler(Request req, Response res) throws DataAccessException {
         Gson gson = new Gson();
-        RegisterRequest request = gson.fromJson(req.body(), RegisterRequest.class);
+        try {
+            RegisterRequest request = gson.fromJson(req.body(), RegisterRequest.class);
+            RegisterResult result = service.register(request);
 
-        RegisterResult result = service.register(request);
-
-        res.type("application/json");
-        return gson.toJson(result);
+            res.type("application/json");
+            return gson.toJson(result);
+        } catch (DataAccessException e) {
+            if (Objects.equals(e.getMessage(), "Error: bad request")) {
+                res.status(400);
+            } else if (Objects.equals(e.getMessage(), "Error: already taken")){
+                res.status(403);
+            } else {
+                res.status(500);
+            }
+            return "{\"message\": \"" + e.getMessage() + "\"}";
+        }
     }
 
     private static Object loginHandler(Request req, Response res) throws DataAccessException {
         Gson gson = new Gson();
-        LoginRequest request = gson.fromJson(req.body(), LoginRequest.class);
+        try {
+            LoginRequest request = gson.fromJson(req.body(), LoginRequest.class);
 
-        LoginResult result = service.login(request);
+            LoginResult result = service.login(request);
 
-        res.type("application/json");
-        return gson.toJson(result);
+            res.type("application/json");
+            return gson.toJson(result);
+        } catch (DataAccessException e) {
+            if (Objects.equals(e.getMessage(), "Error: unauthorized")) {
+                res.status(401);
+            } else {
+                res.status(500);
+            }
+            return "{\"message\": \"" + e.getMessage() + "\"}";
+        }
     }
 
     private static Object logoutHandler(Request req, Response res) throws DataAccessException {
         Gson gson = new Gson();
-        String authToken = req.headers("authorization");
-        LogoutRequest request = new LogoutRequest(authToken);
-        LogoutResult result = service.logout(request);
-
-        res.type("application/json");
-        return gson.toJson(result);
+        try {
+            String authToken = req.headers("authorization");
+            LogoutRequest request = new LogoutRequest(authToken);
+            LogoutResult result = service.logout(request);
+            res.type("application/json");
+            return gson.toJson(result);
+        } catch (DataAccessException e) {
+            if (Objects.equals(e.getMessage(), "Error: unauthorized")) {
+                res.status(401);
+            } else {
+                res.status(500);
+            }
+            return "{\"message\": \"" + e.getMessage() + "\"}";
+        }
     }
 
     private static Object listGamesHandler(Request req, Response res) throws DataAccessException {
         Gson gson = new Gson();
-        String authToken = req.headers("authorization");
-        ListGamesRequest request = new ListGamesRequest(authToken);
-        ListGamesResult result = service.listGames(request);
+        try {
+            String authToken = req.headers("authorization");
+            ListGamesRequest request = new ListGamesRequest(authToken);
+            ListGamesResult result = service.listGames(request);
 
-        res.type("application/json");
-        return gson.toJson(result);
+            res.type("application/json");
+            return gson.toJson(result);
+        } catch (DataAccessException e) {
+            if (Objects.equals(e.getMessage(), "Error: unauthorized")) {
+                res.status(401);
+            } else {
+                res.status(500);
+            }
+            return "{\"message\": \"" + e.getMessage() + "\"}";
+        }
     }
 
     private static Object createGameHandler(Request req, Response res) throws DataAccessException {
         Gson gson = new Gson();
+        try {
+            JsonObject jsonObject = JsonParser.parseString(req.body()).getAsJsonObject();
+            String gameName = jsonObject.get("gameName").getAsString();
+            String authToken = req.headers("authorization");
 
-        JsonObject jsonObject = JsonParser.parseString(req.body()).getAsJsonObject();
-        String gameName = jsonObject.get("gameName").getAsString();
-        String authToken = req.headers("authorization");
+            CreateGameRequest request = new CreateGameRequest(gameName, authToken);
+            CreateGameResult result = service.createGame(request);
 
-        CreateGameRequest request = new CreateGameRequest(gameName, authToken);
-        CreateGameResult result = service.createGame(request);
-
-        res.type("application/json");
-        return gson.toJson(result);
+            res.type("application/json");
+            return gson.toJson(result);
+        } catch (DataAccessException e) {
+            if (Objects.equals(e.getMessage(), "Error: bad request")) {
+                res.status(400);
+            } else if (Objects.equals(e.getMessage(), "Error: unauthorized")){
+                res.status(401);
+            } else {
+                res.status(500);
+            }
+            return "{\"message\": \"" + e.getMessage() + "\"}";
+        }
     }
 
     private static Object joinGameHandler(Request req, Response res) throws DataAccessException {
         Gson gson = new Gson();
-        JsonObject jsonObject = JsonParser.parseString(req.body()).getAsJsonObject();
-        ChessGame.TeamColor playerColor = ChessGame.TeamColor.valueOf(jsonObject.get("playerColor").getAsString());
-        int gameID = jsonObject.get("gameID").getAsInt();
-        String authToken = req.headers("authorization");
-        JoinGameRequest request = new JoinGameRequest(playerColor, gameID, authToken);
+        try {
+            JsonObject jsonObject = JsonParser.parseString(req.body()).getAsJsonObject();
+            ChessGame.TeamColor playerColor = ChessGame.TeamColor.valueOf(jsonObject.get("playerColor").getAsString());
+            int gameID = jsonObject.get("gameID").getAsInt();
+            String authToken = req.headers("authorization");
+            JoinGameRequest request = new JoinGameRequest(playerColor, gameID, authToken);
 
-        JoinGameResult result = service.joinGame(request);
+            JoinGameResult result = service.joinGame(request);
 
-        res.type("application/json");
-        return gson.toJson(result);
+            res.type("application/json");
+            return gson.toJson(result);
+        } catch (DataAccessException e) {
+            if (Objects.equals(e.getMessage(), "Error: bad request")) {
+                res.status(400);
+            } else if (Objects.equals(e.getMessage(), "Error: unauthorized")) {
+                res.status(401);
+            } else if (Objects.equals(e.getMessage(), "Error: already taken")) {
+                res.status(403);
+            } else {
+                res.status(500);
+            }
+            return "{\"message\": \"" + e.getMessage() + "\"}";
+        }
     }
 }
