@@ -7,7 +7,7 @@ import model.AuthData;
 import java.util.HashMap;
 import java.util.UUID;
 
-public class memoryAuthDao implements AuthDAO {
+public class MemoryAuthDao implements AuthDAO {
     final private HashMap<String, AuthData> authTokens = new HashMap<>();
 
     public void clear() {

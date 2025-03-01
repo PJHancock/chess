@@ -8,7 +8,7 @@ import service.results.ListGamesData;
 
 import java.util.*;
 
-public class memoryGameDao implements GameDAO {
+public class MemoryGameDao implements GameDAO {
     private final HashMap<Integer, GameData> games = new HashMap<>();
     private int nextID = 1;
 

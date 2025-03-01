@@ -14,7 +14,7 @@ import com.google.gson.Gson;
 import java.util.Objects;
 
 public class Server {
-    private static final ChessService Service = new ChessService();
+    private static final ChessService CHESS_SERVICE = new ChessService();
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
@@ -45,7 +45,7 @@ public class Server {
     private static Object clearHandler(Request req, Response res) {
         Gson gson = new Gson();
 
-        ClearResult result = Service.clear();
+        ClearResult result = CHESS_SERVICE.clear();
 
         res.type("application/json");
         return gson.toJson(result);
@@ -55,7 +55,7 @@ public class Server {
         Gson gson = new Gson();
         try {
             RegisterRequest request = gson.fromJson(req.body(), RegisterRequest.class);
-            RegisterResult result = Service.register(request);
+            RegisterResult result = CHESS_SERVICE.register(request);
 
             res.type("application/json");
             return gson.toJson(result);
@@ -76,7 +76,7 @@ public class Server {
         try {
             LoginRequest request = gson.fromJson(req.body(), LoginRequest.class);
 
-            LoginResult result = Service.login(request);
+            LoginResult result = CHESS_SERVICE.login(request);
 
             res.type("application/json");
             return gson.toJson(result);
@@ -104,7 +104,7 @@ public class Server {
         try {
             String authToken = req.headers("authorization");
             LogoutRequest request = new LogoutRequest(authToken);
-            LogoutResult result = Service.logout(request);
+            LogoutResult result = CHESS_SERVICE.logout(request);
             res.type("application/json");
             return gson.toJson(result);
         } catch (DataAccessException e) {
@@ -117,7 +117,7 @@ public class Server {
         try {
             String authToken = req.headers("authorization");
             ListGamesRequest request = new ListGamesRequest(authToken);
-            ListGamesResult result = Service.listGames(request);
+            ListGamesResult result = CHESS_SERVICE.listGames(request);
 
             res.type("application/json");
             return gson.toJson(result);
@@ -134,7 +134,7 @@ public class Server {
             String authToken = req.headers("authorization");
 
             CreateGameRequest request = new CreateGameRequest(gameName, authToken);
-            CreateGameResult result = Service.createGame(request);
+            CreateGameResult result = CHESS_SERVICE.createGame(request);
 
             res.type("application/json");
             return gson.toJson(result);
@@ -164,7 +164,7 @@ public class Server {
             String authToken = req.headers("authorization");
             JoinGameRequest request = new JoinGameRequest(playerColor, gameID, authToken);
 
-            JoinGameResult result = Service.joinGame(request);
+            JoinGameResult result = CHESS_SERVICE.joinGame(request);
 
             res.type("application/json");
             return gson.toJson(result);
