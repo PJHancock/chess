@@ -33,9 +33,9 @@ public class MemoryGameDAO implements GameDAO {
         return false;
     }
 
-    public Collection<ListGamesData> listGames() throws DataAccessException {
-        Collection<ListGamesData> gameList = new ArrayList<>() {
-        };
+    public List<ListGamesData> listGames() throws DataAccessException {
+        List<ListGamesData> gameList = new ArrayList<>();
+
         for (GameData game : games.values()) {
             gameList.add(new ListGamesData(game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName()));
         }
