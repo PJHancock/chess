@@ -9,9 +9,9 @@ import service.results.*;
 import java.util.List;
 
 public class ChessService {
-    private final memoryAuthDAO auth = new memoryAuthDAO();
-    private final memoryGameDAO game = new memoryGameDAO();
-    private final memoryUserDAO user = new memoryUserDAO();
+    private final memoryAuthDao auth = new memoryAuthDao();
+    private final memoryGameDao game = new memoryGameDao();
+    private final memoryUserDao user = new memoryUserDao();
 
     public ClearResult clear() {
         auth.clear();

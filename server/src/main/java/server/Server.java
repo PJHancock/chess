@@ -14,7 +14,7 @@ import com.google.gson.Gson;
 import java.util.Objects;
 
 public class Server {
-    private static final ChessService service = new ChessService();
+    private static final ChessService Service = new ChessService();
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
@@ -45,7 +45,7 @@ public class Server {
     private static Object clearHandler(Request req, Response res) {
         Gson gson = new Gson();
 
-        ClearResult result = service.clear();
+        ClearResult result = Service.clear();
 
         res.type("application/json");
         return gson.toJson(result);
@@ -55,7 +55,7 @@ public class Server {
         Gson gson = new Gson();
         try {
             RegisterRequest request = gson.fromJson(req.body(), RegisterRequest.class);
-            RegisterResult result = service.register(request);
+            RegisterResult result = Service.register(request);
 
             res.type("application/json");
             return gson.toJson(result);
@@ -76,7 +76,7 @@ public class Server {
         try {
             LoginRequest request = gson.fromJson(req.body(), LoginRequest.class);
 
-            LoginResult result = service.login(request);
+            LoginResult result = Service.login(request);
 
             res.type("application/json");
             return gson.toJson(result);
@@ -90,21 +90,25 @@ public class Server {
         }
     }
 
+    private static String authorizationHelper(Response res, DataAccessException e) {
+        if (Objects.equals(e.getMessage(), "Error: unauthorized")) {
+            res.status(401);
+        } else {
+            res.status(500);
+        }
+        return "{\"message\": \"" + e.getMessage() + "\"}";
+    }
+
     private static Object logoutHandler(Request req, Response res) {
         Gson gson = new Gson();
         try {
             String authToken = req.headers("authorization");
             LogoutRequest request = new LogoutRequest(authToken);
-            LogoutResult result = service.logout(request);
+            LogoutResult result = Service.logout(request);
             res.type("application/json");
             return gson.toJson(result);
         } catch (DataAccessException e) {
-            if (Objects.equals(e.getMessage(), "Error: unauthorized")) {
-                res.status(401);
-            } else {
-                res.status(500);
-            }
-            return "{\"message\": \"" + e.getMessage() + "\"}";
+            return authorizationHelper(res, e);
         }
     }
 
@@ -113,17 +117,12 @@ public class Server {
         try {
             String authToken = req.headers("authorization");
             ListGamesRequest request = new ListGamesRequest(authToken);
-            ListGamesResult result = service.listGames(request);
+            ListGamesResult result = Service.listGames(request);
 
             res.type("application/json");
             return gson.toJson(result);
         } catch (DataAccessException e) {
-            if (Objects.equals(e.getMessage(), "Error: unauthorized")) {
-                res.status(401);
-            } else {
-                res.status(500);
-            }
-            return "{\"message\": \"" + e.getMessage() + "\"}";
+            return authorizationHelper(res, e);
         }
     }
 
@@ -135,7 +134,7 @@ public class Server {
             String authToken = req.headers("authorization");
 
             CreateGameRequest request = new CreateGameRequest(gameName, authToken);
-            CreateGameResult result = service.createGame(request);
+            CreateGameResult result = Service.createGame(request);
 
             res.type("application/json");
             return gson.toJson(result);
@@ -165,7 +164,7 @@ public class Server {
             String authToken = req.headers("authorization");
             JoinGameRequest request = new JoinGameRequest(playerColor, gameID, authToken);
 
-            JoinGameResult result = service.joinGame(request);
+            JoinGameResult result = Service.joinGame(request);
 
             res.type("application/json");
             return gson.toJson(result);
