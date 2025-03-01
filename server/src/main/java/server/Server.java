@@ -11,8 +11,6 @@ import spark.*;
 import spark.Request;
 import spark.Response;
 import com.google.gson.Gson;
-
-import java.io.Reader;
 import java.util.Objects;
 
 public class Server {
@@ -31,7 +29,6 @@ public class Server {
         Spark.get("/game", Server::listGamesHandler);
         Spark.post("/game", Server::createGameHandler);
         Spark.put("/game", Server::joinGameHandler);
-//        Spark.exception(DataAccessException.class, Server::exceptionHandler);
 
         //This line initializes the server and can be removed once you have a functioning endpoint
         //Spark.init();
@@ -45,11 +42,6 @@ public class Server {
         Spark.awaitStop();
     }
 
-//    private static void exceptionHandler(DataAccessException ex, Request req, Response res) {
-//        res.status(ex.StatusCode());
-//        res.body(ex.toJson());
-//    }
-
     private static Object clearHandler(Request req, Response res) {
         Gson gson = new Gson();
 
@@ -59,7 +51,7 @@ public class Server {
         return gson.toJson(result);
     }
 
-    private static Object registerHandler(Request req, Response res) throws DataAccessException {
+    private static Object registerHandler(Request req, Response res) {
         Gson gson = new Gson();
         try {
             RegisterRequest request = gson.fromJson(req.body(), RegisterRequest.class);
@@ -79,7 +71,7 @@ public class Server {
         }
     }
 
-    private static Object loginHandler(Request req, Response res) throws DataAccessException {
+    private static Object loginHandler(Request req, Response res) {
         Gson gson = new Gson();
         try {
             LoginRequest request = gson.fromJson(req.body(), LoginRequest.class);
@@ -98,7 +90,7 @@ public class Server {
         }
     }
 
-    private static Object logoutHandler(Request req, Response res) throws DataAccessException {
+    private static Object logoutHandler(Request req, Response res) {
         Gson gson = new Gson();
         try {
             String authToken = req.headers("authorization");
@@ -116,7 +108,7 @@ public class Server {
         }
     }
 
-    private static Object listGamesHandler(Request req, Response res) throws DataAccessException {
+    private static Object listGamesHandler(Request req, Response res) {
         Gson gson = new Gson();
         try {
             String authToken = req.headers("authorization");
@@ -135,7 +127,7 @@ public class Server {
         }
     }
 
-    private static Object createGameHandler(Request req, Response res) throws DataAccessException {
+    private static Object createGameHandler(Request req, Response res) {
         Gson gson = new Gson();
         try {
             JsonObject jsonObject = JsonParser.parseString(req.body()).getAsJsonObject();
@@ -159,7 +151,7 @@ public class Server {
         }
     }
 
-    private static Object joinGameHandler(Request req, Response res) throws DataAccessException {
+    private static Object joinGameHandler(Request req, Response res) {
         Gson gson = new Gson();
         try {
             JsonObject jsonObject = JsonParser.parseString(req.body()).getAsJsonObject();

@@ -1,4 +1,4 @@
-package dataaccess.Memory;
+package dataaccess.memory;
 
 import chess.ChessGame;
 import dataaccess.DataAccessException;
@@ -8,7 +8,7 @@ import service.results.ListGamesData;
 
 import java.util.*;
 
-public class MemoryGameDAO implements GameDAO {
+public class memoryGameDAO implements GameDAO {
     private final HashMap<Integer, GameData> games = new HashMap<>();
     private int nextID = 1;
 
