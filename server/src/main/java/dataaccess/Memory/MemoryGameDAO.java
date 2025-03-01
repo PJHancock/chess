@@ -6,9 +6,7 @@ import dataaccess.GameDAO;
 import model.GameData;
 import service.results.ListGamesData;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
+import java.util.*;
 
 public class MemoryGameDAO implements GameDAO {
     final private HashMap<Integer, GameData> games = new HashMap<>();
@@ -36,29 +34,30 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     public Collection<ListGamesData> listGames() throws DataAccessException {
-        Collection<ListGamesData> game_list = new ArrayList<>();
-        for (HashMap.Entry<Integer, GameData> game : games.entrySet()) {
-            GameData originalGame = game.getValue();
-            ListGamesData modifiedGame = new ListGamesData(originalGame.gameID(), originalGame.whiteUsername(),
-                                                           originalGame.blackUsername(), originalGame.gameName());
-            game_list.add(modifiedGame);
+        Collection<ListGamesData> gameList = new ArrayList<>() {
+        };
+        for (GameData game : games.values()) {
+            gameList.add(new ListGamesData(game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName()));
         }
-        return game_list;
+        return gameList;
     }
 
     public void updateGame(String username, ChessGame.TeamColor teamColor, int gameID) throws DataAccessException {
         nextID++;
         GameData game = games.get(gameID);
+        if (game == null) {
+            throw new DataAccessException("Error: already taken");
+        }
         if (teamColor == ChessGame.TeamColor.WHITE) {
             if (game.whiteUsername() != null) {
                 throw new DataAccessException("Error: already taken");
             }
-            games.put(nextID, new GameData(nextID, username, game.blackUsername(), game.gameName(), new ChessGame()));
+            games.put(nextID, new GameData(nextID, username, game.blackUsername(), game.gameName(), game.game()));
         } else {
             if (game.blackUsername() != null) {
                 throw new DataAccessException("Error: already taken");
             }
-            games.put(nextID, new GameData(nextID, game.whiteUsername(), username, game.gameName(), new ChessGame()));
+            games.put(nextID, new GameData(nextID, game.whiteUsername(), username, game.gameName(), game.game()));
         }
         games.remove(gameID);
     }

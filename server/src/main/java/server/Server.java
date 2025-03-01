@@ -34,7 +34,7 @@ public class Server {
 //        Spark.exception(DataAccessException.class, Server::exceptionHandler);
 
         //This line initializes the server and can be removed once you have a functioning endpoint
-        Spark.init();
+        //Spark.init();
 
         Spark.awaitInitialization();
         return Spark.port();
@@ -164,7 +164,12 @@ public class Server {
         Gson gson = new Gson();
         try {
             JsonObject jsonObject = JsonParser.parseString(req.body()).getAsJsonObject();
-            ChessGame.TeamColor playerColor = ChessGame.TeamColor.valueOf(jsonObject.get("playerColor").getAsString());
+            if (!jsonObject.has("playerColor") || jsonObject.get("playerColor").isJsonNull() ||
+            !jsonObject.has("gameID") || jsonObject.get("gameID").isJsonNull()) {
+                res.status(400);
+                return "{\"message\": \"Error: bad request" + "\"}";
+            }
+            ChessGame.TeamColor playerColor = ChessGame.TeamColor.valueOf(jsonObject.get("playerColor").getAsString().toUpperCase());
             int gameID = jsonObject.get("gameID").getAsInt();
             String authToken = req.headers("authorization");
             JoinGameRequest request = new JoinGameRequest(playerColor, gameID, authToken);
@@ -173,6 +178,9 @@ public class Server {
 
             res.type("application/json");
             return gson.toJson(result);
+        } catch (IllegalArgumentException e) {
+            res.status(400);
+            return "{\"message\": \"" + "Error: bad request" + "\"}";
         } catch (DataAccessException e) {
             if (Objects.equals(e.getMessage(), "Error: bad request")) {
                 res.status(400);

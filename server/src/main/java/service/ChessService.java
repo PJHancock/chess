@@ -44,11 +44,14 @@ public class ChessService {
     }
 
     public JoinGameResult joinGame(JoinGameRequest joinGameRequest) throws DataAccessException {
+        // System.out.println("test point 0");
         if (joinGameRequest == null || joinGameRequest.gameID() <= 0 ||
                 joinGameRequest.playerColor() == null ||
-                (joinGameRequest.playerColor() != ChessGame.TeamColor.WHITE && joinGameRequest.playerColor() != ChessGame.TeamColor.BLACK)) {
+                ((joinGameRequest.playerColor() != ChessGame.TeamColor.WHITE) && (joinGameRequest.playerColor() != ChessGame.TeamColor.BLACK))) {
+            // System.out.println("test point 1");
             throw new DataAccessException("Error: bad request");
         }
+        // System.out.println("test point 2");
         if (!auth.getAuth(joinGameRequest.authToken())) {
             throw new DataAccessException("Error: unauthorized");
         }
