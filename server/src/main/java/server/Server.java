@@ -52,9 +52,8 @@ public class Server {
 
     private static Object clearHandler(Request req, Response res) {
         Gson gson = new Gson();
-        ClearRequest request = gson.fromJson(req.body(), ClearRequest.class);
 
-        ClearResult result = service.clear(request);
+        ClearResult result = service.clear();
 
         res.type("application/json");
         return gson.toJson(result);

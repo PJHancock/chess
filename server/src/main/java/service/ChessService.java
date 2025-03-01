@@ -3,20 +3,17 @@ package service;
 import chess.ChessGame;
 import dataaccess.DataAccessException;
 import dataaccess.Memory.*;
-import model.GameData;
 import model.UserData;
 import service.requests.*;
 import service.results.*;
-
-import java.util.Collection;
-import java.util.Objects;
+import java.util.List;
 
 public class ChessService {
     private final MemoryAuthDAO auth = new MemoryAuthDAO();
     private final MemoryGameDAO game = new MemoryGameDAO();
     private final MemoryUserDAO user = new MemoryUserDAO();
 
-    public ClearResult clear(ClearRequest request) {
+    public ClearResult clear() {
         auth.clear();
         game.clear();
         user.clear();
@@ -27,9 +24,9 @@ public class ChessService {
         if (!auth.getAuth(listGamesRequest.authToken())) {
             throw new DataAccessException("Error: unauthorized");
         }
-        Collection<ListGamesData> games = game.listGames();
+        List<ListGamesData> gameList = game.listGames();
 
-        return new ListGamesResult(games);
+        return new ListGamesResult(gameList);
     }
 
     public CreateGameResult createGame(CreateGameRequest createGameRequest) throws DataAccessException {
@@ -44,14 +41,11 @@ public class ChessService {
     }
 
     public JoinGameResult joinGame(JoinGameRequest joinGameRequest) throws DataAccessException {
-        // System.out.println("test point 0");
         if (joinGameRequest == null || joinGameRequest.gameID() <= 0 ||
                 joinGameRequest.playerColor() == null ||
                 ((joinGameRequest.playerColor() != ChessGame.TeamColor.WHITE) && (joinGameRequest.playerColor() != ChessGame.TeamColor.BLACK))) {
-            // System.out.println("test point 1");
             throw new DataAccessException("Error: bad request");
         }
-        // System.out.println("test point 2");
         if (!auth.getAuth(joinGameRequest.authToken())) {
             throw new DataAccessException("Error: unauthorized");
         }

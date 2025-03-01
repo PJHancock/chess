@@ -1,5 +1,5 @@
 package service.results;
 
-import java.util.Collection;
+import java.util.List;
 
-public record ListGamesResult(Collection<ListGamesData> games) {}
+public record ListGamesResult(List<ListGamesData> games) {}

@@ -1,22 +1,17 @@
 package dataaccess;
 
 import chess.ChessGame;
-import model.GameData;
 import service.results.ListGamesData;
-
-import java.util.Collection;
 import java.util.List;
 
 public interface GameDAO {
 
     void clear();
 
-    int createGame(String gameName) throws DataAccessException;
+    int createGame(String gameName);
 
-    boolean getGame(int gameID) throws DataAccessException;
+    List<ListGamesData> listGames();
 
-    List<ListGamesData> listGames() throws DataAccessException;;
-
-    void updateGame(String username, ChessGame.TeamColor teamColor, int gameName) throws DataAccessException;;
+    void updateGame(String username, ChessGame.TeamColor teamColor, int gameName) throws DataAccessException;
 
 }
