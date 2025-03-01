@@ -42,6 +42,15 @@ public class Server {
         Spark.awaitStop();
     }
 
+    private static String authorizationHelper(Response res, DataAccessException e) {
+        if (Objects.equals(e.getMessage(), "Error: unauthorized")) {
+            res.status(401);
+        } else {
+            res.status(500);
+        }
+        return "{\"message\": \"" + e.getMessage() + "\"}";
+    }
+
     private static Object clearHandler(Request req, Response res) {
         Gson gson = new Gson();
 
@@ -81,22 +90,8 @@ public class Server {
             res.type("application/json");
             return gson.toJson(result);
         } catch (DataAccessException e) {
-            if (Objects.equals(e.getMessage(), "Error: unauthorized")) {
-                res.status(401);
-            } else {
-                res.status(500);
-            }
-            return "{\"message\": \"" + e.getMessage() + "\"}";
+            return authorizationHelper(res, e);
         }
-    }
-
-    private static String authorizationHelper(Response res, DataAccessException e) {
-        if (Objects.equals(e.getMessage(), "Error: unauthorized")) {
-            res.status(401);
-        } else {
-            res.status(500);
-        }
-        return "{\"message\": \"" + e.getMessage() + "\"}";
     }
 
     private static Object logoutHandler(Request req, Response res) {
