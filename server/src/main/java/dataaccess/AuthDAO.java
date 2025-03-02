@@ -2,6 +2,8 @@ package dataaccess;
 
 public interface AuthDAO {
 
+    int getAuthTokens();
+
     void clear();
 
     String generateToken(String username);

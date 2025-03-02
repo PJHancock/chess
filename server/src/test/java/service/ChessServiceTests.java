@@ -5,11 +5,6 @@ import dataaccess.memory.MemoryGameDao;
 import dataaccess.memory.MemoryUserDao;
 import model.UserData;
 import org.junit.jupiter.api.*;
-import passoff.model.TestAuthResult;
-import passoff.model.TestCreateRequest;
-import passoff.model.TestUser;
-import passoff.server.TestServerFacade;
-import server.Server;
 
 public class ChessServiceTests {
 
@@ -40,8 +35,10 @@ public class ChessServiceTests {
         authTest.clear();
         gameTest.clear();
         userTest.clear();
-        // Assertions.assertTrue(authTest);
 
+        Assertions.assertEquals(0, authTest.getAuthTokens());
+        Assertions.assertEquals(0, gameTest.getGames());
+        Assertions.assertEquals(0, userTest.getUsers());
     }
 
     @Test

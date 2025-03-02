@@ -9,6 +9,10 @@ public class MemoryUserDao implements UserDAO {
     final private HashMap<Integer, UserData> users = new HashMap<>();
     private int nextID = 1;
 
+    public int getUsers() {
+        return users.size();
+    }
+
     public void clear(){
         users.clear();
     }

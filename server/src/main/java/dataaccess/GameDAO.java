@@ -6,6 +6,8 @@ import java.util.List;
 
 public interface GameDAO {
 
+    int getGames();
+
     void clear();
 
     int createGame(String gameName);

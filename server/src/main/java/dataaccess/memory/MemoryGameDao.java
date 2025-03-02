@@ -12,6 +12,10 @@ public class MemoryGameDao implements GameDAO {
     private final HashMap<Integer, GameData> games = new HashMap<>();
     private int nextID = 1;
 
+    public int getGames() {
+        return games.size();
+    }
+
     public void clear(){
         games.clear();
     }
