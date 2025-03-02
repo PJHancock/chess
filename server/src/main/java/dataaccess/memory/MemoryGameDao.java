@@ -12,15 +12,23 @@ public class MemoryGameDao implements GameDAO {
     private final HashMap<Integer, GameData> games = new HashMap<>();
     private int nextID = 1;
 
-    public int getGames() {
-        return games.size();
+    public GameData getGame(String gameName) {
+        for (GameData game : games.values()) {
+            if (game.gameName().equals(gameName)) {
+                return game;
+            }
+        }
+        return null; // Return null if no matching game is found
     }
 
     public void clear(){
         games.clear();
     }
 
-    public int createGame(String gameName) {
+    public int createGame(String gameName) throws DataAccessException {
+        if (gameName == null || gameName.isEmpty()) {
+            throw new DataAccessException("Error: bad request");
+        }
         int gameID = nextID;
         GameData game = new GameData(gameID, null, null, gameName, new ChessGame());
         games.put(nextID, game);

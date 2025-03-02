@@ -4,6 +4,9 @@ import chess.ChessGame;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import dataaccess.DataAccessException;
+import dataaccess.memory.MemoryAuthDao;
+import dataaccess.memory.MemoryGameDao;
+import dataaccess.memory.MemoryUserDao;
 import service.ChessService;
 import service.requests.*;
 import service.results.*;
@@ -14,7 +17,7 @@ import com.google.gson.Gson;
 import java.util.Objects;
 
 public class Server {
-    private static final ChessService CHESS_SERVICE = new ChessService();
+    private static final ChessService CHESS_SERVICE = new ChessService(new MemoryAuthDao(), new MemoryGameDao(), new MemoryUserDao());
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
@@ -29,9 +32,6 @@ public class Server {
         Spark.get("/game", Server::listGamesHandler);
         Spark.post("/game", Server::createGameHandler);
         Spark.put("/game", Server::joinGameHandler);
-
-        //This line initializes the server and can be removed once you have a functioning endpoint
-        //Spark.init();
 
         Spark.awaitInitialization();
         return Spark.port();

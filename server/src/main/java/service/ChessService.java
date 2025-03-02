@@ -9,15 +9,21 @@ import service.results.*;
 import java.util.List;
 
 public class ChessService {
-    private final MemoryAuthDao auth = new MemoryAuthDao();
-    private final MemoryGameDao game = new MemoryGameDao();
-    private final MemoryUserDao user = new MemoryUserDao();
+    private final MemoryAuthDao auth;
+    private final MemoryGameDao game;
+    private final MemoryUserDao user;
+
+    public ChessService(MemoryAuthDao auth, MemoryGameDao game, MemoryUserDao user) {
+        this.auth = auth;
+        this.game = game;
+        this.user = user;
+    }
 
     public ClearResult clear() {
         auth.clear();
         game.clear();
         user.clear();
-        return null;
+        return new ClearResult();
     }
 
     public ListGamesResult listGames(ListGamesRequest listGamesRequest) throws DataAccessException {

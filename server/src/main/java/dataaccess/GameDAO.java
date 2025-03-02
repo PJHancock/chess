@@ -1,16 +1,17 @@
 package dataaccess;
 
 import chess.ChessGame;
+import model.GameData;
 import service.results.ListGamesData;
 import java.util.List;
 
 public interface GameDAO {
 
-    int getGames();
+    GameData getGame(String gameName);
 
     void clear();
 
-    int createGame(String gameName);
+    int createGame(String gameName) throws DataAccessException;
 
     List<ListGamesData> listGames();
 
