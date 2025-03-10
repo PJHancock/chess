@@ -2,18 +2,19 @@ package service;
 
 import chess.ChessGame;
 import dataaccess.DataAccessException;
-import dataaccess.memory.*;
+import dataaccess.*;
 import model.UserData;
 import service.requests.*;
 import service.results.*;
 import java.util.List;
 
 public class ChessService {
-    private final MemoryAuthDao auth;
-    private final MemoryGameDao game;
-    private final MemoryUserDao user;
 
-    public ChessService(MemoryAuthDao auth, MemoryGameDao game, MemoryUserDao user) {
+    private final AuthDAO auth;
+    private final GameDAO game;
+    private final UserDAO user;
+
+    public ChessService(AuthDAO auth, GameDAO game, UserDAO user) {
         this.auth = auth;
         this.game = game;
         this.user = user;
