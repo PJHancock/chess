@@ -10,10 +10,6 @@ import java.util.UUID;
 public class MemoryAuthDao implements AuthDAO {
     final private HashMap<String, AuthData> authTokens = new HashMap<>();
 
-    public int getAuthTokens() {
-        return authTokens.size();
-    }
-
     public void clear() {
         authTokens.clear();
     }
