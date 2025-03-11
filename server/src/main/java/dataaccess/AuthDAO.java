@@ -2,14 +2,14 @@ package dataaccess;
 
 public interface AuthDAO {
 
-    void clear();
+    void clear() throws DataAccessException;
 
-    String generateToken(String username);
+    String generateToken(String username) throws DataAccessException;
 
-    boolean getAuth(String authToken);
+    boolean getAuth(String authToken) throws DataAccessException;
 
     void deleteAuth(String authToken) throws DataAccessException;
 
-    String getUser(String authToken);
+    String getUser(String authToken) throws DataAccessException;
 }
 

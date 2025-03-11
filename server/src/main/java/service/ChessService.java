@@ -20,7 +20,7 @@ public class ChessService {
         this.user = user;
     }
 
-    public ClearResult clear() {
+    public ClearResult clear() throws DataAccessException {
         auth.clear();
         game.clear();
         user.clear();

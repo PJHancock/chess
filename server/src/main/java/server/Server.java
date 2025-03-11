@@ -22,7 +22,15 @@ public class Server {
     // ChessService CHESS_SERVICE = new ChessService(new MemoryAuthDao(), new MemoryGameDao(), new MemoryUserDao());
 
     // Sql Dao implementation
-    static ChessService CHESS_SERVICE = new ChessService(new MySqlAuthDao(), new MySqlGameDao(), new MySqlUserDao());
+    static ChessService CHESS_SERVICE;
+
+    static {
+        try {
+            CHESS_SERVICE = new ChessService(new MySqlAuthDao(), new MySqlGameDao(), new MySqlUserDao());
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
@@ -56,7 +64,7 @@ public class Server {
         return "{\"message\": \"" + e.getMessage() + "\"}";
     }
 
-    private static Object clearHandler(Request req, Response res) {
+    private static Object clearHandler(Request req, Response res) throws DataAccessException {
         Gson gson = new Gson();
 
         ClearResult result = CHESS_SERVICE.clear();
