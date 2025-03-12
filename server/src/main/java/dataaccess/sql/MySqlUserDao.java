@@ -44,6 +44,9 @@ public class MySqlUserDao implements UserDAO {
     }
 
     public void createUser(UserData u) throws DataAccessException {
+        if (u.username() == null || u.password() == null || u.email() == null) {
+            throw new DataAccessException("bad request");
+        }
         try (var conn = DatabaseManager.getConnection()) {
             var statement = "INSERT INTO users (username, password, email) VALUES(?, ?, ?)";
             try (var preparedStatement = conn.prepareStatement(statement)) {
@@ -59,6 +62,9 @@ public class MySqlUserDao implements UserDAO {
     }
 
     public boolean getUser(String username) throws DataAccessException {
+        if (username == null) {
+            throw new DataAccessException("bad request");
+        }
         try (var conn = DatabaseManager.getConnection()) {
             var statement = "SELECT username FROM users WHERE username = ?";
             try (var preparedStatement = conn.prepareStatement(statement)) {
@@ -73,6 +79,9 @@ public class MySqlUserDao implements UserDAO {
     }
 
     public boolean verifyUser(String username, String password) throws DataAccessException {
+        if (username == null || password == null) {
+            throw new DataAccessException("bad request");
+        }
         try (var conn = DatabaseManager.getConnection()) {
             var statement = "SELECT username, password FROM users WHERE username = ?";
             try (var preparedStatement = conn.prepareStatement(statement)) {
