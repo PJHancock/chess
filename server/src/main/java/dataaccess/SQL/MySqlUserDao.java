@@ -1,40 +1,101 @@
 package dataaccess.SQL;
 
+import dataaccess.DataAccessException;
+import dataaccess.DatabaseManager;
 import dataaccess.UserDAO;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 
-import java.util.HashMap;
+import java.sql.SQLException;
 
 public class MySqlUserDao implements UserDAO {
-    final private HashMap<Integer, UserData> users = new HashMap<>();
-    private int nextID = 1;
 
-    public void clear(){
-        users.clear();
+    public MySqlUserDao() throws DataAccessException {
+        configureDatabase();
     }
 
-    public void createUser(UserData u) {
-        UserData user = new UserData(u.username(), u.password(), u.email());
-        users.put(nextID, user);
-        nextID++;
-    }
+    private final String[] createStatements = {
+            """
+            CREATE TABLE IF NOT EXISTS  users (
+              `id` int NOT NULL AUTO_INCREMENT,
+              `username` varchar(256) NULL,
+              `password` varchar(64) NULL,
+              `email` varchar(256) NOT NULL,
+              PRIMARY KEY (`id`),
+              INDEX(username),
+              UNIQUE(username),
+              INDEX(password),
+              INDEX(email)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+            """
+    };
 
-    public boolean getUser(String username) {
-        for (UserData user : users.values()) {
-            if (user.username().equals(username)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean verifyUser(String username, String password) {
-        if (getUser(username)) {
-            for (UserData user : users.values()) {
-                if (user.password().equals(password)) {
-                    return true;
+    private void configureDatabase() throws DataAccessException {
+        DatabaseManager.createDatabase();
+        try (var conn = DatabaseManager.getConnection()) {
+            for (var statement : createStatements) {
+                try (var preparedStatement = conn.prepareStatement(statement)) {
+                    preparedStatement.executeUpdate();
                 }
             }
+        } catch (SQLException ex) {
+            throw new DataAccessException(String.format("Unable to configure database: %s", ex.getMessage()));
+        }
+    }
+
+    public void clear() throws DataAccessException {
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement("DELETE FROM users")) {
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(String.format("Unable to clear auth table: %s", e.getMessage()));
+        }
+    }
+
+    public void createUser(UserData u) throws DataAccessException {
+        try (var conn = DatabaseManager.getConnection()) {
+            var statement = "INSERT INTO users (username, password, email) VALUES(?, ?, ?)";
+            try (var preparedStatement = conn.prepareStatement(statement)) {
+                preparedStatement.setString(1, u.username());
+                String hashedPassword = BCrypt.hashpw(u.password(), BCrypt.gensalt());
+                preparedStatement.setString(2, hashedPassword);
+                preparedStatement.setString(3, u.email());
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(String.format("Unable to create user: %s", e.getMessage()));
+        }
+    }
+
+    public boolean getUser(String username) throws DataAccessException {
+        try (var conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT username FROM users WHERE username = ?";
+            try (var preparedStatement = conn.prepareStatement(statement)) {
+                preparedStatement.setString(1, username);
+                try (var resultSet = preparedStatement.executeQuery()) {
+                    return resultSet.next(); // Returns true if username exists
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(String.format("Unable to get user: %s", e.getMessage()));
+        }
+    }
+
+    public boolean verifyUser(String username, String password) throws DataAccessException {
+        try (var conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT username, password FROM users WHERE username = ?";
+            try (var preparedStatement = conn.prepareStatement(statement)) {
+                preparedStatement.setString(1, username);
+                try (var resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        String hashedPassword = resultSet.getString("password"); // Retrieve hashed password
+                        return BCrypt.checkpw(password, hashedPassword); // Securely compare passwords
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(String.format("Unable to verify user: %s", e.getMessage()));
         }
         return false;
     }

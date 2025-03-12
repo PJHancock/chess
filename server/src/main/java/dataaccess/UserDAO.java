@@ -4,12 +4,12 @@ import model.UserData;
 
 public interface UserDAO {
 
-    void clear();
+    void clear() throws DataAccessException;
 
-    void createUser(UserData u);
+    void createUser(UserData u) throws DataAccessException;
 
-    boolean getUser(String username);
+    boolean getUser(String username) throws DataAccessException;
 
-    boolean verifyUser(String username, String password);
+    boolean verifyUser(String username, String password) throws DataAccessException;
 
 }
