@@ -36,7 +36,8 @@ class MySqlUserDaoTests {
     @Test
     void createUserNegative() {
         UserData user = new UserData(null, "testPassword", "testEmail");
-        assertThrows(DataAccessException.class, () -> testDataBase.createUser(user), "Should throw DataAccessException for null request");
+        assertThrows(DataAccessException.class, () -> testDataBase.createUser(user),
+                "Should throw DataAccessException for null request");
     }
 
     @Test
@@ -49,7 +50,8 @@ class MySqlUserDaoTests {
     @Test
     void getUserNegative() {
         UserData user = new UserData(null, "testPassword", "testEmail");
-        assertThrows(DataAccessException.class, () -> testDataBase.getUser(user.username()), "Should throw DataAccessException for null request");
+        assertThrows(DataAccessException.class, () -> testDataBase.getUser(user.username()),
+                "Should throw DataAccessException for null request");
     }
 
     @Test
@@ -62,6 +64,7 @@ class MySqlUserDaoTests {
     @Test
     void verifyUserNegative() {
         UserData user = new UserData(null, "testPassword", "testEmail");
-        assertThrows(DataAccessException.class, () -> testDataBase.verifyUser(user.username(), user.password()), "Should throw DataAccessException for null request");
+        assertThrows(DataAccessException.class, () -> testDataBase.verifyUser(user.username(), user.password()),
+                "Should throw DataAccessException for null request");
     }
 }

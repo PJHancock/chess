@@ -33,7 +33,8 @@ class MySqlAuthDaoTests {
     void generateTokenNegative() throws DataAccessException {
         String newAuth = testDataBase.generateToken("testUser");
         assertTrue(testDataBase.getAuth(newAuth));
-        assertThrows(DataAccessException.class, () -> testDataBase.generateToken(null), "Should throw DataAccessException for null request");
+        assertThrows(DataAccessException.class, () -> testDataBase.generateToken(null),
+                "Should throw DataAccessException for null request");
     }
 
     @Test
@@ -47,7 +48,8 @@ class MySqlAuthDaoTests {
     void getAuthNegative() throws DataAccessException {
         String newAuth = testDataBase.generateToken("testUser");
         assertTrue(testDataBase.getAuth(newAuth));
-        assertThrows(DataAccessException.class, () -> testDataBase.getAuth(null), "Should throw DataAccessException for null request");
+        assertThrows(DataAccessException.class, () -> testDataBase.getAuth(null),
+                "Should throw DataAccessException for null request");
     }
 
     @Test
@@ -62,7 +64,8 @@ class MySqlAuthDaoTests {
     void deleteAuthNegative() throws DataAccessException {
         String newAuth = testDataBase.generateToken("testUser");
         assertTrue(testDataBase.getAuth(newAuth));
-        assertThrows(DataAccessException.class, () -> testDataBase.deleteAuth(null), "Should throw DataAccessException for null request");
+        assertThrows(DataAccessException.class, () -> testDataBase.deleteAuth(null),
+                "Should throw DataAccessException for null request");
     }
 
     @Test
@@ -76,6 +79,7 @@ class MySqlAuthDaoTests {
     void getUserNegative() throws DataAccessException {
         String newAuth = testDataBase.generateToken("testUser");
         assertTrue(testDataBase.getAuth(newAuth));
-        assertThrows(DataAccessException.class, () -> testDataBase.getUser(null), "Should throw DataAccessException for null request");
+        assertThrows(DataAccessException.class, () -> testDataBase.getUser(null),
+                "Should throw DataAccessException for null request");
     }
 }
