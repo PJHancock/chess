@@ -1,4 +1,4 @@
-package dataaccess.SQL;
+package dataaccess.sql;
 
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;

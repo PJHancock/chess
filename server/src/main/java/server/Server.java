@@ -4,9 +4,9 @@ import chess.ChessGame;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import dataaccess.DataAccessException;
-import dataaccess.SQL.MySqlAuthDao;
-import dataaccess.SQL.MySqlGameDao;
-import dataaccess.SQL.MySqlUserDao;
+import dataaccess.sql.MySqlAuthDao;
+import dataaccess.sql.MySqlGameDao;
+import dataaccess.sql.MySqlUserDao;
 import service.ChessService;
 import service.requests.*;
 import service.results.*;
@@ -22,11 +22,11 @@ public class Server {
     // ChessService CHESS_SERVICE = new ChessService(new MemoryAuthDao(), new MemoryGameDao(), new MemoryUserDao());
 
     // Sql Dao implementation
-    static ChessService CHESS_SERVICE;
+    static ChessService chessService;
 
     static {
         try {
-            CHESS_SERVICE = new ChessService(new MySqlAuthDao(), new MySqlGameDao(), new MySqlUserDao());
+            chessService = new ChessService(new MySqlAuthDao(), new MySqlGameDao(), new MySqlUserDao());
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
@@ -67,7 +67,7 @@ public class Server {
     private static Object clearHandler(Request req, Response res) throws DataAccessException {
         Gson gson = new Gson();
 
-        ClearResult result = CHESS_SERVICE.clear();
+        ClearResult result = chessService.clear();
 
         res.type("application/json");
         return gson.toJson(result);
@@ -77,7 +77,7 @@ public class Server {
         Gson gson = new Gson();
         try {
             RegisterRequest request = gson.fromJson(req.body(), RegisterRequest.class);
-            RegisterResult result = CHESS_SERVICE.register(request);
+            RegisterResult result = chessService.register(request);
 
             res.type("application/json");
             return gson.toJson(result);
@@ -98,7 +98,7 @@ public class Server {
         try {
             LoginRequest request = gson.fromJson(req.body(), LoginRequest.class);
 
-            LoginResult result = CHESS_SERVICE.login(request);
+            LoginResult result = chessService.login(request);
 
             res.type("application/json");
             return gson.toJson(result);
@@ -112,7 +112,7 @@ public class Server {
         try {
             String authToken = req.headers("authorization");
             LogoutRequest request = new LogoutRequest(authToken);
-            LogoutResult result = CHESS_SERVICE.logout(request);
+            LogoutResult result = chessService.logout(request);
             res.type("application/json");
             return gson.toJson(result);
         } catch (DataAccessException e) {
@@ -125,7 +125,7 @@ public class Server {
         try {
             String authToken = req.headers("authorization");
             ListGamesRequest request = new ListGamesRequest(authToken);
-            ListGamesResult result = CHESS_SERVICE.listGames(request);
+            ListGamesResult result = chessService.listGames(request);
 
             res.type("application/json");
             return gson.toJson(result);
@@ -142,7 +142,7 @@ public class Server {
             String authToken = req.headers("authorization");
 
             CreateGameRequest request = new CreateGameRequest(gameName, authToken);
-            CreateGameResult result = CHESS_SERVICE.createGame(request);
+            CreateGameResult result = chessService.createGame(request);
 
             res.type("application/json");
             return gson.toJson(result);
@@ -172,7 +172,7 @@ public class Server {
             String authToken = req.headers("authorization");
             JoinGameRequest request = new JoinGameRequest(playerColor, gameID, authToken);
 
-            JoinGameResult result = CHESS_SERVICE.joinGame(request);
+            JoinGameResult result = chessService.joinGame(request);
 
             res.type("application/json");
             return gson.toJson(result);
