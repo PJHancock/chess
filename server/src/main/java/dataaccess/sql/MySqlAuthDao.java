@@ -55,6 +55,9 @@ public class MySqlAuthDao implements AuthDAO {
     }
 
     public boolean getAuth(String authToken) throws DataAccessException {
+        if (authToken == null) {
+            throw new DataAccessException("Invalid request");
+        }
         try (var conn = DatabaseManager.getConnection()) {
             var statement = "SELECT username FROM auth WHERE authToken = ?";
             try (var preparedStatement = conn.prepareStatement(statement)) {
