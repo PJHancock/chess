@@ -19,18 +19,34 @@ class MySqlAuthDaoTests {
     }
 
     @Test
-    void generateToken() {
+    void generateTokenPositive() {
     }
 
     @Test
-    void getAuth() {
+    void generateTokenNegative() {
     }
 
     @Test
-    void deleteAuth() {
+    void getAuthPositive() {
     }
 
     @Test
-    void getUser() {
+    void getAuthNegative() {
+    }
+
+    @Test
+    void deleteAuthPositive() {
+    }
+
+    @Test
+    void deleteAuthNegative() {
+    }
+
+    @Test
+    void getUserPositive() {
+    }
+
+    @Test
+    void getUserNegative() {
     }
 }

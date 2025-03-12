@@ -19,18 +19,34 @@ class MySqlGameDaoTests {
     }
 
     @Test
-    void getGame() {
+    void getGamePositive() {
     }
 
     @Test
-    void createGame() {
+    void getGameNegative() {
     }
 
     @Test
-    void listGames() {
+    void createGamePositive() {
     }
 
     @Test
-    void updateGame() {
+    void createGameNegative() {
+    }
+
+    @Test
+    void listGamesPositive() {
+    }
+
+    @Test
+    void listGamesNegative() {
+    }
+
+    @Test
+    void updateGamePositive() {
+    }
+
+    @Test
+    void updateGameNegative() {
     }
 }

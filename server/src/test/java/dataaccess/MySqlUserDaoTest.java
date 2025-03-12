@@ -21,14 +21,26 @@ class MySqlUserDaoTest {
     }
 
     @Test
-    void createUser() {
+    void createUserPositive() {
     }
 
     @Test
-    void getUser() {
+    void createUserNegative() {
     }
 
     @Test
-    void verifyUser() {
+    void getUserPositive() {
+    }
+
+    @Test
+    void getUserNegative() {
+    }
+
+    @Test
+    void verifyUserPositive() {
+    }
+
+    @Test
+    void verifyUserNegative() {
     }
 }
