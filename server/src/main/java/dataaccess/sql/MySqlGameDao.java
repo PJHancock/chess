@@ -7,7 +7,6 @@ import dataaccess.DatabaseManager;
 import dataaccess.GameDAO;
 import model.GameData;
 import service.results.ListGamesData;
-
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
@@ -49,6 +48,9 @@ public class MySqlGameDao implements GameDAO {
     }
 
     public GameData getGame(String gameName) throws DataAccessException {
+        if (gameName == null) {
+            throw new DataAccessException("Invalid request");
+        }
         try (var conn = DatabaseManager.getConnection()) {
             var statement = "SELECT gameID, whiteUsername, blackUsername, gameName, chessGame FROM game WHERE gameName = ?";
             try (var preparedStatement = conn.prepareStatement(statement)) {
@@ -72,6 +74,9 @@ public class MySqlGameDao implements GameDAO {
 
 
     public int createGame(String gameName) throws DataAccessException {
+        if (gameName == null) {
+            throw new DataAccessException("Invalid request");
+        }
         try (var conn = DatabaseManager.getConnection()) {
             var statement = "INSERT INTO game (whiteUsername, blackUsername, gameName, chessGame) VALUES(?, ?, ?, ?)";
             try (var preparedStatement = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS)) {
@@ -116,7 +121,9 @@ public class MySqlGameDao implements GameDAO {
     }
 
     public void updateGame(String username, ChessGame.TeamColor teamColor, int gameID) throws DataAccessException {
-
+        if (username == null) {
+            throw new DataAccessException("Invalid request");
+        }
         try (var conn = DatabaseManager.getConnection()) {
             var statement = "SELECT gameID, whiteUsername, blackUsername, gameName, chessGame FROM game WHERE gameID = ?";
             try (var preparedStatement = conn.prepareStatement(statement)) {

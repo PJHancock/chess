@@ -1,19 +1,18 @@
 package dataaccess;
 
-import org.junit.jupiter.api.AfterEach;
+import dataaccess.sql.MySqlUserDao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class MySqlUserDaoTest {
 
-    @BeforeEach
-    void setUp() {
-    }
+    private MySqlUserDao testDataBase;
 
-    @AfterEach
-    void tearDown() {
+    @BeforeEach
+    void setUp() throws DataAccessException {
+        testDataBase = new MySqlUserDao();
+        testDataBase.clear();
     }
 
     @Test
