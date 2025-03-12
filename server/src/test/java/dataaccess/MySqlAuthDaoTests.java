@@ -1,7 +1,6 @@
 package dataaccess;
 
 import dataaccess.sql.MySqlAuthDao;
-import model.AuthData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -34,9 +33,7 @@ class MySqlAuthDaoTests {
     void generateTokenNegative() throws DataAccessException {
         String newAuth = testDataBase.generateToken("testUser");
         assertTrue(testDataBase.getAuth(newAuth));
-        assertThrows(DataAccessException.class, () -> {
-            testDataBase.generateToken(null);
-        }, "Should throw DataAccessException for null request");
+        assertThrows(DataAccessException.class, () -> testDataBase.generateToken(null), "Should throw DataAccessException for null request");
     }
 
     @Test
@@ -50,24 +47,35 @@ class MySqlAuthDaoTests {
     void getAuthNegative() throws DataAccessException {
         String newAuth = testDataBase.generateToken("testUser");
         assertTrue(testDataBase.getAuth(newAuth));
-        assertThrows(DataAccessException.class, () -> {
-            testDataBase.getAuth(null);
-        }, "Should throw DataAccessException for null request");
+        assertThrows(DataAccessException.class, () -> testDataBase.getAuth(null), "Should throw DataAccessException for null request");
     }
 
     @Test
-    void deleteAuthPositive() {
+    void deleteAuthPositive() throws DataAccessException {
+        String newAuth = testDataBase.generateToken("testUser");
+        assertTrue(testDataBase.getAuth(newAuth));
+        testDataBase.deleteAuth(newAuth);
+        assertFalse(testDataBase.getAuth(newAuth));
     }
 
     @Test
-    void deleteAuthNegative() {
+    void deleteAuthNegative() throws DataAccessException {
+        String newAuth = testDataBase.generateToken("testUser");
+        assertTrue(testDataBase.getAuth(newAuth));
+        assertThrows(DataAccessException.class, () -> testDataBase.deleteAuth(null), "Should throw DataAccessException for null request");
     }
 
     @Test
-    void getUserPositive() {
+    void getUserPositive() throws DataAccessException {
+        String newAuth = testDataBase.generateToken("testUser");
+        assertTrue(testDataBase.getAuth(newAuth));
+        assertEquals("testUser", testDataBase.getUser(newAuth));
     }
 
     @Test
-    void getUserNegative() {
+    void getUserNegative() throws DataAccessException {
+        String newAuth = testDataBase.generateToken("testUser");
+        assertTrue(testDataBase.getAuth(newAuth));
+        assertThrows(DataAccessException.class, () -> testDataBase.getUser(null), "Should throw DataAccessException for null request");
     }
 }
