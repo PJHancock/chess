@@ -23,7 +23,6 @@ public class Repl {
 
     public void runPrelogin() {
         System.out.println(WHITE_PAWN + " Welcome to 240 chess. Type help to get started" + WHITE_PAWN);
-        System.out.print(preloginClient.help());
         Scanner scanner = new Scanner(System.in);
         var result = "";
         while (!result.equals("quit")) {
@@ -46,8 +45,6 @@ public class Repl {
     }
 
     public void runPostlogin() {
-        System.out.print(postloginClient.help());
-
         Scanner scanner = new Scanner(System.in);
         var result = "";
         while (!(result.equals("logout") || result.equals("quit"))) {
@@ -70,8 +67,6 @@ public class Repl {
     }
 
 //    public void runGameplay() {
-//        System.out.print(gameplayClient.help());
-//
 //        Scanner scanner = new Scanner(System.in);
 //        var result = "";
 //        while (!result.equals("leave")) {
@@ -105,7 +100,7 @@ public class Repl {
     }
 
 //    private void printGameplayPrompt() {
-//        // To be implemented layer
+//        // To be implemented later
 //        System.out.print("\n" + "[GamePlay Mode]" + ">>> ");
 //    }
 }
