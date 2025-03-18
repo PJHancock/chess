@@ -1,5 +1,6 @@
 package ui;
 
+import chess.ChessGame;
 import ui.Clients.GameplayClient;
 import ui.Clients.PostloginClient;
 import ui.Clients.PreloginClient;
@@ -56,8 +57,9 @@ public class Repl {
             try {
                 result = postloginClient.eval(line);
                 System.out.print(result);
-                if (Objects.equals(line., "join") || Objects.equals(line, "observe")) {
-                    runGameplay();
+                if (Objects.equals(line, "join") || Objects.equals(line, "observe")) {
+                    printGameboard();
+                    // runGameplay();
                 }
             } catch (Throwable e) {
                 var msg = e.toString();
@@ -67,11 +69,30 @@ public class Repl {
         System.out.println();
     }
 
-    public void runGameplay() {
-        printGameboard();
-    }
+//    public void runGameplay() {
+//        System.out.print(gameplayClient.help());
+//
+//        Scanner scanner = new Scanner(System.in);
+//        var result = "";
+//        while (!result.equals("leave")) {
+//            printGameplayPrompt();
+//            String line = scanner.nextLine();
+//
+//            try {
+//                result = postloginClient.eval(line);
+//                System.out.print(result);
+//                if (Objects.equals(line., "join") || Objects.equals(line, "observe")) {
+//                    runGameplay();
+//                }
+//            } catch (Throwable e) {
+//                var msg = e.toString();
+//                System.out.print(msg);
+//            }
+//        }
+//        System.out.println();
+//    }
 
-    public void printGameboard() {
+    public void printGameboard(ChessGame.TeamColor playerSide) {
 
     }
 
@@ -83,8 +104,8 @@ public class Repl {
         System.out.print("\n" + "[LOGGED_OUT] >>> " + SET_TEXT_COLOR_BLUE);
     }
 
-    private void printGameplayPrompt() {
-        // To be implemented layer
-        System.out.print("\n" + "[GamePlay Mode]" + ">>> ");
-    }
+//    private void printGameplayPrompt() {
+//        // To be implemented layer
+//        System.out.print("\n" + "[GamePlay Mode]" + ">>> ");
+//    }
 }
