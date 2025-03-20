@@ -1,7 +1,6 @@
 package service;
 
 import chess.ChessGame;
-import dataaccess.DataAccessException;
 import dataaccess.memory.MemoryAuthDao;
 import dataaccess.memory.MemoryGameDao;
 import dataaccess.memory.MemoryUserDao;
@@ -41,7 +40,7 @@ public class ChessServiceTests {
 
     @Test
     @DisplayName("Clear Positive Test")
-    public void clearPositiveTest() throws DataAccessException {
+    public void clearPositiveTest() throws dataaccess.DataAccessException {
         String authToken = authTest.generateToken("TestName");
         gameTest.createGame("TestGame");
         userTest.createUser(new UserData("TestUser", "TestPassword", "TestEmail"));
@@ -55,7 +54,7 @@ public class ChessServiceTests {
 
     @Test
     @DisplayName("Create Game Positive Test")
-    public void createGamePositiveTest() throws DataAccessException {
+    public void createGamePositiveTest() throws dataaccess.DataAccessException {
         String username = "TestUser";
         String authToken = authTest.generateToken(username);
         CreateGameRequest request = new CreateGameRequest("NewChessGame", authToken);
@@ -70,14 +69,14 @@ public class ChessServiceTests {
     @Test
     @DisplayName("Create Game Negative Test")
     public void createGameNegativeTest() {
-        assertThrows(DataAccessException.class, () -> {
+        assertThrows(dataaccess.DataAccessException.class, () -> {
             chessServiceTest.createGame(null);
-        }, "Should throw DataAccessException for null request");
+        }, "Should throw dataaccess.DataAccessException for null request");
     }
 
     @Test
     @DisplayName("Join Game Positive Test")
-    public void joinGamePositiveTest() throws DataAccessException {
+    public void joinGamePositiveTest() throws dataaccess.DataAccessException {
         gameTest.createGame("TestGame");
         String username = "TestUser";
         String authToken = authTest.generateToken(username);
@@ -91,21 +90,21 @@ public class ChessServiceTests {
 
     @Test
     @DisplayName("Join Game Negative Test")
-    public void joinGameNegativeTest() throws DataAccessException {
+    public void joinGameNegativeTest() throws dataaccess.DataAccessException {
         gameTest.createGame("TestGame");
         String username = "TestUser";
         String authToken = authTest.generateToken(username);
         //incorrect gameID
         JoinGameRequest request = new JoinGameRequest(ChessGame.TeamColor.WHITE,2, authToken);
 
-        assertThrows(DataAccessException.class, () -> {
+        assertThrows(dataaccess.DataAccessException.class, () -> {
             chessServiceTest.joinGame(request);
-        }, "Should throw DataAccessException for incorrect gameID");
+        }, "Should throw dataaccess.DataAccessException for incorrect gameID");
     }
 
     @Test
     @DisplayName("List Games Positive Test")
-    public void listGamesPositiveTest() throws DataAccessException {
+    public void listGamesPositiveTest() throws dataaccess.DataAccessException {
         List<ListGamesData> gameList = new ArrayList<>();
         gameList.add(new ListGamesData(1, null, null, "TestGame1"));
         gameList.add(new ListGamesData(2, null, null, "TestGame2"));
@@ -122,14 +121,14 @@ public class ChessServiceTests {
     public void listGamesNegativeTest() {
         ListGamesRequest request = new ListGamesRequest(null);
 
-        assertThrows(DataAccessException.class, () -> {
+        assertThrows(dataaccess.DataAccessException.class, () -> {
             chessServiceTest.listGames(request);
-        }, "Should throw DataAccessException for unauthorized");
+        }, "Should throw dataaccess.DataAccessException for unauthorized");
     }
 
     @Test
     @DisplayName("Login Positive Test")
-    public void loginPositiveTest() throws DataAccessException {
+    public void loginPositiveTest() throws dataaccess.DataAccessException {
         userTest.createUser(new UserData("TestUsername", "TestPassword", "TestEmail"));
         LoginRequest request = new LoginRequest("TestUsername", "TestPassword");
         LoginResult result = chessServiceTest.login(request);
@@ -141,14 +140,14 @@ public class ChessServiceTests {
     public void loginNegativeTest() {
         userTest.createUser(new UserData("TestUsername", "TestPassword", "TestEmail"));
         LoginRequest request = new LoginRequest("TestUsername", "WrongPassword");
-        assertThrows(DataAccessException.class, () -> {
+        assertThrows(dataaccess.DataAccessException.class, () -> {
             chessServiceTest.login(request);
-        }, "Should throw DataAccessException for wrong password");
+        }, "Should throw dataaccess.DataAccessException for wrong password");
     }
 
     @Test
     @DisplayName("Logout Positive Test")
-    public void logoutPositiveTest() throws DataAccessException {
+    public void logoutPositiveTest() throws dataaccess.DataAccessException {
         userTest.createUser(new UserData("TestUsername", "TestPassword", "TestEmail"));
         String authToken = authTest.generateToken("TestUsername");
         chessServiceTest.logout(new LogoutRequest(authToken));
@@ -158,14 +157,14 @@ public class ChessServiceTests {
     @Test
     @DisplayName("Logout Negative Test")
     public void logoutNegativeTest() {
-        assertThrows(DataAccessException.class, () -> {
+        assertThrows(dataaccess.DataAccessException.class, () -> {
             chessServiceTest.logout(new LogoutRequest(null));
-        }, "Should throw DataAccessException for unauthorized");
+        }, "Should throw dataaccess.DataAccessException for unauthorized");
     }
 
     @Test
     @DisplayName("Register Positive Test")
-    public void registerPositiveTest() throws DataAccessException {
+    public void registerPositiveTest() throws dataaccess.DataAccessException {
         RegisterRequest request = new RegisterRequest("TestUsername", "TestPassword", "TestEmail");
         chessServiceTest.register(request);
         assertTrue(userTest.verifyUser("TestUsername", "TestPassword"));
@@ -175,8 +174,8 @@ public class ChessServiceTests {
     @DisplayName("Register Negative Test")
     public void registerNegativeTest() {
         RegisterRequest request = new RegisterRequest("TestUsername", "TestPassword", null);
-        assertThrows(DataAccessException.class, () -> {
+        assertThrows(dataaccess.DataAccessException.class, () -> {
             chessServiceTest.register(request);
-        }, "Should throw DataAccessException for null email");
+        }, "Should throw dataaccess.DataAccessException for null email");
     }
 }

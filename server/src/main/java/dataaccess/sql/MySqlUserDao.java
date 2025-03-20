@@ -9,7 +9,7 @@ import java.sql.SQLException;
 
 public class MySqlUserDao implements UserDAO {
 
-    public MySqlUserDao() throws DataAccessException {
+    public MySqlUserDao() throws dataaccess.DataAccessException {
         configureDatabase();
     }
 
@@ -29,7 +29,7 @@ public class MySqlUserDao implements UserDAO {
             """
     };
 
-    private void configureDatabase() throws DataAccessException {
+    private void configureDatabase() throws dataaccess.DataAccessException {
         DatabaseManager.configureDatabase(createStatements);
     }
 
@@ -39,13 +39,13 @@ public class MySqlUserDao implements UserDAO {
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException e) {
-            throw new DataAccessException(String.format("Unable to clear auth table: %s", e.getMessage()));
+            throw new dataaccess.DataAccessException(String.format("Unable to clear auth table: %s", e.getMessage()));
         }
     }
 
-    public void createUser(UserData u) throws DataAccessException {
+    public void createUser(UserData u) throws dataaccess.DataAccessException {
         if (u.username() == null || u.password() == null || u.email() == null) {
-            throw new DataAccessException("bad request");
+            throw new dataaccess.DataAccessException("bad request");
         }
         try (var conn = DatabaseManager.getConnection()) {
             var statement = "INSERT INTO users (username, password, email) VALUES(?, ?, ?)";
@@ -61,9 +61,9 @@ public class MySqlUserDao implements UserDAO {
         }
     }
 
-    public boolean getUser(String username) throws DataAccessException {
+    public boolean getUser(String username) throws dataaccess.DataAccessException {
         if (username == null) {
-            throw new DataAccessException("bad request");
+            throw new dataaccess.DataAccessException("bad request");
         }
         try (var conn = DatabaseManager.getConnection()) {
             var statement = "SELECT username FROM users WHERE username = ?";
@@ -74,13 +74,13 @@ public class MySqlUserDao implements UserDAO {
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException(String.format("Unable to get user: %s", e.getMessage()));
+            throw new dataaccess.DataAccessException(String.format("Unable to get user: %s", e.getMessage()));
         }
     }
 
-    public boolean verifyUser(String username, String password) throws DataAccessException {
+    public boolean verifyUser(String username, String password) throws dataaccess.DataAccessException {
         if (username == null || password == null) {
-            throw new DataAccessException("bad request");
+            throw new dataaccess.DataAccessException("bad request");
         }
         try (var conn = DatabaseManager.getConnection()) {
             var statement = "SELECT username, password FROM users WHERE username = ?";
@@ -94,7 +94,7 @@ public class MySqlUserDao implements UserDAO {
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException(String.format("Unable to verify user: %s", e.getMessage()));
+            throw new dataaccess.DataAccessException(String.format("Unable to verify user: %s", e.getMessage()));
         }
         return false;
     }

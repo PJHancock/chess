@@ -1,14 +1,13 @@
 package dataaccess.sql;
 
 import dataaccess.AuthDAO;
-import dataaccess.DataAccessException;
 import dataaccess.DatabaseManager;
 import java.sql.*;
 import java.util.UUID;
 
 public class MySqlAuthDao implements AuthDAO {
 
-    public MySqlAuthDao() throws DataAccessException {
+    public MySqlAuthDao() throws dataaccess.DataAccessException {
         configureDatabase();
     }
 
@@ -25,21 +24,21 @@ public class MySqlAuthDao implements AuthDAO {
             """
     };
 
-    private void configureDatabase() throws DataAccessException {
+    private void configureDatabase() throws dataaccess.DataAccessException {
         DatabaseManager.configureDatabase(createStatements);
     }
 
-    public void clear() throws DataAccessException {
+    public void clear() throws dataaccess.DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement("DELETE FROM auth")) {
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException e) {
-            throw new DataAccessException(String.format("Unable to clear auth table: %s", e.getMessage()));
+            throw new dataaccess.DataAccessException(String.format("Unable to clear auth table: %s", e.getMessage()));
         }
     }
 
-    public String generateToken(String username) throws DataAccessException {
+    public String generateToken(String username) throws dataaccess.DataAccessException {
         String authToken = UUID.randomUUID().toString();
         try (var conn = DatabaseManager.getConnection()) {
             var statement = "INSERT INTO auth (authToken, username) VALUES(?, ?)";
@@ -49,14 +48,14 @@ public class MySqlAuthDao implements AuthDAO {
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException e) {
-            throw new DataAccessException(String.format("Unable to generate token: %s", e.getMessage()));
+            throw new dataaccess.DataAccessException(String.format("Unable to generate token: %s", e.getMessage()));
         }
         return authToken;
     }
 
-    public boolean getAuth(String authToken) throws DataAccessException {
+    public boolean getAuth(String authToken) throws dataaccess.DataAccessException {
         if (authToken == null) {
-            throw new DataAccessException("Invalid request");
+            throw new dataaccess.DataAccessException("Invalid request");
         }
         try (var conn = DatabaseManager.getConnection()) {
             var statement = "SELECT username FROM auth WHERE authToken = ?";
@@ -67,13 +66,13 @@ public class MySqlAuthDao implements AuthDAO {
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException(String.format("Unable to get authToken: %s", e.getMessage()));
+            throw new dataaccess.DataAccessException(String.format("Unable to get authToken: %s", e.getMessage()));
         }
     }
 
-    public void deleteAuth(String authToken) throws DataAccessException {
+    public void deleteAuth(String authToken) throws dataaccess.DataAccessException {
         if (authToken == null) {
-            throw new DataAccessException("Invalid request");
+            throw new dataaccess.DataAccessException("Invalid request");
         }
         try (var conn = DatabaseManager.getConnection()) {
             var statement = "DELETE FROM auth WHERE authToken = ?";
@@ -82,13 +81,13 @@ public class MySqlAuthDao implements AuthDAO {
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException e) {
-            throw new DataAccessException(String.format("Unable to delete authToken: %s", e.getMessage()));
+            throw new dataaccess.DataAccessException(String.format("Unable to delete authToken: %s", e.getMessage()));
         }
     }
 
-    public String getUser(String authToken) throws DataAccessException {
+    public String getUser(String authToken) throws dataaccess.DataAccessException {
         if (authToken == null) {
-            throw new DataAccessException("Invalid request");
+            throw new dataaccess.DataAccessException("Invalid request");
         }
         try (var conn = DatabaseManager.getConnection()) {
             var statement = "SELECT username FROM auth WHERE authToken = ?";
@@ -103,7 +102,7 @@ public class MySqlAuthDao implements AuthDAO {
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException(String.format("Unable to get username: %s", e.getMessage()));
+            throw new dataaccess.DataAccessException(String.format("Unable to get username: %s", e.getMessage()));
         }
     }
 }

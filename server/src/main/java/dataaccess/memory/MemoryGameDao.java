@@ -56,12 +56,12 @@ public class MemoryGameDao implements GameDAO {
         }
         if (teamColor == ChessGame.TeamColor.WHITE) {
             if (game.whiteUsername() != null) {
-                throw new DataAccessException("Error: already taken");
+                throw new dataaccess.DataAccessException("Error: already taken");
             }
             game = new GameData(gameID, username, game.blackUsername(), game.gameName(), game.game());
         } else {
             if (game.blackUsername() != null) {
-                throw new DataAccessException("Error: already taken");
+                throw new dataaccess.DataAccessException("Error: already taken");
             }
             game = new GameData(gameID, game.whiteUsername(), username, game.gameName(), game.game());
         }

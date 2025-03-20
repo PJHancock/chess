@@ -1,7 +1,6 @@
 package dataaccess.memory;
 
 import dataaccess.AuthDAO;
-import dataaccess.DataAccessException;
 import model.AuthData;
 
 import java.util.HashMap;
@@ -24,9 +23,9 @@ public class MemoryAuthDao implements AuthDAO {
         return authTokens.containsKey(authToken);
     }
 
-    public void deleteAuth(String authToken) throws DataAccessException {
+    public void deleteAuth(String authToken) throws dataaccess.DataAccessException {
         if (!authTokens.containsKey(authToken)) {
-            throw new DataAccessException("Error: Auth token not found");
+            throw new dataaccess.DataAccessException("Error: Auth token not found");
         }
         authTokens.remove(authToken);
     }

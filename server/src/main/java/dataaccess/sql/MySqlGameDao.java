@@ -13,7 +13,7 @@ import java.util.*;
 
 public class MySqlGameDao implements GameDAO {
 
-    public MySqlGameDao() throws DataAccessException {
+    public MySqlGameDao() throws dataaccess.DataAccessException {
         configureDatabase();
     }
 
@@ -33,23 +33,23 @@ public class MySqlGameDao implements GameDAO {
             """
     };
 
-    private void configureDatabase() throws DataAccessException {
+    private void configureDatabase() throws dataaccess.DataAccessException {
         DatabaseManager.configureDatabase(createStatements);
     }
 
-    public void clear() throws DataAccessException {
+    public void clear() throws dataaccess.DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement("DELETE FROM game")) {
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException e) {
-            throw new DataAccessException(String.format("Unable to clear auth table: %s", e.getMessage()));
+            throw new dataaccess.DataAccessException(String.format("Unable to clear auth table: %s", e.getMessage()));
         }
     }
 
-    public GameData getGame(String gameName) throws DataAccessException {
+    public GameData getGame(String gameName) throws dataaccess.DataAccessException {
         if (gameName == null) {
-            throw new DataAccessException("Invalid request");
+            throw new dataaccess.DataAccessException("Invalid request");
         }
         try (var conn = DatabaseManager.getConnection()) {
             var statement = "SELECT gameID, whiteUsername, blackUsername, gameName, chessGame FROM game WHERE gameName = ?";
@@ -68,14 +68,14 @@ public class MySqlGameDao implements GameDAO {
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException(String.format("Unable to get game: %s", e.getMessage()));
+            throw new dataaccess.DataAccessException(String.format("Unable to get game: %s", e.getMessage()));
         }
     }
 
 
-    public int createGame(String gameName) throws DataAccessException {
+    public int createGame(String gameName) throws dataaccess.DataAccessException {
         if (gameName == null) {
-            throw new DataAccessException("Invalid request");
+            throw new dataaccess.DataAccessException("Invalid request");
         }
         try (var conn = DatabaseManager.getConnection()) {
             var statement = "INSERT INTO game (whiteUsername, blackUsername, gameName, chessGame) VALUES(?, ?, ?, ?)";
@@ -91,16 +91,16 @@ public class MySqlGameDao implements GameDAO {
                     if (resultSet.next()) {
                         return resultSet.getInt(1); // Get the generated gameID
                     } else {
-                        throw new DataAccessException("Game ID was not generated.");
+                        throw new dataaccess.DataAccessException("Game ID was not generated.");
                     }
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException(String.format("Unable to create game: %s", e.getMessage()));
+            throw new dataaccess.DataAccessException(String.format("Unable to create game: %s", e.getMessage()));
         }
     }
 
-    public List<ListGamesData> listGames() throws DataAccessException {
+    public List<ListGamesData> listGames() throws dataaccess.DataAccessException {
         var games = new ArrayList<ListGamesData>();
         try (var conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement("SELECT gameID, whiteUsername, blackUsername, gameName FROM game")) {
@@ -115,14 +115,14 @@ public class MySqlGameDao implements GameDAO {
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException(String.format("Unable to list games: %s", e.getMessage()));
+            throw new dataaccess.DataAccessException(String.format("Unable to list games: %s", e.getMessage()));
         }
         return games;
     }
 
-    public void updateGame(String username, ChessGame.TeamColor teamColor, int gameID) throws DataAccessException {
+    public void updateGame(String username, ChessGame.TeamColor teamColor, int gameID) throws dataaccess.DataAccessException {
         if (username == null) {
-            throw new DataAccessException("Invalid request");
+            throw new dataaccess.DataAccessException("Invalid request");
         }
         try (var conn = DatabaseManager.getConnection()) {
             var statement = "SELECT gameID, whiteUsername, blackUsername, gameName, chessGame FROM game WHERE gameID = ?";
@@ -139,7 +139,7 @@ public class MySqlGameDao implements GameDAO {
                     game = new GameData(gameID, whiteUsername, blackUsername, gameName, chessGame);
                 }
                 if (game == null) {
-                    throw new DataAccessException("Error: Game not found");
+                    throw new dataaccess.DataAccessException("Error: Game not found");
                 }
                 var statement2 = getString(teamColor, game);
                 try (var preparedStatement2 = conn.prepareStatement(statement2)) {
@@ -147,20 +147,20 @@ public class MySqlGameDao implements GameDAO {
                     preparedStatement2.setInt(2, gameID);
                     preparedStatement2.executeUpdate();
                 } catch (SQLException e) {
-                    throw new DataAccessException(String.format("Unable to update game: %s", e.getMessage()));
+                    throw new dataaccess.DataAccessException(String.format("Unable to update game: %s", e.getMessage()));
                 }
 
             }
         } catch (SQLException e) {
-            throw new DataAccessException(String.format("Unable to update game: %s", e.getMessage()));
+            throw new dataaccess.DataAccessException(String.format("Unable to update game: %s", e.getMessage()));
         }
     }
 
-    private static String getString(ChessGame.TeamColor teamColor, GameData game) throws DataAccessException {
+    private static String getString(ChessGame.TeamColor teamColor, GameData game) throws dataaccess.DataAccessException {
         var statement2 = "";
         if (teamColor == ChessGame.TeamColor.WHITE) {
             if (game.whiteUsername() != null) {
-                throw new DataAccessException("Error: already taken");
+                throw new dataaccess.DataAccessException("Error: already taken");
             }
             statement2 = "UPDATE game SET whiteUsername=? WHERE gameID=?";
         } else {

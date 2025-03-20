@@ -34,7 +34,7 @@ class MySqlAuthDaoTests {
         String newAuth = testDataBase.generateToken("testUser");
         assertTrue(testDataBase.getAuth(newAuth));
         assertThrows(DataAccessException.class, () -> testDataBase.generateToken(null),
-                "Should throw DataAccessException for null request");
+                "Should throw dataaccess.DataAccessException for null request");
     }
 
     @Test
@@ -49,7 +49,7 @@ class MySqlAuthDaoTests {
         String newAuth = testDataBase.generateToken("testUser");
         assertTrue(testDataBase.getAuth(newAuth));
         assertThrows(DataAccessException.class, () -> testDataBase.getAuth(null),
-                "Should throw DataAccessException for null request");
+                "Should throw dataaccess.DataAccessException for null request");
     }
 
     @Test
@@ -65,7 +65,7 @@ class MySqlAuthDaoTests {
         String newAuth = testDataBase.generateToken("testUser");
         assertTrue(testDataBase.getAuth(newAuth));
         assertThrows(DataAccessException.class, () -> testDataBase.deleteAuth(null),
-                "Should throw DataAccessException for null request");
+                "Should throw dataaccess.DataAccessException for null request");
     }
 
     @Test
@@ -80,6 +80,6 @@ class MySqlAuthDaoTests {
         String newAuth = testDataBase.generateToken("testUser");
         assertTrue(testDataBase.getAuth(newAuth));
         assertThrows(DataAccessException.class, () -> testDataBase.getUser(null),
-                "Should throw DataAccessException for null request");
+                "Should throw dataaccess.DataAccessException for null request");
     }
 }

@@ -40,7 +40,7 @@ class MySqlGameDaoTests {
         testDataBase.createGame("testGame");
         assertNotNull(testDataBase.getGame("testGame"));
         assertThrows(DataAccessException.class, () -> testDataBase.getGame(null),
-                "Should throw DataAccessException for null request");
+                "Should throw dataaccess.DataAccessException for null request");
     }
 
     @Test
@@ -53,7 +53,7 @@ class MySqlGameDaoTests {
     @Test
     void createGameNegative() {
         assertThrows(DataAccessException.class, () -> testDataBase.createGame(null),
-                "Should throw DataAccessException for null request");
+                "Should throw dataaccess.DataAccessException for null request");
     }
 
     @Test
@@ -85,8 +85,8 @@ class MySqlGameDaoTests {
     void updateGameNegative() throws DataAccessException {
         int gameID = testDataBase.createGame("testGame");
         assertThrows(DataAccessException.class, () -> testDataBase.updateGame(null, ChessGame.TeamColor.WHITE, gameID),
-                "Should throw DataAccessException for null request");
+                "Should throw dataaccess.DataAccessException for null request");
         assertThrows(DataAccessException.class, () -> testDataBase.updateGame("testUser", ChessGame.TeamColor.WHITE, 0),
-                "Should throw DataAccessException for null request");
+                "Should throw dataaccess.DataAccessException for null request");
     }
 }

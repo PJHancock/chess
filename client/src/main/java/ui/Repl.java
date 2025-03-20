@@ -12,17 +12,17 @@ import static ui.EscapeSequences.*;
 public class Repl {
     private final PreloginClient preloginClient;
     private final PostloginClient postloginClient;
-    private final GameplayClient gameplayClient;
+    // private final GameplayClient gameplayClient;
 
 
     public Repl(String serverUrl) {
         preloginClient = new PreloginClient(serverUrl);
         postloginClient = new PostloginClient(serverUrl);
-        gameplayClient = new GameplayClient(serverUrl);
+        // gameplayClient = new GameplayClient(serverUrl);
     }
 
     public void runPrelogin() {
-        System.out.println(WHITE_PAWN + " Welcome to 240 chess. Type help to get started" + WHITE_PAWN);
+        System.out.println(WHITE_PAWN + " Welcome to 240 chess. Type Help to get started" + WHITE_PAWN);
         Scanner scanner = new Scanner(System.in);
         var result = "";
         while (!result.equals("quit")) {
@@ -32,8 +32,7 @@ public class Repl {
             try {
                 result = preloginClient.eval(line);
                 System.out.print(SET_TEXT_COLOR_BLUE + result);
-                if (Objects.equals(line., "login") || Objects.equals(line, "register")) {
-                    System.out.print("Logged in as ");
+                if (Objects.equals(line.split(" ")[0], "login") || (Objects.equals(line.split(" ")[0], "register"))) {
                     runPostlogin();
                 }
             } catch (Throwable e) {
@@ -54,8 +53,9 @@ public class Repl {
             try {
                 result = postloginClient.eval(line);
                 System.out.print(result);
-                if (Objects.equals(line, "join") || Objects.equals(line, "observe")) {
-                    printGameboard();
+                if (Objects.equals(line.split(" ")[0], "join") || Objects.equals(line.split(" ")[0], "observe")) {
+                    // Pass in if joining as white or black
+                    printGameboard(line.split(" ")[2]);
                     // runGameplay();
                 }
             } catch (Throwable e) {
@@ -87,7 +87,7 @@ public class Repl {
 //        System.out.println();
 //    }
 
-    public void printGameboard(ChessGame.TeamColor playerSide) {
+    public void printGameboard(String playerSide) {
 
     }
 

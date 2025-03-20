@@ -64,7 +64,7 @@ public class Server {
         return "{\"message\": \"" + e.getMessage() + "\"}";
     }
 
-    private static Object clearHandler(Request req, Response res) throws DataAccessException {
+    private static Object clearHandler(Request req, Response res) throws dataaccess.DataAccessException {
         Gson gson = new Gson();
 
         ClearResult result = chessService.clear();
@@ -81,7 +81,7 @@ public class Server {
 
             res.type("application/json");
             return gson.toJson(result);
-        } catch (DataAccessException e) {
+        } catch (dataaccess.DataAccessException e) {
             if (Objects.equals(e.getMessage(), "Error: bad request")) {
                 res.status(400);
             } else if (Objects.equals(e.getMessage(), "Error: already taken")){
@@ -102,7 +102,7 @@ public class Server {
 
             res.type("application/json");
             return gson.toJson(result);
-        } catch (DataAccessException e) {
+        } catch (dataaccess.DataAccessException e) {
             return authorizationHelper(res, e);
         }
     }
@@ -115,7 +115,7 @@ public class Server {
             LogoutResult result = chessService.logout(request);
             res.type("application/json");
             return gson.toJson(result);
-        } catch (DataAccessException e) {
+        } catch (dataaccess.DataAccessException e) {
             return authorizationHelper(res, e);
         }
     }
@@ -129,7 +129,7 @@ public class Server {
 
             res.type("application/json");
             return gson.toJson(result);
-        } catch (DataAccessException e) {
+        } catch (dataaccess.DataAccessException e) {
             return authorizationHelper(res, e);
         }
     }
@@ -146,7 +146,7 @@ public class Server {
 
             res.type("application/json");
             return gson.toJson(result);
-        } catch (DataAccessException e) {
+        } catch (dataaccess.DataAccessException e) {
             if (Objects.equals(e.getMessage(), "Error: bad request")) {
                 res.status(400);
             } else if (Objects.equals(e.getMessage(), "Error: unauthorized")){
@@ -179,7 +179,7 @@ public class Server {
         } catch (IllegalArgumentException e) {
             res.status(400);
             return "{\"message\": \"" + "Error: bad request" + "\"}";
-        } catch (DataAccessException e) {
+        } catch (dataaccess.DataAccessException e) {
             if (Objects.equals(e.getMessage(), "Error: bad request")) {
                 res.status(400);
             } else if (Objects.equals(e.getMessage(), "Error: unauthorized")) {
