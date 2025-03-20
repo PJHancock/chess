@@ -48,7 +48,7 @@ public class PreloginClient {
             String username = server.register(params[0], params[1], params[2]);
             return String.format("Logged in as %s.", username);
         }
-        throw new DataAccessException("Expected: <yourname>");
+        throw new DataAccessException("Expected: <USERNAME> <PASSWORD> <EMAIL>");
     }
 
     public String login(String... params) throws DataAccessException {
@@ -56,6 +56,6 @@ public class PreloginClient {
             String username = server.login(params[0], params[1]);
             return String.format("Logged in as %s.", username);
         }
-        throw new DataAccessException("Expected: <yourname>");
+        throw new DataAccessException("Expected: <USERNAME> <PASSWORD>");
     }
 }
