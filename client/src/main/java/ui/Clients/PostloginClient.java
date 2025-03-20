@@ -1,9 +1,12 @@
 package ui.Clients;
 
+import com.google.gson.Gson;
+import service.results.ListGamesData;
 import ui.DataAccessException;
 import ui.ServerFacade;
 
 import java.util.Arrays;
+import java.util.List;
 
 import static ui.EscapeSequences.RESET_TEXT_COLOR;
 import static ui.EscapeSequences.SET_TEXT_COLOR_BLUE;
@@ -55,15 +58,20 @@ public class PostloginClient {
 
     public String create(String... params) throws DataAccessException {
         if (params.length == 1) {
-            String username = server.create(params[0]);
-            return String.format("Logged in as %s.", username);
+            int gameID = server.create(params[0]);
+            return String.format("Created game %s with game ID %d.", params[0], gameID);
         }
         throw new DataAccessException("Expected: <NAME>");
     }
 
-    public String list(String... params) throws DataAccessException {
-        String username = server.list();
-        return String.format("Logged in as %s.", username);
+    public String list() throws DataAccessException {
+        List<ListGamesData> games = server.list();
+        var result = new StringBuilder();
+        var gson = new Gson();
+        for (var game : games) {
+            result.append(gson.toJson(game)).append('\n');
+        }
+        return result.toString();
     }
 
     public String join(String... params) throws DataAccessException {
