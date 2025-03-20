@@ -24,10 +24,10 @@ public class PostloginClient {
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
                 case "create" -> create(params);
-                case "list" -> list(params);
-                case "join" -> join();
-                case "observe" -> observe();
-                case "logout" -> logout(params);
+                case "list" -> list();
+                case "join" -> join(params);
+                case "observe" -> observe(params);
+                case "logout" -> logout();
                 case "quit" -> "quit";
                 default -> help();
             };
