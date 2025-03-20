@@ -33,7 +33,9 @@ public class Repl {
                 result = preloginClient.eval(line);
                 System.out.print(SET_TEXT_COLOR_BLUE + result);
                 if (Objects.equals(line.split(" ")[0], "login") || (Objects.equals(line.split(" ")[0], "register"))) {
-                    runPostlogin();
+                    System.out.print(SET_TEXT_COLOR_BLUE + result);
+                    String authToken = preloginClient.getAuthToken();
+                    runPostlogin(authToken);
                 }
             } catch (Throwable e) {
                 var msg = e.toString();
@@ -43,7 +45,7 @@ public class Repl {
         }
     }
 
-    public void runPostlogin() {
+    public void runPostlogin(String authToken) {
         Scanner scanner = new Scanner(System.in);
         var result = "";
         while (!(result.equals("logout") || result.equals("quit"))) {
@@ -51,7 +53,7 @@ public class Repl {
             String line = scanner.nextLine();
 
             try {
-                result = postloginClient.eval(line);
+                result = postloginClient.eval(line, authToken);
                 System.out.print(result);
                 if (Objects.equals(line.split(" ")[0], "join") || Objects.equals(line.split(" ")[0], "observe")) {
                     // Pass in if joining as white or black

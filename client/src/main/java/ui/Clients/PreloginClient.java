@@ -1,19 +1,27 @@
 package ui.Clients;
 
+import service.results.LoginResult;
+import service.results.RegisterResult;
 import ui.DataAccessException;
 import ui.ServerFacade;
 
 import java.util.Arrays;
+import java.util.List;
 
 import static ui.EscapeSequences.*;
 
 public class PreloginClient {
     private final ServerFacade server;
+    public static String authToken;
     // private final String serverUrl;
 
     public PreloginClient(String serverUrl) {
         server = new ServerFacade(serverUrl);
         // this.serverUrl = serverUrl;
+    }
+
+    public String getAuthToken() {
+        return authToken;
     }
 
     public String eval(String input) {
@@ -45,16 +53,18 @@ public class PreloginClient {
 
     public String register(String... params) throws DataAccessException {
         if (params.length == 3) {
-            String username = server.register(params[0], params[1], params[2]);
-            return String.format("Logged in as %s.", username);
+            RegisterResult result = server.register(params[0], params[1], params[2]);
+            authToken = result.authToken();
+            return String.format("Logged in as %s.", result.username());
         }
         throw new DataAccessException("Expected: <USERNAME> <PASSWORD> <EMAIL>");
     }
 
     public String login(String... params) throws DataAccessException {
         if (params.length == 2) {
-            String username = server.login(params[0], params[1]);
-            return String.format("Logged in as %s.", username);
+            LoginResult result = server.login(params[0], params[1]);
+            authToken = result.authToken();
+            return String.format("Logged in as %s.", result.username());
         }
         throw new DataAccessException("Expected: <USERNAME> <PASSWORD>");
     }

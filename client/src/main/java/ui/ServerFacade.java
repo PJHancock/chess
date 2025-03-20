@@ -1,11 +1,11 @@
 package ui;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
+import service.requests.JoinGameRequest;
 import service.requests.LoginRequest;
 import service.requests.RegisterRequest;
-import service.results.ListGamesData;
-import service.results.LoginResult;
-import service.results.RegisterResult;
+import service.results.*;
 
 import java.io.*;
 import java.net.*;
@@ -19,56 +19,71 @@ public class ServerFacade {
     }
 
 
-    public String register(String username, String password, String email) throws DataAccessException {
+    public RegisterResult register(String username, String password, String email) throws DataAccessException {
         var path = "/user";
         var requestBody = new RegisterRequest(username, password, email);
-        var response = this.makeRequest("Post", path, requestBody, RegisterResult.class);
-        return response.username();
+        return this.makeRequest("POST", path, requestBody, RegisterResult.class, null);
     }
 
-    public String login(String username, String password) throws DataAccessException {
+    public LoginResult login(String username, String password) throws DataAccessException {
         var path = "/session";
         var requestBody = new LoginRequest(username, password);
-        var response = this.makeRequest("Post", path, requestBody, LoginResult.class);
-        return response.username();
+        return this.makeRequest("POST", path, requestBody, LoginResult.class, null);
     }
 
-    public int create(String param) {
+    public int create(String authToken, String gameName) throws DataAccessException {
+        var path = "/game";
+        var response = this.makeRequest("POST", path, gameName, CreateGameResult.class, authToken);
+        return response.gameID();
     }
 
-    public List<ListGamesData> list() {
-        return null;
+    public List<ListGamesData> list(String authToken) throws DataAccessException {
+        var path = "/game";
+        var response = this.makeRequest("GET", path, null, ListGamesResult.class, authToken);
+        return response.games();
     }
 
-    public String join(String param, String param1) {
+    public void join(String authToken, String playerColor, String gameID) throws DataAccessException {
+        var path = "/game";
+        int gameIdRequest = Integer.parseInt(gameID);
+        JoinGameRequest requestBody;
+        if (playerColor.equals("white")) {
+            requestBody = new JoinGameRequest(ChessGame.TeamColor.WHITE, gameIdRequest, authToken);
+        } else {
+            requestBody = new JoinGameRequest(ChessGame.TeamColor.BLACK, gameIdRequest, authToken);
+        }
+        this.makeRequest("PUT", path, requestBody, JoinGameResult.class, authToken);
     }
 
-    public String observe(String param) {
+    public void logout(String authToken) throws DataAccessException {
+        var path = "/session";
+        this.makeRequest("DELETE", path, null, null, authToken);
     }
 
-    public String logout() {
-    }
-
-    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws DataAccessException {
+    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass, String authToken) throws DataAccessException {
         try {
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
             http.setDoOutput(true);
 
+            http.addRequestProperty("Content-Type", "application/json");
+            if (authToken != null && !authToken.isEmpty()) {
+                http.setRequestProperty("Authorization", "Bearer " + authToken);
+            }
+
             writeBody(request, http);
             http.connect();
             throwIfNotSuccessful(http);
             return readBody(http, responseClass);
         } catch (Exception ex) {
-            throw new DataAccessException(ex.getMessage());
+            throw new DataAccessException("Request failed: " + ex.getMessage());
         }
     }
 
 
     private static void writeBody(Object request, HttpURLConnection http) throws IOException {
         if (request != null) {
-            http.addRequestProperty("Content-Type", "application/json");
             String reqData = new Gson().toJson(request);
             try (OutputStream reqBody = http.getOutputStream()) {
                 reqBody.write(reqData.getBytes());

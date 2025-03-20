@@ -20,17 +20,17 @@ public class PostloginClient {
         this.serverUrl = serverUrl;
     }
 
-    public String eval(String input) {
+    public String eval(String input, String authToken) {
         try {
             var tokens = input.toLowerCase().split(" ");
             var cmd = (tokens.length > 0) ? tokens[0] : "help";
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
-                case "create" -> create(params);
-                case "list" -> list();
-                case "join" -> join(params);
+                case "create" -> create(authToken, params);
+                case "list" -> list(authToken);
+                case "join" -> join(authToken, params);
                 case "observe" -> observe(params);
-                case "logout" -> logout();
+                case "logout" -> logout(authToken);
                 case "quit" -> "quit";
                 default -> help();
             };
@@ -56,16 +56,16 @@ public class PostloginClient {
                 RESET_TEXT_COLOR + "- with possible commands";
     }
 
-    public String create(String... params) throws DataAccessException {
+    public String create(String authToken, String... params) throws DataAccessException {
         if (params.length == 1) {
-            int gameID = server.create(params[0]);
+            int gameID = server.create(params[0], authToken);
             return String.format("Created game %s with game ID %d.", params[0], gameID);
         }
         throw new DataAccessException("Expected: <NAME>");
     }
 
-    public String list() throws DataAccessException {
-        List<ListGamesData> games = server.list();
+    public String list(String authToken) throws DataAccessException {
+        List<ListGamesData> games = server.list(authToken);
         var result = new StringBuilder();
         var gson = new Gson();
         for (var game : games) {
@@ -74,24 +74,23 @@ public class PostloginClient {
         return result.toString();
     }
 
-    public String join(String... params) throws DataAccessException {
+    public String join(String authToken, String... params) throws DataAccessException {
         if (params.length == 2) {
-            String username = server.join(params[0], params[1]);
-            return String.format("Logged in as %s.", username);
+            server.join(authToken, params[0], params[1]);
+            return "Joined game";
         }
         throw new DataAccessException("Expected: <ID> [WHITE|BLACK]");
     }
 
     public String observe(String... params) throws DataAccessException {
         if (params.length == 1) {
-            String username = server.observe(params[0]);
-            return String.format("Logged in as %s.", username);
+            return String.format("Watching game %s", params[0]);
         }
         throw new DataAccessException("Expected: <ID>");
     }
 
-    public String logout() throws DataAccessException {
-        String username = server.logout();
+    public String logout(String authToken) throws DataAccessException {
+        server.logout(authToken);
         return "Logged out";
     }
 }
