@@ -13,6 +13,8 @@ public class Repl {
     private final PreloginClient preloginClient;
     private final PostloginClient postloginClient;
     // private final GameplayClient gameplayClient;
+    private static final Scanner scanner = new Scanner(System.in);
+    private static String result = "";
 
 
     public Repl(String serverUrl) {
@@ -23,20 +25,13 @@ public class Repl {
 
     public void runPrelogin() {
         System.out.println(WHITE_PAWN + " Welcome to 240 chess. Type Help to get started" + WHITE_PAWN);
-        Scanner scanner = new Scanner(System.in);
-        var result = "";
         while (!result.equals("quit")) {
             printPreloginPrompt();
             String line = scanner.nextLine();
-
             try {
                 result = preloginClient.eval(line);
                 System.out.print(SET_TEXT_COLOR_BLUE + result);
-                if (Objects.equals(line.split(" ")[0], "login") || (Objects.equals(line.split(" ")[0], "register"))) {
-                    System.out.print(SET_TEXT_COLOR_BLUE + result);
-                    String authToken = preloginClient.getAuthToken();
-                    runPostlogin(authToken);
-                }
+                handlePostLogin(line);
             } catch (Throwable e) {
                 var msg = e.toString();
                 System.out.print(msg);
@@ -45,9 +40,14 @@ public class Repl {
         }
     }
 
+    private void handlePostLogin(String line) {
+        if (line.split(" ").length > 1 && (line.split(" ")[0].equals("login") || line.split(" ")[0].equals("register"))) {
+            String authToken = preloginClient.getAuthToken();
+            runPostlogin(authToken);
+        }
+    }
+
     public void runPostlogin(String authToken) {
-        Scanner scanner = new Scanner(System.in);
-        var result = "";
         while (!(result.equals("logout") || result.equals("quit"))) {
             printPostloginPrompt();
             String line = scanner.nextLine();
