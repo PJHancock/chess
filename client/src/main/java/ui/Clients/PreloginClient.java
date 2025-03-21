@@ -6,13 +6,11 @@ import ui.DataAccessException;
 import ui.ServerFacade;
 
 import java.util.Arrays;
-import java.util.List;
-
 import static ui.EscapeSequences.*;
 
 public class PreloginClient {
     private final ServerFacade server;
-    public static String authToken;
+    private String authToken;
     // private final String serverUrl;
 
     public PreloginClient(String serverUrl) {
@@ -36,19 +34,19 @@ public class PreloginClient {
                 default -> help();
             };
         } catch (DataAccessException ex) {
-            return ex.getMessage();
+            return "Error: " + ex.getMessage();
         }
     }
 
     public String help() {
-        return SET_TEXT_COLOR_BLUE + "register <USERNAME> <PASSWORD> <EMAIL> " +
-        RESET_TEXT_COLOR + "- to create an account\n" +
-        SET_TEXT_COLOR_BLUE + "login <USERNAME> <PASSWORD> " +
-        RESET_TEXT_COLOR + "- to play chess\n" +
-        SET_TEXT_COLOR_BLUE + "quit " +
-        RESET_TEXT_COLOR + "- playing chess \n" +
-        SET_TEXT_COLOR_BLUE + "help " +
-        RESET_TEXT_COLOR + "- with possible commands";
+        return  SET_TEXT_COLOR_BLUE + "register <USERNAME> <PASSWORD> <EMAIL> " +
+                RESET_TEXT_COLOR + "- to create an account\n" +
+                SET_TEXT_COLOR_BLUE + "login <USERNAME> <PASSWORD> " +
+                RESET_TEXT_COLOR + "- to play chess\n" +
+                SET_TEXT_COLOR_BLUE + "quit " +
+                RESET_TEXT_COLOR + "- playing chess \n" +
+                SET_TEXT_COLOR_BLUE + "help " +
+                RESET_TEXT_COLOR + "- with possible commands";
     }
 
     public String register(String... params) throws DataAccessException {
@@ -57,7 +55,7 @@ public class PreloginClient {
             authToken = result.authToken();
             return String.format("Logged in as %s.", result.username());
         }
-        throw new DataAccessException("Expected: <USERNAME> <PASSWORD> <EMAIL>");
+        throw new DataAccessException("Invalid registration. Expected: <USERNAME> <PASSWORD> <EMAIL>");
     }
 
     public String login(String... params) throws DataAccessException {
@@ -66,6 +64,6 @@ public class PreloginClient {
             authToken = result.authToken();
             return String.format("Logged in as %s.", result.username());
         }
-        throw new DataAccessException("Expected: <USERNAME> <PASSWORD>");
+        throw new DataAccessException("Invalid login. Expected: <USERNAME> <PASSWORD>");
     }
 }

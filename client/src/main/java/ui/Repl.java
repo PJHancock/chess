@@ -94,11 +94,11 @@ public class Repl {
     }
 
     private void printPreloginPrompt() {
-        System.out.print("\n" + "[LOGGED_OUT] >>> " + SET_TEXT_COLOR_GREEN);
+        System.out.print("\n" + RESET_TEXT_COLOR + "[LOGGED_OUT] >>> " + SET_TEXT_COLOR_GREEN);
     }
 
     private void printPostloginPrompt() {
-        System.out.print("\n" + "[LOGGED_IN] >>> " + SET_TEXT_COLOR_BLUE);
+        System.out.print("\n" + RESET_TEXT_COLOR + "[LOGGED_IN] >>> " + SET_TEXT_COLOR_GREEN);
     }
 
 //    private void printGameplayPrompt() {
