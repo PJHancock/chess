@@ -98,7 +98,7 @@ public class Repl {
     }
 
     private void printPostloginPrompt() {
-        System.out.print("\n" + "[LOGGED_OUT] >>> " + SET_TEXT_COLOR_BLUE);
+        System.out.print("\n" + "[LOGGED_IN] >>> " + SET_TEXT_COLOR_BLUE);
     }
 
 //    private void printGameplayPrompt() {
