@@ -1,7 +1,5 @@
 package ui;
 
-import chess.ChessGame;
-import ui.Clients.GameplayClient;
 import ui.Clients.PostloginClient;
 import ui.Clients.PreloginClient;
 
@@ -68,27 +66,6 @@ public class Repl {
         System.out.println();
     }
 
-//    public void runGameplay() {
-//        Scanner scanner = new Scanner(System.in);
-//        var result = "";
-//        while (!result.equals("leave")) {
-//            printGameplayPrompt();
-//            String line = scanner.nextLine();
-//
-//            try {
-//                result = postloginClient.eval(line);
-//                System.out.print(result);
-//                if (Objects.equals(line., "join") || Objects.equals(line, "observe")) {
-//                    runGameplay();
-//                }
-//            } catch (Throwable e) {
-//                var msg = e.toString();
-//                System.out.print(msg);
-//            }
-//        }
-//        System.out.println();
-//    }
-
     public void printGameboard(String playerSide) {
 
     }
@@ -100,5 +77,4 @@ public class Repl {
     private void printPostloginPrompt() {
         System.out.print("\n" + RESET_TEXT_COLOR + "[LOGGED_IN] >>> " + SET_TEXT_COLOR_GREEN);
     }
-
 }
