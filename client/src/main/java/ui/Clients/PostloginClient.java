@@ -13,11 +13,11 @@ import static ui.EscapeSequences.SET_TEXT_COLOR_BLUE;
 
 public class PostloginClient {
     private final ServerFacade server;
-    private final String serverUrl;
+    // private final String serverUrl;
 
     public PostloginClient(String serverUrl) {
         server = new ServerFacade(serverUrl);
-        this.serverUrl = serverUrl;
+        // this.serverUrl = serverUrl;
     }
 
     public String eval(String input, String authToken) {
