@@ -31,7 +31,7 @@ public class Repl {
             try {
                 result = preloginClient.eval(line);
                 System.out.print(SET_TEXT_COLOR_BLUE + result);
-                handlePostLogin(line);
+                handlePostLogin(result);
             } catch (Throwable e) {
                 var msg = e.toString();
                 System.out.print(msg);
@@ -40,10 +40,8 @@ public class Repl {
         }
     }
 
-    private void handlePostLogin(String line) {
-        if (line.toLowerCase().split(" ").length > 1 &&
-                        (line.toLowerCase().split(" ")[0].equals("login") ||
-                        line.toLowerCase().split(" ")[0].equals("register"))) {
+    private void handlePostLogin(String result) {
+        if (result.split(" ")[0].equals("Logged")) {
             String authToken = preloginClient.getAuthToken();
             runPostlogin(authToken);
         }
@@ -103,8 +101,4 @@ public class Repl {
         System.out.print("\n" + RESET_TEXT_COLOR + "[LOGGED_IN] >>> " + SET_TEXT_COLOR_GREEN);
     }
 
-//    private void printGameplayPrompt() {
-//        // To be implemented later
-//        System.out.print("\n" + "[GamePlay Mode]" + ">>> ");
-//    }
 }
