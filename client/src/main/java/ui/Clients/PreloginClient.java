@@ -41,9 +41,9 @@ public class PreloginClient {
     }
 
     public String help() {
-        return SET_TEXT_COLOR_BLUE + " register <USERNAME> <PASSWORD> <EMAIL>" +
+        return SET_TEXT_COLOR_BLUE + "register <USERNAME> <PASSWORD> <EMAIL> " +
         RESET_TEXT_COLOR + "- to create an account\n" +
-        SET_TEXT_COLOR_BLUE + "login <USERNAME> <PASSWORD>" +
+        SET_TEXT_COLOR_BLUE + "login <USERNAME> <PASSWORD> " +
         RESET_TEXT_COLOR + "- to play chess\n" +
         SET_TEXT_COLOR_BLUE + "quit " +
         RESET_TEXT_COLOR + "- playing chess \n" +

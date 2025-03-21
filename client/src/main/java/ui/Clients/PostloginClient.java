@@ -40,7 +40,7 @@ public class PostloginClient {
     }
 
     public String help() {
-        return SET_TEXT_COLOR_BLUE + " create <NAME> " +
+        return SET_TEXT_COLOR_BLUE + "create <NAME> " +
                 RESET_TEXT_COLOR + "- a game\n" +
                 SET_TEXT_COLOR_BLUE + "list " +
                 RESET_TEXT_COLOR + "- games\n" +
