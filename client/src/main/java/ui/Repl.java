@@ -41,7 +41,9 @@ public class Repl {
     }
 
     private void handlePostLogin(String line) {
-        if (line.split(" ").length > 1 && (line.split(" ")[0].equals("login") || line.split(" ")[0].equals("register"))) {
+        if (line.toLowerCase().split(" ").length > 1 &&
+                        (line.toLowerCase().split(" ")[0].equals("login") ||
+                        line.toLowerCase().split(" ")[0].equals("register"))) {
             String authToken = preloginClient.getAuthToken();
             runPostlogin(authToken);
         }

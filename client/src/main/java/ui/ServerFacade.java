@@ -69,7 +69,9 @@ public class ServerFacade {
 
             http.addRequestProperty("Content-Type", "application/json");
             if (authToken != null && !authToken.isEmpty()) {
-                http.setRequestProperty("Authorization", "Bearer " + authToken);
+                String authHeader = "Bearer " + authToken;
+                http.setRequestProperty("Authorization", authHeader);
+                System.out.println("Authorization header: " + authHeader); // Debugging line
             }
 
             writeBody(request, http);
