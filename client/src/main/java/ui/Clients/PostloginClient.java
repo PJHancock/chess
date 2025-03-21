@@ -58,7 +58,7 @@ public class PostloginClient {
 
     public String create(String authToken, String... params) throws DataAccessException {
         if (params.length == 1) {
-            int gameID = server.create(params[0], authToken);
+            int gameID = server.create(authToken, params[0]);
             return String.format("Created game %s with game ID %d.", params[0], gameID);
         }
         throw new DataAccessException("Expected: <NAME>");

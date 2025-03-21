@@ -46,7 +46,7 @@ public class Repl {
     }
 
     public void runPostlogin(String authToken) {
-        while (!(result.equals("logout") || result.equals("quit"))) {
+        while (!(result.equals("Logged out") || result.equals("quit"))) {
             printPostloginPrompt();
             String line = scanner.nextLine();
 
