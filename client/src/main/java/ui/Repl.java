@@ -70,7 +70,14 @@ public class Repl {
     public void printGameboard(String playerSide) {
         String line0 = SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_BLACK + "    h  g  f  e  d  c  b  a    \n";
         String line1 = SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_BLACK + " 1 " +
-                        " " +
+                        SET_TEXT_COLOR_BLUE + SET_BG_COLOR_LIGHT_GREY + " " + BLACK_ROOK + " " +
+                        SET_BG_COLOR_LIGHT_GREY + " " + BLACK_KNIGHT + " " +
+                        SET_BG_COLOR_BLACK + " " + BLACK_BISHOP + " " +
+                        SET_BG_COLOR_LIGHT_GREY + " " + BLACK_QUEEN + " " +
+                        SET_BG_COLOR_BLACK + " " + BLACK_KING + " " +
+                        SET_BG_COLOR_LIGHT_GREY + " " + BLACK_BISHOP + " " +
+                        SET_BG_COLOR_BLACK + " " + BLACK_KNIGHT + " " +
+                        SET_BG_COLOR_LIGHT_GREY + " " + BLACK_ROOK + " " +
                         SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_BLACK + " 1 \n";
         String line2 = SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_BLACK + " 2 " +
                         " " +
@@ -94,9 +101,9 @@ public class Repl {
                         " " +
                         SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_BLACK + " 8 \n";
         if (playerSide.equals("white")) {
-            System.out.print(line0+line8+line7+line6+line5+line4+line3+line2+line1+line0);
+            System.out.print("\n" + line0 + line8 + line7 + line6 + line5 + line4 + line3 + line2 + line1 + line0);
         } else {
-
+            System.out.print("\n" + line0 + line1 + line2 + line3 + line4 + line5 + line6 + line7 + line8 + line0);
         }
     }
 
