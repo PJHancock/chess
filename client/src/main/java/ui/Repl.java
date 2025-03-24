@@ -53,10 +53,12 @@ public class Repl {
             try {
                 result = postloginClient.eval(line, authToken);
                 System.out.print(result);
-                if (Objects.equals(line.split(" ")[0], "join") || Objects.equals(line.split(" ")[0], "observe")) {
+                if (Objects.equals(line.split(" ")[0], "join")) {
                     // Pass in if joining as white or black
                     printGameboard(line.split(" ")[2]);
                     // runGameplay();
+                } else if (Objects.equals(line.split(" ")[0], "observe")) {
+                    printGameboard("white");
                 }
             } catch (Throwable e) {
                 var msg = e.toString();
