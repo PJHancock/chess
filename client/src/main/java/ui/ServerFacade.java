@@ -2,6 +2,7 @@ package ui;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
+import service.requests.CreateGameRequest;
 import service.requests.JoinGameRequest;
 import service.requests.LoginRequest;
 import service.requests.RegisterRequest;
@@ -33,7 +34,8 @@ public class ServerFacade {
 
     public int create(String authToken, String gameName) throws DataAccessException {
         var path = "/game";
-        var response = this.makeRequest("POST", path, gameName, CreateGameResult.class, authToken);
+        var requestBody = new CreateGameRequest(gameName, authToken);
+        var response = this.makeRequest("POST", path, requestBody, CreateGameResult.class, authToken);
         return response.gameID();
     }
 
@@ -43,11 +45,16 @@ public class ServerFacade {
         return response.games();
     }
 
-    public void join(String authToken, String playerColor, String gameID) throws DataAccessException {
+    public void join(String authToken, String gameID, String playerColor) throws DataAccessException {
         var path = "/game";
-        int gameIdRequest = Integer.parseInt(gameID);
+        int gameIdRequest;
+        try {
+            gameIdRequest = Integer.parseInt(gameID.trim());
+        } catch (NumberFormatException e) {
+            throw new DataAccessException("Game ID must be a valid number.");
+        }
         JoinGameRequest requestBody;
-        if (playerColor.equals("white")) {
+        if ("white".equalsIgnoreCase(playerColor.trim())) {
             requestBody = new JoinGameRequest(ChessGame.TeamColor.WHITE, gameIdRequest, authToken);
         } else {
             requestBody = new JoinGameRequest(ChessGame.TeamColor.BLACK, gameIdRequest, authToken);

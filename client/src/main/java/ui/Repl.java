@@ -63,7 +63,6 @@ public class Repl {
                 System.out.print(msg);
             }
         }
-        System.out.println();
     }
 
     public void printGameboard(String playerSide) {
