@@ -1,8 +1,7 @@
-package ui.Clients;
+package client;
 
 import service.results.ListGamesData;
 import ui.DataAccessException;
-import ui.ServerFacade;
 
 import java.util.Arrays;
 import java.util.HashMap;

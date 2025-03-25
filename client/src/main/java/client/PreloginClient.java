@@ -1,9 +1,8 @@
-package ui.Clients;
+package client;
 
 import service.results.LoginResult;
 import service.results.RegisterResult;
 import ui.DataAccessException;
-import ui.ServerFacade;
 
 import java.util.Arrays;
 import static ui.EscapeSequences.*;

@@ -1,4 +1,4 @@
-package ui;
+package client;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
@@ -7,6 +7,7 @@ import service.requests.JoinGameRequest;
 import service.requests.LoginRequest;
 import service.requests.RegisterRequest;
 import service.results.*;
+import ui.DataAccessException;
 
 import java.io.*;
 import java.net.*;

@@ -22,7 +22,7 @@ public class Server {
     // ChessService CHESS_SERVICE = new ChessService(new MemoryAuthDao(), new MemoryGameDao(), new MemoryUserDao());
 
     // Sql Dao implementation
-    static ChessService chessService;
+    public static ChessService chessService;
 
     static {
         try {
