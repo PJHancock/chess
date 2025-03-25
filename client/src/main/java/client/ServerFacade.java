@@ -73,7 +73,7 @@ public class ServerFacade {
         this.makeRequest("DELETE", path, null, null, authToken);
     }
 
-    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass, String UserAuthToken) throws DataAccessException {
+    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass, String userAuthToken) throws DataAccessException {
         try {
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
@@ -82,8 +82,8 @@ public class ServerFacade {
 
             http.addRequestProperty("Content-Type", "application/json");
 
-            if (UserAuthToken != null && !UserAuthToken.isEmpty()) {
-                http.setRequestProperty("Authorization", UserAuthToken);
+            if (userAuthToken != null && !userAuthToken.isEmpty()) {
+                http.setRequestProperty("Authorization", userAuthToken);
             }
 
             writeBody(request, http);

@@ -10,7 +10,7 @@ public class Repl {
     private final PreloginClient preloginClient;
     private final PostloginClient postloginClient;
     // private final GameplayClient gameplayClient;
-    private static final Scanner scanner = new Scanner(System.in);
+    private static final Scanner Scanner = new Scanner(System.in);
     private static String result = "";
 
 
@@ -26,7 +26,7 @@ public class Repl {
                 SET_TEXT_COLOR_WHITE + WHITE_PAWN + RESET_TEXT_COLOR);
         while (!result.equals("quit")) {
             printPreloginPrompt();
-            String line = scanner.nextLine();
+            String line = Scanner.nextLine();
             System.out.print(RESET_TEXT_COLOR);
             try {
                 result = preloginClient.eval(line);
@@ -50,7 +50,7 @@ public class Repl {
     public void runPostlogin(String authToken) {
         while (!(result.equals("Logged out") || result.equals("quit"))) {
             printPostloginPrompt();
-            String line = scanner.nextLine();
+            String line = Scanner.nextLine();
             System.out.print(RESET_TEXT_COLOR);
             try {
                 result = postloginClient.eval(line, authToken);
@@ -124,71 +124,43 @@ public class Repl {
                         backgroundColor2 + " " + BLACK_ROOK + " " +
                         SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK + " 8 " + RESET_BG_COLOR + RESET_TEXT_COLOR + "\n";
 
-        String line7 =  SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK + " 7 " +
-                        SET_TEXT_COLOR_BLUE + backgroundColor2 + " " + BLACK_PAWN + " " +
-                        backgroundColor1 + " " + BLACK_PAWN + " " +
-                        backgroundColor2 + " " + BLACK_PAWN + " " +
-                        backgroundColor1 + " " + BLACK_PAWN + " " +
-                        backgroundColor2 + " " + BLACK_PAWN + " " +
-                        backgroundColor1 + " " + BLACK_PAWN + " " +
-                        backgroundColor2 + " " + BLACK_PAWN + " " +
-                        backgroundColor1 + " " + BLACK_PAWN + " " +
-                        SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK + " 7 " + RESET_BG_COLOR + RESET_TEXT_COLOR + "\n";
+        String line7 = getBlackPawns(backgroundColor2, backgroundColor1);
+
+        String emptyLine1 = backgroundColor1 + " " + EMPTY + " " +
+                backgroundColor2 + " " + EMPTY + " " +
+                backgroundColor1 + " " + EMPTY + " " +
+                backgroundColor2 + " " + EMPTY + " " +
+                backgroundColor1 + " " + EMPTY + " " +
+                backgroundColor2 + " " + EMPTY + " " +
+                backgroundColor1 + " " + EMPTY + " " +
+                backgroundColor2 + " " + EMPTY + " ";
+
+        String emptyLine2 = backgroundColor2 + " " + EMPTY + " " +
+                backgroundColor1 + " " + EMPTY + " " +
+                backgroundColor2 + " " + EMPTY + " " +
+                backgroundColor1 + " " + EMPTY + " " +
+                backgroundColor2 + " " + EMPTY + " " +
+                backgroundColor1 + " " + EMPTY + " " +
+                backgroundColor2 + " " + EMPTY + " " +
+                backgroundColor1 + " " + EMPTY + " ";
 
         String line6 =  SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK + " 6 " +
-                        backgroundColor1 + " " + EMPTY + " " +
-                        backgroundColor2 + " " + EMPTY + " " +
-                        backgroundColor1 + " " + EMPTY + " " +
-                        backgroundColor2 + " " + EMPTY + " " +
-                        backgroundColor1 + " " + EMPTY + " " +
-                        backgroundColor2 + " " + EMPTY + " " +
-                        backgroundColor1 + " " + EMPTY + " " +
-                        backgroundColor2 + " " + EMPTY + " " +
+                        emptyLine1 +
                         SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK + " 6 " + RESET_BG_COLOR + RESET_TEXT_COLOR + "\n";
 
         String line5 =  SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK + " 5 " +
-                        backgroundColor2 + " " + EMPTY + " " +
-                        backgroundColor1 + " " + EMPTY + " " +
-                        backgroundColor2 + " " + EMPTY + " " +
-                        backgroundColor1 + " " + EMPTY + " " +
-                        backgroundColor2 + " " + EMPTY + " " +
-                        backgroundColor1 + " " + EMPTY + " " +
-                        backgroundColor2 + " " + EMPTY + " " +
-                        backgroundColor1 + " " + EMPTY + " " +
+                        emptyLine2 +
                         SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK + " 5 " + RESET_BG_COLOR + RESET_TEXT_COLOR + "\n";
 
         String line4 =  SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK + " 4 " +
-                        backgroundColor1 + " " + EMPTY + " " +
-                        backgroundColor2 + " " + EMPTY + " " +
-                        backgroundColor1 + " " + EMPTY + " " +
-                        backgroundColor2 + " " + EMPTY + " " +
-                        backgroundColor1 + " " + EMPTY + " " +
-                        backgroundColor2 + " " + EMPTY + " " +
-                        backgroundColor1 + " " + EMPTY + " " +
-                        backgroundColor2 + " " + EMPTY + " " +
+                        emptyLine1 +
                         SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK + " 4 " + RESET_BG_COLOR + RESET_TEXT_COLOR + "\n";
 
         String line3 =  SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK + " 3 " +
-                        backgroundColor2 + " " + EMPTY + " " +
-                        backgroundColor1 + " " + EMPTY + " " +
-                        backgroundColor2 + " " + EMPTY + " " +
-                        backgroundColor1 + " " + EMPTY + " " +
-                        backgroundColor2 + " " + EMPTY + " " +
-                        backgroundColor1 + " " + EMPTY + " " +
-                        backgroundColor2 + " " + EMPTY + " " +
-                        backgroundColor1 + " " + EMPTY + " " +
+                        emptyLine2 +
                         SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK + " 3 " + RESET_BG_COLOR + RESET_TEXT_COLOR + "\n";
 
-        String line2 =  SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK + " 2 " +
-                        SET_TEXT_COLOR_RED + backgroundColor1 + " " + WHITE_PAWN + " " +
-                        backgroundColor2 + " " + WHITE_PAWN + " " +
-                        backgroundColor1 + " " + WHITE_PAWN + " " +
-                        backgroundColor2 + " " + WHITE_PAWN + " " +
-                        backgroundColor1 + " " + WHITE_PAWN + " " +
-                        backgroundColor2 + " " + WHITE_PAWN + " " +
-                        backgroundColor1 + " " + WHITE_PAWN + " " +
-                        backgroundColor2 + " " + WHITE_PAWN + " " +
-                        SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK + " 2 " + RESET_BG_COLOR + RESET_TEXT_COLOR + "\n";
+        String line2 = getWhitePawns(backgroundColor1, backgroundColor2);
 
         String line1 =  SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK + " 1 " +
                         SET_TEXT_COLOR_RED + backgroundColor2 + " " + WHITE_ROOK + " " +
@@ -202,10 +174,36 @@ public class Repl {
                         SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK + " 1 " + RESET_BG_COLOR + RESET_TEXT_COLOR + "\n";
 
         if (playerSide.equals("white")) {
-            System.out.print("\n" + whiteColumns + line8 + line7 + line6 + line5 + line4 + line3 + line2 + line1 + whiteColumns + RESET_TEXT_COLOR + RESET_BG_COLOR);
+            System.out.print("\n" + whiteColumns + line8 + line7 + line6 + line5 +
+                    line4 + line3 + line2 + line1 + whiteColumns + RESET_TEXT_COLOR + RESET_BG_COLOR);
         } else {
-            System.out.print("\n" + blackColumns + line1 + line2 + line3 + line4 + line5 + line6 + line7 + line8 + blackColumns + RESET_TEXT_COLOR + RESET_BG_COLOR);
+            System.out.print("\n" + blackColumns + line1 + line2 + line3 +
+                    line4 + line5 + line6 + line7 + line8 + blackColumns + RESET_TEXT_COLOR + RESET_BG_COLOR);
         }
+    }
+
+    private static String getBlackPawns(String backgroundColor2, String backgroundColor1) {
+        String repeatBlackPawn = backgroundColor2 + " " + BLACK_PAWN + " " +
+                backgroundColor1 + " " + BLACK_PAWN + " ";
+
+        return SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK + " 7 " +
+                        SET_TEXT_COLOR_BLUE + repeatBlackPawn +
+                        repeatBlackPawn +
+                        repeatBlackPawn +
+                        repeatBlackPawn +
+                        SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK + " 7 " + RESET_BG_COLOR + RESET_TEXT_COLOR + "\n";
+    }
+
+    private static String getWhitePawns(String backgroundColor1, String backgroundColor2) {
+        String repeatWhitePawn = backgroundColor1 + " " + WHITE_PAWN + " " +
+                backgroundColor2 + " " + WHITE_PAWN + " ";
+
+        return SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK + " 2 " +
+                        SET_TEXT_COLOR_RED + repeatWhitePawn +
+                        repeatWhitePawn +
+                        repeatWhitePawn +
+                        repeatWhitePawn +
+                        SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK + " 2 " + RESET_BG_COLOR + RESET_TEXT_COLOR + "\n";
     }
 
     private void printPreloginPrompt() {
