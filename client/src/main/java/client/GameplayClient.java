@@ -1,18 +1,15 @@
 package client;
 
-import model.results.ListGamesData;
 import ui.DataAccessException;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 
 import static ui.EscapeSequences.*;
 
 public class GameplayClient {
     private final ServerFacade server;
     // private final String serverUrl;
-    private HashMap<Integer, Integer> gameIds = new HashMap<>();
 
     public GameplayClient(String serverUrl) {
         server = new ServerFacade(serverUrl);
