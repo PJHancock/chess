@@ -64,6 +64,9 @@ public class ServerFacade {
             }
             this.makeRequest("PUT", path, requestBody, JoinGameResult.class, authToken);
         } catch (DataAccessException e){
+            if (e.getMessage().equals("Request failed: Forbidden")) {
+                throw new DataAccessException("Team color already taken");
+            }
             throw new DataAccessException(e.getMessage());
         }
     }

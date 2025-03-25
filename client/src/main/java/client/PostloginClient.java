@@ -94,12 +94,15 @@ public class PostloginClient {
     public String join(String authToken, String... params) throws DataAccessException {
         try {
             if (params.length == 2) {
+                String playerColor = params[1];
                 if (Integer.parseInt(params[0]) > gameIds.size()) {
                     throw new DataAccessException("Invalid game ID");
+                } else if (playerColor == null || !(playerColor.equals("white") || (playerColor.equals("black")))) {
+                    throw new DataAccessException("Invalid playerColor");
                 }
                 int gameId = gameIds.get(Integer.parseInt(params[0]));
                 server.join(authToken, gameId, params[1]);
-                return "Joined game";
+                return "Joined game " + SET_TEXT_COLOR_RED + gameId + RESET_TEXT_COLOR;
             }
             throw new DataAccessException(SET_TEXT_COLOR_RED + "Expected: <ID> [WHITE|BLACK]" + RESET_TEXT_COLOR);
         } catch (NumberFormatException| DataAccessException e) {
