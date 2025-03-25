@@ -72,17 +72,17 @@ public class Repl {
     public void printGameboard(String playerSide) {
         String backgroundColor1 = SET_BG_COLOR_BLACK;
         String backgroundColor2 = SET_BG_COLOR_LIGHT_GREY;
-        String leftBlackPiece = BLACK_QUEEN;
-        String rightBlackPiece = BLACK_KING;
-        String leftWhitePiece = WHITE_QUEEN;
-        String rightWhitePiece = WHITE_KING;
+        String leftBlackPiece = BLACK_KING;
+        String rightBlackPiece = BLACK_QUEEN;
+        String leftWhitePiece = WHITE_KING;
+        String rightWhitePiece = WHITE_QUEEN;
         if (playerSide.equals("white")) {
             backgroundColor1 = SET_BG_COLOR_LIGHT_GREY;
             backgroundColor2 = SET_BG_COLOR_BLACK;
-            leftBlackPiece = BLACK_KING;
-            rightBlackPiece = BLACK_QUEEN;
-            leftWhitePiece = WHITE_KING;
-            rightWhitePiece = WHITE_QUEEN;
+            leftBlackPiece = BLACK_QUEEN;
+            rightBlackPiece = BLACK_KING;
+            leftWhitePiece = WHITE_QUEEN;
+            rightWhitePiece = WHITE_KING;
         }
         String blackColumns = getBlackColumns();
 

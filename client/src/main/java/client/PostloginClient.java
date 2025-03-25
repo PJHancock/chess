@@ -56,12 +56,15 @@ public class PostloginClient {
     }
 
     public String create(String authToken, String... params) throws DataAccessException {
-        if (params.length == 1) {
-            int gameID = server.create(authToken, params[0]);
-            gameIds.put(gameIds.size() + 1, gameID);
-            return "Created game with name " + SET_TEXT_COLOR_RED + params[0] + RESET_TEXT_COLOR;
+        StringBuilder gameName = new StringBuilder();
+        for (String param : params) {
+            gameName.append(param).append(" ");
         }
-        throw new DataAccessException(SET_TEXT_COLOR_RED + "Expected: <NAME>" + RESET_TEXT_COLOR);
+        gameName.deleteCharAt(gameName.length() - 1);
+        int gameID = server.create(authToken, gameName.toString());
+        gameIds.put(gameIds.size() + 1, gameID);
+        return "Created game with name " + SET_TEXT_COLOR_RED + gameName + RESET_TEXT_COLOR;
+        // throw new DataAccessException(SET_TEXT_COLOR_RED + "Expected: <NAME>" + RESET_TEXT_COLOR);
     }
 
     public String list(String authToken) throws DataAccessException {
@@ -84,7 +87,13 @@ public class PostloginClient {
     private static String getGameInfo(ListGamesData game, int index) {
         String gameName = game.gameName();
         String whiteUsername = game.whiteUsername();
+        if (whiteUsername == null) {
+            whiteUsername = "Empty";
+        }
         String blackUsername = game.blackUsername();
+        if (blackUsername == null) {
+            blackUsername = "Empty";
+        }
         return RESET_TEXT_COLOR + "ID: " + SET_TEXT_COLOR_RED + index + RESET_TEXT_COLOR +
                 " Game name: " + SET_TEXT_COLOR_RED + gameName + RESET_TEXT_COLOR +
                 " White player: " + SET_TEXT_COLOR_RED + whiteUsername + RESET_TEXT_COLOR +
@@ -102,11 +111,13 @@ public class PostloginClient {
                 }
                 int gameId = gameIds.get(Integer.parseInt(params[0]));
                 server.join(authToken, gameId, params[1]);
-                return "Joined game " + SET_TEXT_COLOR_RED + gameId + RESET_TEXT_COLOR;
+                return "Joined game " + SET_TEXT_COLOR_RED + params[0] + RESET_TEXT_COLOR;
             }
             throw new DataAccessException(SET_TEXT_COLOR_RED + "Expected: <ID> [WHITE|BLACK]" + RESET_TEXT_COLOR);
-        } catch (NumberFormatException| DataAccessException e) {
+        } catch (DataAccessException e) {
             throw new DataAccessException(SET_TEXT_COLOR_RED + e.getMessage() + RESET_TEXT_COLOR);
+        } catch (NumberFormatException e) {
+            throw new DataAccessException(SET_TEXT_COLOR_RED + "Invalid game ID" + RESET_TEXT_COLOR);
         }
     }
 
