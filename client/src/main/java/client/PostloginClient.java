@@ -92,12 +92,19 @@ public class PostloginClient {
     }
 
     public String join(String authToken, String... params) throws DataAccessException {
-        if (params.length == 2) {
-            int gameId = gameIds.get(Integer.parseInt(params[0]));
-            server.join(authToken, gameId, params[1]);
-            return "Joined game";
+        try {
+            if (params.length == 2) {
+                if (Integer.parseInt(params[0]) > gameIds.size()) {
+                    throw new DataAccessException("Invalid game ID");
+                }
+                int gameId = gameIds.get(Integer.parseInt(params[0]));
+                server.join(authToken, gameId, params[1]);
+                return "Joined game";
+            }
+            throw new DataAccessException(SET_TEXT_COLOR_RED + "Expected: <ID> [WHITE|BLACK]" + RESET_TEXT_COLOR);
+        } catch (NumberFormatException| DataAccessException e) {
+            throw new DataAccessException(SET_TEXT_COLOR_RED + e.getMessage() + RESET_TEXT_COLOR);
         }
-        throw new DataAccessException(SET_TEXT_COLOR_RED + "Expected: <ID> [WHITE|BLACK]" + RESET_TEXT_COLOR);
     }
 
     public String observe(String... params) throws DataAccessException {

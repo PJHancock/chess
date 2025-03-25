@@ -10,7 +10,7 @@ public class Repl {
     private final PreloginClient preloginClient;
     private final PostloginClient postloginClient;
     // private final GameplayClient gameplayClient;
-    private static final Scanner Scanner = new Scanner(System.in);
+    private static final Scanner SCANNER = new Scanner(System.in);
     private static String result = "";
 
 
@@ -26,7 +26,7 @@ public class Repl {
                 SET_TEXT_COLOR_WHITE + WHITE_PAWN + RESET_TEXT_COLOR);
         while (!result.equals("quit")) {
             printPreloginPrompt();
-            String line = Scanner.nextLine();
+            String line = SCANNER.nextLine();
             System.out.print(RESET_TEXT_COLOR);
             try {
                 result = preloginClient.eval(line);
@@ -50,7 +50,7 @@ public class Repl {
     public void runPostlogin(String authToken) {
         while (!(result.equals("Logged out") || result.equals("quit"))) {
             printPostloginPrompt();
-            String line = Scanner.nextLine();
+            String line = SCANNER.nextLine();
             System.out.print(RESET_TEXT_COLOR);
             try {
                 result = postloginClient.eval(line, authToken);
@@ -70,12 +70,12 @@ public class Repl {
     }
 
     public void printGameboard(String playerSide) {
-        String backgroundColor1;
-        String backgroundColor2;
-        String leftBlackPiece;
-        String rightBlackPiece;
-        String leftWhitePiece;
-        String rightWhitePiece;
+        String backgroundColor1 = SET_BG_COLOR_BLACK;
+        String backgroundColor2 = SET_BG_COLOR_LIGHT_GREY;
+        String leftBlackPiece = BLACK_QUEEN;
+        String rightBlackPiece = BLACK_KING;
+        String leftWhitePiece = WHITE_QUEEN;
+        String rightWhitePiece = WHITE_KING;
         if (playerSide.equals("white")) {
             backgroundColor1 = SET_BG_COLOR_LIGHT_GREY;
             backgroundColor2 = SET_BG_COLOR_BLACK;
@@ -83,35 +83,10 @@ public class Repl {
             rightBlackPiece = BLACK_QUEEN;
             leftWhitePiece = WHITE_KING;
             rightWhitePiece = WHITE_QUEEN;
-        } else {
-            backgroundColor1 = SET_BG_COLOR_BLACK;
-            backgroundColor2 = SET_BG_COLOR_LIGHT_GREY;
-            leftBlackPiece = BLACK_QUEEN;
-            rightBlackPiece = BLACK_KING;
-            leftWhitePiece = WHITE_QUEEN;
-            rightWhitePiece = WHITE_KING;
         }
-        String blackColumns =  SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK + "   " +
-                        "  " + "h" + "  " +
-                        "  " + "g" + "  " +
-                        "  " + "f" + "  " +
-                        "  " + "e" + "  " +
-                        "  " + "d" + "  " +
-                        "  " + "c" + "  " +
-                        "  " + "b" + "  " +
-                        "  " + "a" + "  " +
-                        "   " + RESET_BG_COLOR + RESET_TEXT_COLOR + "\n";
+        String blackColumns = getBlackColumns();
 
-        String whiteColumns =  SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK + "   " +
-                "  " + "a" + "  " +
-                "  " + "b" + "  " +
-                "  " + "c" + "  " +
-                "  " + "d" + "  " +
-                "  " + "e" + "  " +
-                "  " + "f" + "  " +
-                "  " + "g" + "  " +
-                "  " + "h" + "  " +
-                "   " + RESET_BG_COLOR + RESET_TEXT_COLOR + "\n";
+        String whiteColumns = getWhiteColumns();
 
         String line8 =  SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK + " 8 " +
                         SET_TEXT_COLOR_BLUE + backgroundColor1 + " " + BLACK_ROOK + " " +
@@ -180,6 +155,32 @@ public class Repl {
             System.out.print("\n" + blackColumns + line1 + line2 + line3 +
                     line4 + line5 + line6 + line7 + line8 + blackColumns + RESET_TEXT_COLOR + RESET_BG_COLOR);
         }
+    }
+
+    private static String getWhiteColumns() {
+        return SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK + "   " +
+                "  " + "a" + "  " +
+                "  " + "b" + "  " +
+                "  " + "c" + "  " +
+                "  " + "d" + "  " +
+                "  " + "e" + "  " +
+                "  " + "f" + "  " +
+                "  " + "g" + "  " +
+                "  " + "h" + "  " +
+                "   " + RESET_BG_COLOR + RESET_TEXT_COLOR + "\n";
+    }
+
+    private static String getBlackColumns() {
+        return SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK + "   " +
+                "  " + "h" + "  " +
+                "  " + "g" + "  " +
+                "  " + "f" + "  " +
+                "  " + "e" + "  " +
+                "  " + "d" + "  " +
+                "  " + "c" + "  " +
+                "  " + "b" + "  " +
+                "  " + "a" + "  " +
+                "   " + RESET_BG_COLOR + RESET_TEXT_COLOR + "\n";
     }
 
     private static String getBlackPawns(String backgroundColor2, String backgroundColor1) {

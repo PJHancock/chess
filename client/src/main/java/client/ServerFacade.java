@@ -64,7 +64,7 @@ public class ServerFacade {
             }
             this.makeRequest("PUT", path, requestBody, JoinGameResult.class, authToken);
         } catch (DataAccessException e){
-            throw new DataAccessException("Spot already taken");
+            throw new DataAccessException(e.getMessage());
         }
     }
 
