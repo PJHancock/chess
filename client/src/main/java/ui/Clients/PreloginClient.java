@@ -34,7 +34,7 @@ public class PreloginClient {
                 default -> help();
             };
         } catch (DataAccessException ex) {
-            return "Error: " + ex.getMessage();
+            return SET_TEXT_COLOR_RED + ex.getMessage() + RESET_TEXT_COLOR;
         }
     }
 
@@ -53,7 +53,7 @@ public class PreloginClient {
         if (params.length == 3) {
             RegisterResult result = server.register(params[0], params[1], params[2]);
             authToken = result.authToken();
-            return String.format("Logged in as %s.", result.username());
+            return "Logged in as " + result.username();
         }
         throw new DataAccessException("Invalid registration. Expected: <USERNAME> <PASSWORD> <EMAIL>");
     }
@@ -62,7 +62,7 @@ public class PreloginClient {
         if (params.length == 2) {
             LoginResult result = server.login(params[0], params[1]);
             authToken = result.authToken();
-            return String.format("Logged in as %s.", result.username());
+            return "Logged in as " + result.username();
         }
         throw new DataAccessException("Invalid login. Expected: <USERNAME> <PASSWORD>");
     }

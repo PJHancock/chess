@@ -21,9 +21,13 @@ public class ServerFacade {
 
 
     public RegisterResult register(String username, String password, String email) throws DataAccessException {
-        var path = "/user";
-        var requestBody = new RegisterRequest(username, password, email);
-        return this.makeRequest("POST", path, requestBody, RegisterResult.class, null);
+        try {
+            var path = "/user";
+            var requestBody = new RegisterRequest(username, password, email);
+            return this.makeRequest("POST", path, requestBody, RegisterResult.class, null);
+        } catch (DataAccessException e){
+            throw new DataAccessException("Username taken");
+        }
     }
 
     public LoginResult login(String username, String password) throws DataAccessException {
@@ -45,21 +49,19 @@ public class ServerFacade {
         return response.games();
     }
 
-    public void join(String authToken, String gameID, String playerColor) throws DataAccessException {
-        var path = "/game";
-        int gameIdRequest;
+    public void join(String authToken, int gameID, String playerColor) throws DataAccessException {
         try {
-            gameIdRequest = Integer.parseInt(gameID.trim());
-        } catch (NumberFormatException e) {
-            throw new DataAccessException("Game ID must be a valid number.");
+            var path = "/game";
+            JoinGameRequest requestBody;
+            if ("white".equalsIgnoreCase(playerColor.trim())) {
+                requestBody = new JoinGameRequest(ChessGame.TeamColor.WHITE, gameID, authToken);
+            } else {
+                requestBody = new JoinGameRequest(ChessGame.TeamColor.BLACK, gameID, authToken);
+            }
+            this.makeRequest("PUT", path, requestBody, JoinGameResult.class, authToken);
+        } catch (DataAccessException e){
+            throw new DataAccessException("Spot already taken");
         }
-        JoinGameRequest requestBody;
-        if ("white".equalsIgnoreCase(playerColor.trim())) {
-            requestBody = new JoinGameRequest(ChessGame.TeamColor.WHITE, gameIdRequest, authToken);
-        } else {
-            requestBody = new JoinGameRequest(ChessGame.TeamColor.BLACK, gameIdRequest, authToken);
-        }
-        this.makeRequest("PUT", path, requestBody, JoinGameResult.class, authToken);
     }
 
     public void logout(String authToken) throws DataAccessException {

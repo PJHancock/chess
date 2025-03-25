@@ -1,19 +1,19 @@
 package ui.Clients;
 
-import com.google.gson.Gson;
 import service.results.ListGamesData;
 import ui.DataAccessException;
 import ui.ServerFacade;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
-import static ui.EscapeSequences.RESET_TEXT_COLOR;
-import static ui.EscapeSequences.SET_TEXT_COLOR_BLUE;
+import static ui.EscapeSequences.*;
 
 public class PostloginClient {
     private final ServerFacade server;
     // private final String serverUrl;
+    private HashMap<Integer, Integer> gameIds = new HashMap<>();
 
     public PostloginClient(String serverUrl) {
         server = new ServerFacade(serverUrl);
@@ -35,7 +35,7 @@ public class PostloginClient {
                 default -> help();
             };
         } catch (DataAccessException ex) {
-            return ex.getMessage();
+            return SET_TEXT_COLOR_RED + ex.getMessage() + RESET_TEXT_COLOR;
         }
     }
 
@@ -59,34 +59,57 @@ public class PostloginClient {
     public String create(String authToken, String... params) throws DataAccessException {
         if (params.length == 1) {
             int gameID = server.create(authToken, params[0]);
-            return String.format("Created game %s with game ID %d.", params[0], gameID);
+            gameIds.put(gameIds.size() + 1, gameID);
+            return "Created game with name " + SET_TEXT_COLOR_RED + params[0] + RESET_TEXT_COLOR;
         }
-        throw new DataAccessException("Expected: <NAME>");
+        throw new DataAccessException(SET_TEXT_COLOR_RED + "Expected: <NAME>" + RESET_TEXT_COLOR);
     }
 
     public String list(String authToken) throws DataAccessException {
         List<ListGamesData> games = server.list(authToken);
+        gameIds = new HashMap<>();
         var result = new StringBuilder();
-        var gson = new Gson();
+        int index = 1;
+        if (games.isEmpty()) {
+            return "No active games";
+        }
         for (var game : games) {
-            result.append(gson.toJson(game)).append('\n');
+            String gameInfo = getGameInfo(game, index);
+            result.append(gameInfo).append('\n');
+            gameIds.put(index, game.gameID());
+            index += 1;
         }
         return result.toString();
     }
 
+    private static String getGameInfo(ListGamesData game, int index) {
+        String gameName = game.gameName();
+        String whiteUsername = game.whiteUsername();
+        String blackUsername = game.blackUsername();
+        return RESET_TEXT_COLOR + "ID: " + SET_TEXT_COLOR_RED + index + RESET_TEXT_COLOR +
+                " Game name: " + SET_TEXT_COLOR_RED + gameName + RESET_TEXT_COLOR +
+                " White player: " + SET_TEXT_COLOR_RED + whiteUsername + RESET_TEXT_COLOR +
+                " Black player: " + SET_TEXT_COLOR_RED + blackUsername + RESET_TEXT_COLOR;
+    }
+
     public String join(String authToken, String... params) throws DataAccessException {
         if (params.length == 2) {
-            server.join(authToken, params[0], params[1]);
+            int gameId = gameIds.get(Integer.parseInt(params[0]));
+            server.join(authToken, gameId, params[1]);
             return "Joined game";
         }
-        throw new DataAccessException("Expected: <ID> [WHITE|BLACK]");
+        throw new DataAccessException(SET_TEXT_COLOR_RED + "Expected: <ID> [WHITE|BLACK]" + RESET_TEXT_COLOR);
     }
 
     public String observe(String... params) throws DataAccessException {
         if (params.length == 1) {
-            return String.format("Watching game %s", params[0]);
+            if (Integer.parseInt(params[0]) > gameIds.size()) {
+                throw new DataAccessException(SET_TEXT_COLOR_RED + "Invalid game ID" + RESET_TEXT_COLOR);
+            }
+            int gameId = gameIds.get(Integer.parseInt(params[0]));
+            return "Watching game " + gameId;
         }
-        throw new DataAccessException("Expected: <ID>");
+        throw new DataAccessException(SET_TEXT_COLOR_RED + "Expected: <ID>" + RESET_TEXT_COLOR);
     }
 
     public String logout(String authToken) throws DataAccessException {

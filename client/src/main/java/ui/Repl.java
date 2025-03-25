@@ -27,9 +27,10 @@ public class Repl {
         while (!result.equals("quit")) {
             printPreloginPrompt();
             String line = scanner.nextLine();
+            System.out.print(RESET_TEXT_COLOR);
             try {
                 result = preloginClient.eval(line);
-                System.out.print(SET_TEXT_COLOR_BLUE + result);
+                System.out.print(result);
                 handlePostLogin(result);
             } catch (Throwable e) {
                 var msg = e.toString();
@@ -50,11 +51,11 @@ public class Repl {
         while (!(result.equals("Logged out") || result.equals("quit"))) {
             printPostloginPrompt();
             String line = scanner.nextLine();
-
+            System.out.print(RESET_TEXT_COLOR);
             try {
                 result = postloginClient.eval(line, authToken);
                 System.out.print(result);
-                if (result.split(" ")[0].equals( "Joined")) {
+                if (result.split(" ")[0].equals("Joined")) {
                     // Pass in if joining as white or black
                     printGameboard(line.split(" ")[2]);
                     // runGameplay();
