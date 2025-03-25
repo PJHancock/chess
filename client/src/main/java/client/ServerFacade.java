@@ -52,7 +52,7 @@ public class ServerFacade {
 
     public void join(String authToken, int gameID, String playerColor) throws DataAccessException {
         try {
-            if (!(playerColor.equals("white") || (playerColor.equals("black")))) {
+            if (playerColor == null || !(playerColor.equals("white") || (playerColor.equals("black")))) {
                 throw new DataAccessException("Invalid playerColor");
             }
             var path = "/game";
