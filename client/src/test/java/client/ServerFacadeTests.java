@@ -92,20 +92,32 @@ public class ServerFacadeTests {
     }
 
     @Test
-    void joinPositive() {
-
+    void joinPositive() throws ui.DataAccessException {
+        var authData = facade.register("player1", "password", "p1@email.com");
+        int gameId = facade.create(authData.authToken(), "game1");
+        facade.join(authData.authToken(), gameId, "white");
+        assertEquals(1, facade.list(authData.authToken()).size());
     }
 
     @Test
-    void joinNegative() {
+    void joinNegative() throws ui.DataAccessException {
+        var authData = facade.register("player1", "password", "p1@email.com");
+        int gameId = facade.create(authData.authToken(), "game1");
+        assertThrows(ui.DataAccessException.class, () -> facade.join(authData.authToken(), gameId, "orange"),
+                "Should throw DataAccessException for bad request");
     }
 
     @Test
-    void logoutPositive() {
+    void logoutPositive() throws ui.DataAccessException {
+        var authData = facade.register("player1", "password", "p1@email.com");
+        assertDoesNotThrow(() -> facade.logout(authData.authToken()));
     }
 
     @Test
-    void logoutNegative() {
+    void logoutNegative() throws ui.DataAccessException {
+        facade.register("player1", "password", "p1@email.com");
+        assertThrows(ui.DataAccessException.class, () -> facade.logout(null),
+                "Should throw DataAccessException for unauthorized request");
     }
 
 }
