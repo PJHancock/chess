@@ -68,91 +68,141 @@ public class Repl {
     }
 
     public void printGameboard(String playerSide) {
-        String line0 =  SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_BLACK + "    h  g  f  e  d  c  b  a    \n";
-        String line8 =  SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_BLACK + " 1 " +
-                        SET_TEXT_COLOR_BLUE + SET_BG_COLOR_LIGHT_GREY + " " + BLACK_ROOK + " " +
-                        SET_BG_COLOR_BLACK + " " + BLACK_KNIGHT + " " +
-                        SET_BG_COLOR_LIGHT_GREY + " " + BLACK_BISHOP + " " +
-                        SET_BG_COLOR_BLACK + " " + BLACK_QUEEN + " " +
-                        SET_BG_COLOR_LIGHT_GREY + " " + BLACK_KING + " " +
-                        SET_BG_COLOR_BLACK + " " + BLACK_BISHOP + " " +
-                        SET_BG_COLOR_LIGHT_GREY + " " + BLACK_KNIGHT + " " +
-                        SET_BG_COLOR_BLACK + " " + BLACK_ROOK + " " +
-                        SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_BLACK + " 1 \n";
-        String line7 =  SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_BLACK + " 2 " +
-                        SET_TEXT_COLOR_BLUE + SET_BG_COLOR_BLACK + " " + BLACK_PAWN + " " +
-                        SET_BG_COLOR_LIGHT_GREY + " " + BLACK_PAWN + " " +
-                        SET_BG_COLOR_BLACK + " " + BLACK_PAWN + " " +
-                        SET_BG_COLOR_LIGHT_GREY + " " + BLACK_PAWN + " " +
-                        SET_BG_COLOR_BLACK + " " + BLACK_PAWN + " " +
-                        SET_BG_COLOR_LIGHT_GREY + " " + BLACK_PAWN + " " +
-                        SET_BG_COLOR_BLACK + " " + BLACK_PAWN + " " +
-                        SET_BG_COLOR_LIGHT_GREY + " " + BLACK_PAWN + " " +
-                        SET_BG_COLOR_BLACK + SET_TEXT_COLOR_BLACK + " 2 \n";
-        String line6 =  SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_BLACK + " 3 " +
-                        SET_BG_COLOR_LIGHT_GREY + " " + EMPTY + " " +
-                        SET_BG_COLOR_BLACK + " " + EMPTY + " " +
-                        SET_BG_COLOR_LIGHT_GREY + " " + EMPTY + " " +
-                        SET_BG_COLOR_BLACK + " " + EMPTY + " " +
-                        SET_BG_COLOR_LIGHT_GREY + " " + EMPTY + " " +
-                        SET_BG_COLOR_BLACK + " " + EMPTY + " " +
-                        SET_BG_COLOR_LIGHT_GREY + " " + EMPTY + " " +
-                        SET_BG_COLOR_BLACK + " " + EMPTY + " " +
-                        SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_BLACK + " 3 \n";
-        String line5 =  SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_BLACK + " 4 " +
-                        SET_BG_COLOR_BLACK + " " + EMPTY + " " +
-                        SET_BG_COLOR_LIGHT_GREY + " " + EMPTY + " " +
-                        SET_BG_COLOR_BLACK + " " + EMPTY + " " +
-                        SET_BG_COLOR_LIGHT_GREY + " " + EMPTY + " " +
-                        SET_BG_COLOR_BLACK + " " + EMPTY + " " +
-                        SET_BG_COLOR_LIGHT_GREY + " " + EMPTY + " " +
-                        SET_BG_COLOR_BLACK + " " + EMPTY + " " +
-                        SET_BG_COLOR_LIGHT_GREY + " " + EMPTY + " " +
-                        SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_BLACK + " 4 \n";
-        String line4 =  SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_BLACK + " 5 " +
-                        SET_BG_COLOR_LIGHT_GREY + " " + EMPTY + " " +
-                        SET_BG_COLOR_BLACK + " " + EMPTY + " " +
-                        SET_BG_COLOR_LIGHT_GREY + " " + EMPTY + " " +
-                        SET_BG_COLOR_BLACK + " " + EMPTY + " " +
-                        SET_BG_COLOR_LIGHT_GREY + " " + EMPTY + " " +
-                        SET_BG_COLOR_BLACK + " " + EMPTY + " " +
-                        SET_BG_COLOR_LIGHT_GREY + " " + EMPTY + " " +
-                        SET_BG_COLOR_BLACK + " " + EMPTY + " " +
-                        SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_BLACK + " 5 \n";
-        String line3 =  SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_BLACK + " 6 " +
-                        SET_BG_COLOR_BLACK + " " + EMPTY + " " +
-                        SET_BG_COLOR_LIGHT_GREY + " " + EMPTY + " " +
-                        SET_BG_COLOR_BLACK + " " + EMPTY + " " +
-                        SET_BG_COLOR_LIGHT_GREY + " " + EMPTY + " " +
-                        SET_BG_COLOR_BLACK + " " + EMPTY + " " +
-                        SET_BG_COLOR_LIGHT_GREY + " " + EMPTY + " " +
-                        SET_BG_COLOR_BLACK + " " + EMPTY + " " +
-                        SET_BG_COLOR_LIGHT_GREY + " " + EMPTY + " " +
-                        SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_BLACK + " 6 \n";
-        String line2 =  SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_BLACK + " 7 " +
-                        SET_TEXT_COLOR_RED + SET_BG_COLOR_LIGHT_GREY + " " + WHITE_PAWN + " " +
-                        SET_BG_COLOR_BLACK + " " + WHITE_PAWN + " " +
-                        SET_BG_COLOR_LIGHT_GREY + " " + WHITE_PAWN + " " +
-                        SET_BG_COLOR_BLACK + " " + WHITE_PAWN + " " +
-                        SET_BG_COLOR_LIGHT_GREY + " " + WHITE_PAWN + " " +
-                        SET_BG_COLOR_BLACK + " " + WHITE_PAWN + " " +
-                        SET_BG_COLOR_LIGHT_GREY + " " + WHITE_PAWN + " " +
-                        SET_BG_COLOR_BLACK + " " + WHITE_PAWN + " " +
-                        SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_BLACK + " 7 \n";
-        String line1 =  SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_BLACK + " 8 " +
-                        SET_TEXT_COLOR_BLUE + SET_BG_COLOR_BLACK + " " + WHITE_ROOK + " " +
-                        SET_BG_COLOR_LIGHT_GREY + " " + WHITE_KNIGHT + " " +
-                        SET_BG_COLOR_BLACK + " " + WHITE_BISHOP + " " +
-                        SET_BG_COLOR_LIGHT_GREY + " " + WHITE_QUEEN + " " +
-                        SET_BG_COLOR_BLACK + " " + WHITE_KING + " " +
-                        SET_BG_COLOR_LIGHT_GREY + " " + WHITE_BISHOP + " " +
-                        SET_BG_COLOR_BLACK + " " + WHITE_KNIGHT + " " +
-                        SET_BG_COLOR_LIGHT_GREY + " " + WHITE_ROOK + " " +
-                        SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_BLACK + " 8 \n";
+        String backgroundColor1;
+        String backgroundColor2;
+        String leftBlackPiece;
+        String rightBlackPiece;
+        String leftWhitePiece;
+        String rightWhitePiece;
         if (playerSide.equals("white")) {
-            System.out.print("\n" + line0 + line8 + line7 + line6 + line5 + line4 + line3 + line2 + line1 + line0);
+            backgroundColor1 = SET_BG_COLOR_LIGHT_GREY;
+            backgroundColor2 = SET_BG_COLOR_BLACK;
+            leftBlackPiece = BLACK_QUEEN;
+            rightBlackPiece = BLACK_KING;
+            leftWhitePiece = WHITE_QUEEN;
+            rightWhitePiece = WHITE_KING;
         } else {
-            System.out.print("\n" + line0 + line1 + line2 + line3 + line4 + line5 + line6 + line7 + line8 + line0);
+            backgroundColor1 = SET_BG_COLOR_BLACK;
+            backgroundColor2 = SET_BG_COLOR_LIGHT_GREY;
+            leftBlackPiece = BLACK_KING;
+            rightBlackPiece = BLACK_QUEEN;
+            leftWhitePiece = WHITE_KING;
+            rightWhitePiece = WHITE_QUEEN;
+        }
+        String blackColumns =  SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK + "   " +
+                        "  " + "h" + "  " +
+                        "  " + "g" + "  " +
+                        "  " + "f" + "  " +
+                        "  " + "e" + "  " +
+                        "  " + "d" + "  " +
+                        "  " + "c" + "  " +
+                        "  " + "b" + "  " +
+                        "  " + "a" + "  " +
+                        "   " + RESET_BG_COLOR + RESET_TEXT_COLOR + "\n";
+
+        String whiteColumns =  SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK + "   " +
+                "  " + "a" + "  " +
+                "  " + "b" + "  " +
+                "  " + "c" + "  " +
+                "  " + "d" + "  " +
+                "  " + "e" + "  " +
+                "  " + "f" + "  " +
+                "  " + "g" + "  " +
+                "  " + "h" + "  " +
+                "   " + RESET_BG_COLOR + RESET_TEXT_COLOR + "\n";
+
+        String line8 =  SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK + " 8 " +
+                        SET_TEXT_COLOR_BLUE + backgroundColor1 + " " + BLACK_ROOK + " " +
+                        backgroundColor2 + " " + BLACK_KNIGHT + " " +
+                        backgroundColor1 + " " + BLACK_BISHOP + " " +
+                        backgroundColor2 + " " + leftBlackPiece + " " +
+                        backgroundColor1 + " " + rightBlackPiece + " " +
+                        backgroundColor2 + " " + BLACK_BISHOP + " " +
+                        backgroundColor1 + " " + BLACK_KNIGHT + " " +
+                        backgroundColor2 + " " + BLACK_ROOK + " " +
+                        SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK + " 8 " + RESET_BG_COLOR + RESET_TEXT_COLOR + "\n";
+
+        String line7 =  SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK + " 7 " +
+                        SET_TEXT_COLOR_BLUE + backgroundColor2 + " " + BLACK_PAWN + " " +
+                        backgroundColor1 + " " + BLACK_PAWN + " " +
+                        backgroundColor2 + " " + BLACK_PAWN + " " +
+                        backgroundColor1 + " " + BLACK_PAWN + " " +
+                        backgroundColor2 + " " + BLACK_PAWN + " " +
+                        backgroundColor1 + " " + BLACK_PAWN + " " +
+                        backgroundColor2 + " " + BLACK_PAWN + " " +
+                        backgroundColor1 + " " + BLACK_PAWN + " " +
+                        SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK + " 7 " + RESET_BG_COLOR + RESET_TEXT_COLOR + "\n";
+
+        String line6 =  SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK + " 6 " +
+                        backgroundColor1 + " " + EMPTY + " " +
+                        backgroundColor2 + " " + EMPTY + " " +
+                        backgroundColor1 + " " + EMPTY + " " +
+                        backgroundColor2 + " " + EMPTY + " " +
+                        backgroundColor1 + " " + EMPTY + " " +
+                        backgroundColor2 + " " + EMPTY + " " +
+                        backgroundColor1 + " " + EMPTY + " " +
+                        backgroundColor2 + " " + EMPTY + " " +
+                        SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK + " 6 " + RESET_BG_COLOR + RESET_TEXT_COLOR + "\n";
+
+        String line5 =  SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK + " 5 " +
+                        backgroundColor2 + " " + EMPTY + " " +
+                        backgroundColor1 + " " + EMPTY + " " +
+                        backgroundColor2 + " " + EMPTY + " " +
+                        backgroundColor1 + " " + EMPTY + " " +
+                        backgroundColor2 + " " + EMPTY + " " +
+                        backgroundColor1 + " " + EMPTY + " " +
+                        backgroundColor2 + " " + EMPTY + " " +
+                        backgroundColor1 + " " + EMPTY + " " +
+                        SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK + " 5 " + RESET_BG_COLOR + RESET_TEXT_COLOR + "\n";
+
+        String line4 =  SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK + " 4 " +
+                        backgroundColor1 + " " + EMPTY + " " +
+                        backgroundColor2 + " " + EMPTY + " " +
+                        backgroundColor1 + " " + EMPTY + " " +
+                        backgroundColor2 + " " + EMPTY + " " +
+                        backgroundColor1 + " " + EMPTY + " " +
+                        backgroundColor2 + " " + EMPTY + " " +
+                        backgroundColor1 + " " + EMPTY + " " +
+                        backgroundColor2 + " " + EMPTY + " " +
+                        SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK + " 4 " + RESET_BG_COLOR + RESET_TEXT_COLOR + "\n";
+
+        String line3 =  SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK + " 3 " +
+                        backgroundColor2 + " " + EMPTY + " " +
+                        backgroundColor1 + " " + EMPTY + " " +
+                        backgroundColor2 + " " + EMPTY + " " +
+                        backgroundColor1 + " " + EMPTY + " " +
+                        backgroundColor2 + " " + EMPTY + " " +
+                        backgroundColor1 + " " + EMPTY + " " +
+                        backgroundColor2 + " " + EMPTY + " " +
+                        backgroundColor1 + " " + EMPTY + " " +
+                        SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK + " 3 " + RESET_BG_COLOR + RESET_TEXT_COLOR + "\n";
+
+        String line2 =  SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK + " 2 " +
+                        SET_TEXT_COLOR_RED + backgroundColor1 + " " + WHITE_PAWN + " " +
+                        backgroundColor2 + " " + WHITE_PAWN + " " +
+                        backgroundColor1 + " " + WHITE_PAWN + " " +
+                        backgroundColor2 + " " + WHITE_PAWN + " " +
+                        backgroundColor1 + " " + WHITE_PAWN + " " +
+                        backgroundColor2 + " " + WHITE_PAWN + " " +
+                        backgroundColor1 + " " + WHITE_PAWN + " " +
+                        backgroundColor2 + " " + WHITE_PAWN + " " +
+                        SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK + " 2 " + RESET_BG_COLOR + RESET_TEXT_COLOR + "\n";
+
+        String line1 =  SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK + " 1 " +
+                        SET_TEXT_COLOR_RED + backgroundColor2 + " " + WHITE_ROOK + " " +
+                        backgroundColor1 + " " + WHITE_KNIGHT + " " +
+                        backgroundColor2 + " " + WHITE_BISHOP + " " +
+                        backgroundColor1 + " " + leftWhitePiece + " " +
+                        backgroundColor2 + " " + rightWhitePiece + " " +
+                        backgroundColor1 + " " + WHITE_BISHOP + " " +
+                        backgroundColor2 + " " + WHITE_KNIGHT + " " +
+                        backgroundColor1 + " " + WHITE_ROOK + " " +
+                        SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK + " 1 " + RESET_BG_COLOR + RESET_TEXT_COLOR + "\n";
+
+        if (playerSide.equals("white")) {
+            System.out.print("\n" + whiteColumns + line8 + line7 + line6 + line5 + line4 + line3 + line2 + line1 + whiteColumns + RESET_TEXT_COLOR + RESET_BG_COLOR);
+        } else {
+            System.out.print("\n" + blackColumns + line1 + line2 + line3 + line4 + line5 + line6 + line7 + line8 + blackColumns + RESET_TEXT_COLOR + RESET_BG_COLOR);
         }
     }
 
