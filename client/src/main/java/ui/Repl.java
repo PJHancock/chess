@@ -62,6 +62,7 @@ public class Repl {
                     runGameplay();
                 } else if (result.split(" ")[0].equals( "Watching")) {
                     printGameboard("white");
+                    runGameplay();
                 }
             } catch (Throwable e) {
                 var msg = e.toString();
@@ -78,6 +79,9 @@ public class Repl {
             try {
                 result = gameplayClient.eval(line);
                 System.out.print(result);
+                if (result.equals("Do you want to resign? (Y)es/(N)o")) {
+                    String confirmation = SCANNER.nextLine();
+                }
             } catch (Throwable e) {
                 var msg = e.toString();
                 System.out.print(msg);

@@ -37,9 +37,9 @@ public class GameplayClient {
     public String help() {
         return SET_TEXT_COLOR_BLUE + "redraw " +
                 RESET_TEXT_COLOR + "- chess board\n" +
-                SET_TEXT_COLOR_BLUE + "move <x1,y1> <x2,y2>" +
+                SET_TEXT_COLOR_BLUE + "move <x1,y1> <x2,y2> " +
                 RESET_TEXT_COLOR + "- piece from <x1,y1> to <x2,y2>\n" +
-                SET_TEXT_COLOR_BLUE + "highlight <x1,y1> " +
+                SET_TEXT_COLOR_BLUE + "highlight <x,y> " +
                 RESET_TEXT_COLOR + "- possible moves from piece at <x1,y1> \n" +
                 SET_TEXT_COLOR_BLUE + "leave " +
                 RESET_TEXT_COLOR + "- the game \n" +
@@ -50,11 +50,11 @@ public class GameplayClient {
     }
 
     private String resign() {
-        return null;
+        return "Do you want to resign? (Y)es/(N)o";
     }
 
     private String leave() {
-        return null;
+        return "You left the game";
     }
 
     private String highlight(String[] params) throws DataAccessException {
