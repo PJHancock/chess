@@ -1,5 +1,6 @@
 package ui;
 
+import client.GameplayClient;
 import client.PostloginClient;
 import client.PreloginClient;
 
@@ -9,7 +10,7 @@ import static ui.EscapeSequences.*;
 public class Repl {
     private final PreloginClient preloginClient;
     private final PostloginClient postloginClient;
-    // private final GameplayClient gameplayClient;
+    private final GameplayClient gameplayClient;
     private static final Scanner SCANNER = new Scanner(System.in);
     private static String result = "";
 
@@ -17,7 +18,7 @@ public class Repl {
     public Repl(String serverUrl) {
         preloginClient = new PreloginClient(serverUrl);
         postloginClient = new PostloginClient(serverUrl);
-        // gameplayClient = new GameplayClient(serverUrl);
+        gameplayClient = new GameplayClient(serverUrl);
     }
 
     public void runPrelogin() {
@@ -58,10 +59,25 @@ public class Repl {
                 if (result.split(" ")[0].equals("Joined")) {
                     // Pass in if joining as white or black
                     printGameboard(line.split(" ")[2]);
-                    // runGameplay();
+                    runGameplay();
                 } else if (result.split(" ")[0].equals( "Watching")) {
                     printGameboard("white");
                 }
+            } catch (Throwable e) {
+                var msg = e.toString();
+                System.out.print(msg);
+            }
+        }
+    }
+
+    public void runGameplay() {
+        while (!(result.equals("You left the game"))) {
+            printGameplayPrompt();
+            String line = SCANNER.nextLine();
+            System.out.print(RESET_TEXT_COLOR);
+            try {
+                result = gameplayClient.eval(line);
+                System.out.print(result);
             } catch (Throwable e) {
                 var msg = e.toString();
                 System.out.print(msg);
@@ -213,5 +229,9 @@ public class Repl {
 
     private void printPostloginPrompt() {
         System.out.print("\n" + RESET_TEXT_COLOR + "[LOGGED_IN] >>> " + SET_TEXT_COLOR_GREEN);
+    }
+
+    private void printGameplayPrompt() {
+        System.out.print("\n" + RESET_TEXT_COLOR + "[Gameplay] >>> " + SET_TEXT_COLOR_GREEN);
     }
 }
