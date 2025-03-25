@@ -5,11 +5,11 @@ import dataaccess.memory.MemoryAuthDao;
 import dataaccess.memory.MemoryGameDao;
 import dataaccess.memory.MemoryUserDao;
 import model.UserData;
+import model.requests.*;
 import org.junit.jupiter.api.*;
-import service.requests.*;
-import service.results.CreateGameResult;
-import service.results.ListGamesData;
-import service.results.LoginResult;
+import model.results.CreateGameResult;
+import model.results.ListGamesData;
+import model.results.LoginResult;
 
 import java.util.ArrayList;
 import java.util.List;

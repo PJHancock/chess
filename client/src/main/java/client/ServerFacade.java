@@ -2,11 +2,11 @@ package client;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
-import service.requests.CreateGameRequest;
-import service.requests.JoinGameRequest;
-import service.requests.LoginRequest;
-import service.requests.RegisterRequest;
-import service.results.*;
+import model.requests.CreateGameRequest;
+import model.requests.JoinGameRequest;
+import model.requests.LoginRequest;
+import model.requests.RegisterRequest;
+import model.results.*;
 import ui.DataAccessException;
 
 import java.io.*;

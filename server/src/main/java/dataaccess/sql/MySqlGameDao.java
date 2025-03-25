@@ -6,7 +6,7 @@ import dataaccess.DataAccessException;
 import dataaccess.DatabaseManager;
 import dataaccess.GameDAO;
 import model.GameData;
-import service.results.ListGamesData;
+import model.results.ListGamesData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;

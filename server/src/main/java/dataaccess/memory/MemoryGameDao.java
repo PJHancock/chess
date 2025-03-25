@@ -4,7 +4,7 @@ import chess.ChessGame;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import model.GameData;
-import service.results.ListGamesData;
+import model.results.ListGamesData;
 
 import java.util.*;
 

@@ -1,6 +1,6 @@
 package client;
 
-import service.results.ListGamesData;
+import model.results.ListGamesData;
 import ui.DataAccessException;
 
 import java.util.Arrays;

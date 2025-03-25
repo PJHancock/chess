@@ -5,7 +5,7 @@ import dataaccess.sql.MySqlGameDao;
 import model.GameData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import service.results.ListGamesData;
+import model.results.ListGamesData;
 
 import java.util.ArrayList;
 

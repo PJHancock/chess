@@ -2,7 +2,7 @@ package dataaccess;
 
 import chess.ChessGame;
 import model.GameData;
-import service.results.ListGamesData;
+import model.results.ListGamesData;
 import java.util.List;
 
 public interface GameDAO {

@@ -1,7 +1,7 @@
 package client;
 
-import service.results.LoginResult;
-import service.results.RegisterResult;
+import model.results.LoginResult;
+import model.results.RegisterResult;
 import ui.DataAccessException;
 
 import java.util.Arrays;

@@ -4,8 +4,9 @@ import chess.ChessGame;
 import dataaccess.DataAccessException;
 import dataaccess.*;
 import model.UserData;
-import service.requests.*;
-import service.results.*;
+import model.requests.*;
+import model.results.*;
+
 import java.util.List;
 
 public class ChessService {

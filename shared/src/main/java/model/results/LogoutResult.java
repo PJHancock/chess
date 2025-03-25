@@ -1,3 +1,3 @@
-package service.results;
+package model.results;
 
 public record LogoutResult() {}
