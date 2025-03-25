@@ -21,7 +21,9 @@ public class Repl {
     }
 
     public void runPrelogin() {
-        System.out.println(WHITE_PAWN + " Welcome to 240 chess. Type Help to get started" + WHITE_PAWN);
+        System.out.println(SET_TEXT_COLOR_WHITE + WHITE_PAWN + RESET_TEXT_COLOR +
+                " Welcome to 240 chess. Type Help to get started" +
+                SET_TEXT_COLOR_WHITE + WHITE_PAWN + RESET_TEXT_COLOR);
         while (!result.equals("quit")) {
             printPreloginPrompt();
             String line = scanner.nextLine();
