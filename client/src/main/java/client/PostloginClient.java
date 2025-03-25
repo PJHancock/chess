@@ -104,7 +104,7 @@ public class PostloginClient {
         try {
             if (params.length == 2) {
                 String playerColor = params[1];
-                if (Integer.parseInt(params[0]) > gameIds.size()) {
+                if (Integer.parseInt(params[0]) > gameIds.size() || Integer.parseInt(params[0]) <= 0) {
                     throw new DataAccessException("Invalid game ID");
                 } else if (playerColor == null || !(playerColor.equals("white") || (playerColor.equals("black")))) {
                     throw new DataAccessException("Invalid playerColor");
@@ -126,8 +126,8 @@ public class PostloginClient {
             if (Integer.parseInt(params[0]) > gameIds.size()) {
                 throw new DataAccessException(SET_TEXT_COLOR_RED + "Invalid game ID" + RESET_TEXT_COLOR);
             }
-            int gameId = gameIds.get(Integer.parseInt(params[0]));
-            return "Watching game " + gameId;
+            // int gameId = gameIds.get(Integer.parseInt(params[0]));
+            return "Watching game " + params[0];
         }
         throw new DataAccessException(SET_TEXT_COLOR_RED + "Expected: <ID>" + RESET_TEXT_COLOR);
     }
