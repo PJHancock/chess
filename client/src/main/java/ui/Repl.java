@@ -53,11 +53,11 @@ public class Repl {
             try {
                 result = postloginClient.eval(line, authToken);
                 System.out.print(result);
-                if (Objects.equals(line.split(" ")[0], "join")) {
+                if (result.split(" ")[0].equals( "Joined")) {
                     // Pass in if joining as white or black
                     printGameboard(line.split(" ")[2]);
                     // runGameplay();
-                } else if (Objects.equals(line.split(" ")[0], "observe")) {
+                } else if (result.split(" ")[0].equals( "Watching")) {
                     printGameboard("white");
                 }
             } catch (Throwable e) {
@@ -77,17 +77,17 @@ public class Repl {
         if (playerSide.equals("white")) {
             backgroundColor1 = SET_BG_COLOR_LIGHT_GREY;
             backgroundColor2 = SET_BG_COLOR_BLACK;
-            leftBlackPiece = BLACK_QUEEN;
-            rightBlackPiece = BLACK_KING;
-            leftWhitePiece = WHITE_QUEEN;
-            rightWhitePiece = WHITE_KING;
-        } else {
-            backgroundColor1 = SET_BG_COLOR_BLACK;
-            backgroundColor2 = SET_BG_COLOR_LIGHT_GREY;
             leftBlackPiece = BLACK_KING;
             rightBlackPiece = BLACK_QUEEN;
             leftWhitePiece = WHITE_KING;
             rightWhitePiece = WHITE_QUEEN;
+        } else {
+            backgroundColor1 = SET_BG_COLOR_BLACK;
+            backgroundColor2 = SET_BG_COLOR_LIGHT_GREY;
+            leftBlackPiece = BLACK_QUEEN;
+            rightBlackPiece = BLACK_KING;
+            leftWhitePiece = WHITE_QUEEN;
+            rightWhitePiece = WHITE_KING;
         }
         String blackColumns =  SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK + "   " +
                         "  " + "h" + "  " +
