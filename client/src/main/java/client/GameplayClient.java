@@ -3,7 +3,6 @@ package client;
 import ui.DataAccessException;
 
 import java.util.Arrays;
-import java.util.HashMap;
 
 import static ui.EscapeSequences.*;
 
@@ -50,7 +49,7 @@ public class GameplayClient {
     }
 
     private String resign() {
-        return "Do you want to resign? (Y)es/(N)o";
+        return "Do you want to resign? (Y)es/(N)o ";
     }
 
     private String leave() {

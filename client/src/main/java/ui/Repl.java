@@ -72,15 +72,22 @@ public class Repl {
     }
 
     public void runGameplay() {
-        while (!(result.equals("You left the game"))) {
+        while (!result.equals("You left the game")) {
             printGameplayPrompt();
             String line = SCANNER.nextLine();
             System.out.print(RESET_TEXT_COLOR);
             try {
                 result = gameplayClient.eval(line);
                 System.out.print(result);
-                if (result.equals("Do you want to resign? (Y)es/(N)o")) {
+                if (result.equals("Do you want to resign? (Y)es/(N)o ")) {
                     String confirmation = SCANNER.nextLine();
+                    if (confirmation.equalsIgnoreCase("y")) {
+                        System.out.print("You resigned");
+                    } else if (confirmation.equalsIgnoreCase("n")){
+                        System.out.print("You did not resign");
+                    } else {
+                        System.out.print("Not a valid input. Expected 'Y' or 'N'");
+                    }
                 }
             } catch (Throwable e) {
                 var msg = e.toString();
