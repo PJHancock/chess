@@ -13,6 +13,7 @@ public class Repl {
     private final GameplayClient gameplayClient;
     private static final Scanner SCANNER = new Scanner(System.in);
     private static String result = "";
+    private static String currentBoard;
 
 
     public Repl(String serverUrl) {
@@ -58,11 +59,11 @@ public class Repl {
                 System.out.print(result);
                 if (result.split(" ")[0].equals("Joined")) {
                     // Pass in if joining as white or black
-                    printGameboard(line.split(" ")[2]);
-                    runGameplay();
+                    currentBoard = initialGameboard(line.split(" ")[2]);
+                    runGameplay(currentBoard);
                 } else if (result.split(" ")[0].equals( "Watching")) {
-                    printGameboard("white");
-                    runGameplay();
+                    currentBoard = initialGameboard("white");
+                    runGameplay(currentBoard);
                 }
             } catch (Throwable e) {
                 var msg = e.toString();
@@ -71,13 +72,13 @@ public class Repl {
         }
     }
 
-    public void runGameplay() {
+    public void runGameplay(String currentBoard) {
         while (!result.equals("You left the game")) {
             printGameplayPrompt();
             String line = SCANNER.nextLine();
             System.out.print(RESET_TEXT_COLOR);
             try {
-                result = gameplayClient.eval(line);
+                result = gameplayClient.eval(line, currentBoard);
                 System.out.print(result);
                 if (result.equals("Do you want to resign? (Y)es/(N)o ")) {
                     String confirmation = SCANNER.nextLine();
@@ -96,7 +97,7 @@ public class Repl {
         }
     }
 
-    public void printGameboard(String playerSide) {
+    public String initialGameboard(String playerSide) {
         String backgroundColor1 = SET_BG_COLOR_BLACK;
         String backgroundColor2 = SET_BG_COLOR_LIGHT_GREY;
         String leftBlackPiece = BLACK_KING;
@@ -176,11 +177,11 @@ public class Repl {
                         SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK + " 1 " + RESET_BG_COLOR + RESET_TEXT_COLOR + "\n";
 
         if (playerSide.equals("white")) {
-            System.out.print("\n" + whiteColumns + line8 + line7 + line6 + line5 +
-                    line4 + line3 + line2 + line1 + whiteColumns + RESET_TEXT_COLOR + RESET_BG_COLOR);
+            return "\n" + whiteColumns + line8 + line7 + line6 + line5 +
+                    line4 + line3 + line2 + line1 + whiteColumns + RESET_TEXT_COLOR + RESET_BG_COLOR;
         } else {
-            System.out.print("\n" + blackColumns + line1 + line2 + line3 +
-                    line4 + line5 + line6 + line7 + line8 + blackColumns + RESET_TEXT_COLOR + RESET_BG_COLOR);
+            return "\n" + blackColumns + line1 + line2 + line3 +
+                    line4 + line5 + line6 + line7 + line8 + blackColumns + RESET_TEXT_COLOR + RESET_BG_COLOR;
         }
     }
 

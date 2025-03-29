@@ -15,15 +15,15 @@ public class GameplayClient {
         // this.serverUrl = serverUrl;
     }
 
-    public String eval(String input) {
+    public String eval(String input, String currentBoard) {
         try {
             var tokens = input.toLowerCase().split(" ");
             var cmd = (tokens.length > 0) ? tokens[0] : "help";
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
-                case "redraw" -> redraw();
-                case "move" -> move(params);
-                case "highlight" -> highlight(params);
+                case "redraw" -> redraw(currentBoard);
+                case "move" -> move(currentBoard, params);
+                case "highlight" -> highlight(currentBoard, params);
                 case "leave" -> leave();
                 case "resign" -> resign();
                 default -> help();
@@ -56,15 +56,15 @@ public class GameplayClient {
         return "You left the game";
     }
 
-    private String highlight(String[] params) throws DataAccessException {
+    private String highlight(String currentBoard, String[] params) throws DataAccessException {
         return null;
     }
 
-    private String redraw() {
+    private String redraw(String currentBoard) {
         return null;
     }
 
-    private String move(String... params) throws DataAccessException {
+    private String move(String currentBoard, String... params) throws DataAccessException {
         return null;
     }
 }
