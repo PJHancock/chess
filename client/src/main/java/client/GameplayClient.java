@@ -1,5 +1,9 @@
 package client;
 
+import chess.ChessBoard;
+import chess.ChessGame;
+import chess.ChessPiece;
+import chess.ChessPosition;
 import model.GameData;
 import ui.DataAccessException;
 
@@ -62,10 +66,111 @@ public class GameplayClient {
     }
 
     private String redraw(GameData gameData, String teamColor) {
-        return null;
+        return drawBoard(gameData, teamColor);
     }
 
     private String move(GameData gameData, String teamColor, String... params) throws DataAccessException {
         return null;
+    }
+
+    private String drawBoard(GameData gameData, String teamColor) {
+        ChessBoard board = gameData.game().getBoard();
+        StringBuilder boardString = new StringBuilder();
+        // Place top columns
+        if (teamColor.equals("white")) {
+            boardString.append(getWhiteColumns());
+        } else {
+            boardString.append(getBlackColumns());
+        }
+        for (int i = 1; i <= 8; i++) {
+            boardString.append(SET_BG_COLOR_WHITE + " ").append(SET_TEXT_COLOR_BLACK + "a").append(" " + RESET_TEXT_COLOR + RESET_BG_COLOR);
+            for (int j = 1; j <= 8; j++) {
+                ChessPiece piece = board.getPiece(new ChessPosition(i,j));
+                if ((i + j) % 2 == 0) {
+                    boardString.append(SET_BG_COLOR_LIGHT_GREY);
+                } else {
+                    boardString.append(SET_BG_COLOR_BLACK);
+                }
+                boardString.append(" ").append(getPiece(piece)).append(" ");
+            }
+            boardString.append(SET_BG_COLOR_WHITE + " ").append(SET_TEXT_COLOR_BLACK + "a").append(" " + RESET_BG_COLOR + "\n");
+        }
+        // Place bottom columns
+        if (teamColor.equals("white")) {
+            boardString.append(getWhiteColumns());
+        } else {
+            boardString.append(getBlackColumns());
+        }
+        return boardString.toString();
+    }
+
+    private static String getWhiteColumns() {
+        return SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK + "   " +
+                "  " + "a" + "  " +
+                "  " + "b" + "  " +
+                "  " + "c" + "  " +
+                "  " + "d" + "  " +
+                "  " + "e" + "  " +
+                "  " + "f" + "  " +
+                "  " + "g" + "  " +
+                "  " + "h" + "  " +
+                "   " + RESET_BG_COLOR + RESET_TEXT_COLOR + "\n";
+    }
+
+    private static String getBlackColumns() {
+        return SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK + "   " +
+                "  " + "h" + "  " +
+                "  " + "g" + "  " +
+                "  " + "f" + "  " +
+                "  " + "e" + "  " +
+                "  " + "d" + "  " +
+                "  " + "c" + "  " +
+                "  " + "b" + "  " +
+                "  " + "a" + "  " +
+                "   " + RESET_BG_COLOR + RESET_TEXT_COLOR + "\n";
+    }
+
+    private String getPiece(ChessPiece piece) {
+        StringBuilder pieceString = new StringBuilder();
+        if (piece == null) {
+            return EMPTY;
+        }
+        ChessPiece.PieceType pieceType = piece.getPieceType();
+        ChessGame.TeamColor teamColor = piece.getTeamColor();
+        if (teamColor.equals(ChessGame.TeamColor.WHITE)) {
+            pieceString.append(SET_TEXT_COLOR_RED);
+            if (pieceType.equals(ChessPiece.PieceType.PAWN)) {
+                pieceString.append(WHITE_PAWN);
+            } else if (pieceType.equals(ChessPiece.PieceType.ROOK)) {
+                pieceString.append(WHITE_ROOK);
+            } else if (pieceType.equals(ChessPiece.PieceType.BISHOP)) {
+                pieceString.append(WHITE_BISHOP);
+            } else if (pieceType.equals(ChessPiece.PieceType.KNIGHT)) {
+                pieceString.append(WHITE_KNIGHT);
+            } else if (pieceType.equals(ChessPiece.PieceType.QUEEN)) {
+                pieceString.append(WHITE_QUEEN);
+            } else {
+                pieceString.append(WHITE_KING);
+            }
+            pieceString.append(RESET_TEXT_COLOR);
+            return pieceString.toString();
+        } else {
+            pieceString.append(SET_TEXT_COLOR_BLUE);
+            if (pieceType.equals(ChessPiece.PieceType.PAWN)) {
+                pieceString.append(BLACK_PAWN);
+            } else if (pieceType.equals(ChessPiece.PieceType.ROOK)) {
+                pieceString.append(BLACK_ROOK);
+            } else if (pieceType.equals(ChessPiece.PieceType.BISHOP)) {
+                pieceString.append(BLACK_BISHOP);
+            } else if (pieceType.equals(ChessPiece.PieceType.KNIGHT)) {
+                pieceString.append(BLACK_KNIGHT);
+            } else if (pieceType.equals(ChessPiece.PieceType.QUEEN)) {
+                pieceString.append(BLACK_QUEEN);
+            } else {
+                pieceString.append(BLACK_KING);
+            }
+            pieceString.append(RESET_TEXT_COLOR);
+            return pieceString.toString();
+        }
     }
 }
