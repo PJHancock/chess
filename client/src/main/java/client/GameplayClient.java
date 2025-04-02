@@ -83,7 +83,11 @@ public class GameplayClient {
             boardString.append(getBlackColumns());
         }
         for (int i = 1; i <= 8; i++) {
-            boardString.append(SET_BG_COLOR_WHITE + " ").append(SET_TEXT_COLOR_BLACK + "a").append(" " + RESET_TEXT_COLOR + RESET_BG_COLOR);
+            if (teamColor.equals("white")) {
+                boardString.append(SET_BG_COLOR_WHITE + " ").append(SET_TEXT_COLOR_BLACK).append(9-i).append(" " + RESET_TEXT_COLOR + RESET_BG_COLOR);
+            } else {
+                boardString.append(SET_BG_COLOR_WHITE + " ").append(SET_TEXT_COLOR_BLACK).append(i).append(" " + RESET_TEXT_COLOR + RESET_BG_COLOR);
+            }
             for (int j = 1; j <= 8; j++) {
                 ChessPiece piece = board.getPiece(new ChessPosition(i,j));
                 if ((i + j) % 2 == 0) {
@@ -93,8 +97,12 @@ public class GameplayClient {
                 }
                 boardString.append(" ").append(getPiece(piece)).append(" ");
             }
-            boardString.append(SET_BG_COLOR_WHITE + " ").append(SET_TEXT_COLOR_BLACK + "a").append(" " + RESET_BG_COLOR + "\n");
-        }
+            if (teamColor.equals("white")) {
+                boardString.append(SET_BG_COLOR_WHITE + " ").append(SET_TEXT_COLOR_BLACK).append(9-i).append(" " + RESET_BG_COLOR + "\n");
+            } else {
+                boardString.append(SET_BG_COLOR_WHITE + " ").append(SET_TEXT_COLOR_BLACK).append(i).append(" " + RESET_BG_COLOR + "\n");
+            }
+            }
         // Place bottom columns
         if (teamColor.equals("white")) {
             boardString.append(getWhiteColumns());
