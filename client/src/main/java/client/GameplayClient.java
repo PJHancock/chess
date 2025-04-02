@@ -65,7 +65,7 @@ public class GameplayClient {
         return null;
     }
 
-    private String redraw(GameData gameData, String teamColor) {
+    public String redraw(GameData gameData, String teamColor) {
         return drawBoard(gameData, teamColor);
     }
 
