@@ -3,6 +3,8 @@ package ui;
 import client.GameplayClient;
 import client.PostloginClient;
 import client.PreloginClient;
+import dataaccess.DataAccessException;
+import model.GameData;
 
 import java.util.Scanner;
 import static ui.EscapeSequences.*;
@@ -13,10 +15,9 @@ public class Repl {
     private final GameplayClient gameplayClient;
     private static final Scanner SCANNER = new Scanner(System.in);
     private static String result = "";
-    private static String currentBoard;
 
 
-    public Repl(String serverUrl) {
+    public Repl(String serverUrl) throws DataAccessException {
         preloginClient = new PreloginClient(serverUrl);
         postloginClient = new PostloginClient(serverUrl);
         gameplayClient = new GameplayClient(serverUrl);
@@ -59,11 +60,13 @@ public class Repl {
                 System.out.print(result);
                 if (result.split(" ")[0].equals("Joined")) {
                     // Pass in if joining as white or black
-                    currentBoard = initialGameboard(line.split(" ")[2]);
-                    runGameplay(currentBoard);
+                    String listGamesGameId = result.split(" ")[2];
+                    GameData gameData = postloginClient.getGameData(listGamesGameId);
+                    runGameplay(gameData, line.split(" ")[2]);
                 } else if (result.split(" ")[0].equals( "Watching")) {
-                    currentBoard = initialGameboard("white");
-                    runGameplay(currentBoard);
+                    String listGamesGameId = result.split(" ")[2];
+                    GameData gameData = postloginClient.getGameData(listGamesGameId);
+                    runGameplay(gameData, "white");
                 }
             } catch (Throwable e) {
                 var msg = e.toString();
@@ -72,13 +75,13 @@ public class Repl {
         }
     }
 
-    public void runGameplay(String currentBoard) {
+    public void runGameplay(GameData gameData, String teamColor) {
         while (!result.equals("You left the game")) {
             printGameplayPrompt();
             String line = SCANNER.nextLine();
             System.out.print(RESET_TEXT_COLOR);
             try {
-                result = gameplayClient.eval(line, currentBoard);
+                result = gameplayClient.eval(line, gameData, teamColor);
                 System.out.print(result);
                 if (result.equals("Do you want to resign? (Y)es/(N)o ")) {
                     String confirmation = SCANNER.nextLine();

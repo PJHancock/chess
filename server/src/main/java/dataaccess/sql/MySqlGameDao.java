@@ -72,6 +72,32 @@ public class MySqlGameDao implements GameDAO {
         }
     }
 
+    public GameData getGameUsingId(String gameId) throws dataaccess.DataAccessException {
+        if (gameId == null) {
+            throw new dataaccess.DataAccessException("Invalid request");
+        }
+        try (var conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT gameID, whiteUsername, blackUsername, gameName, chessGame FROM game WHERE gameID = ?";
+            try (var preparedStatement = conn.prepareStatement(statement)) {
+                preparedStatement.setString(1, gameId);
+                var resultSet = preparedStatement.executeQuery();
+                if (resultSet.next()) {
+                    int gameID = resultSet.getInt("gameID");
+                    String whiteUsername = resultSet.getString("whiteUsername");
+                    String blackUsername = resultSet.getString("blackUsername");
+                    String gameName = resultSet.getString("gameName");
+                    String json = resultSet.getString("chessGame");
+                    var chessGame = new Gson().fromJson(json, ChessGame.class);
+                    return new GameData(gameID, whiteUsername, blackUsername, gameName, chessGame);
+                } else {
+                    return null;
+                }
+            }
+        } catch (SQLException e) {
+            throw new dataaccess.DataAccessException(String.format("Unable to get game: %s", e.getMessage()));
+        }
+    }
+
 
     public int createGame(String gameName) throws dataaccess.DataAccessException {
         if (gameName == null) {

@@ -1,5 +1,6 @@
 package client;
 
+import model.GameData;
 import ui.DataAccessException;
 
 import java.util.Arrays;
@@ -15,15 +16,15 @@ public class GameplayClient {
         // this.serverUrl = serverUrl;
     }
 
-    public String eval(String input, String currentBoard) {
+    public String eval(String input, GameData gameData, String teamColor) {
         try {
             var tokens = input.toLowerCase().split(" ");
             var cmd = (tokens.length > 0) ? tokens[0] : "help";
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
-                case "redraw" -> redraw(currentBoard);
-                case "move" -> move(currentBoard, params);
-                case "highlight" -> highlight(currentBoard, params);
+                case "redraw" -> redraw(gameData, teamColor);
+                case "move" -> move(gameData, teamColor, params);
+                case "highlight" -> highlight(gameData, params);
                 case "leave" -> leave();
                 case "resign" -> resign();
                 default -> help();
@@ -56,15 +57,15 @@ public class GameplayClient {
         return "You left the game";
     }
 
-    private String highlight(String currentBoard, String[] params) throws DataAccessException {
+    private String highlight(GameData gameData, String[] params) throws DataAccessException {
         return null;
     }
 
-    private String redraw(String currentBoard) {
+    private String redraw(GameData gameData, String teamColor) {
         return null;
     }
 
-    private String move(String currentBoard, String... params) throws DataAccessException {
+    private String move(GameData gameData, String teamColor, String... params) throws DataAccessException {
         return null;
     }
 }
