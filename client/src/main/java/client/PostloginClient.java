@@ -67,7 +67,7 @@ public class PostloginClient {
         gameName.deleteCharAt(gameName.length() - 1);
         int gameID = server.create(authToken, gameName.toString());
         gameIds.put(gameIds.size() + 1, gameID);
-        return "Created game with name " + SET_TEXT_COLOR_RED + gameName + RESET_TEXT_COLOR;
+        return "Created game with name " + SET_TEXT_COLOR_GREEN + gameName + RESET_TEXT_COLOR;
         // throw new DataAccessException(SET_TEXT_COLOR_RED + "Expected: <NAME>" + RESET_TEXT_COLOR);
     }
 
@@ -98,10 +98,10 @@ public class PostloginClient {
         if (blackUsername == null) {
             blackUsername = "Empty";
         }
-        return RESET_TEXT_COLOR + "ID: " + SET_TEXT_COLOR_RED + index + RESET_TEXT_COLOR +
-                " Game name: " + SET_TEXT_COLOR_RED + gameName + RESET_TEXT_COLOR +
-                " White player: " + SET_TEXT_COLOR_RED + whiteUsername + RESET_TEXT_COLOR +
-                " Black player: " + SET_TEXT_COLOR_RED + blackUsername + RESET_TEXT_COLOR;
+        return RESET_TEXT_COLOR + "ID: " + SET_TEXT_COLOR_GREEN + index + RESET_TEXT_COLOR +
+                " Game name: " + SET_TEXT_COLOR_GREEN + gameName + RESET_TEXT_COLOR +
+                " White player: " + SET_TEXT_COLOR_GREEN + whiteUsername + RESET_TEXT_COLOR +
+                " Black player: " + SET_TEXT_COLOR_GREEN + blackUsername + RESET_TEXT_COLOR;
     }
 
     public String join(String authToken, String... params) throws DataAccessException {
@@ -115,7 +115,7 @@ public class PostloginClient {
                 }
                 int gameId = gameIds.get(Integer.parseInt(params[0]));
                 server.join(authToken, gameId, params[1]);
-                return "Joined game " + SET_TEXT_COLOR_RED + params[0] + RESET_TEXT_COLOR;
+                return "Joined game " + params[0];
             }
             throw new DataAccessException(SET_TEXT_COLOR_RED + "Expected: <ID> [WHITE|BLACK]" + RESET_TEXT_COLOR);
         } catch (DataAccessException e) {
