@@ -62,9 +62,6 @@ public class Repl {
                     // Pass in if joining as white or black
                     String listGamesGameId = result.split(" ")[2];
                     GameData gameData = postloginClient.getGameData(listGamesGameId);
-                    System.out.println("Checkpoint1");
-                    System.out.println(gameData.game());
-                    System.out.println("Checkpoint2");
                     runGameplay(gameData, line.split(" ")[2]);
                 } else if (result.split(" ")[0].equals( "Watching")) {
                     String listGamesGameId = result.split(" ")[2];
