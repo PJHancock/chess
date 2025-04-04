@@ -1,6 +1,5 @@
 package client;
 
-import dataaccess.GameDAO;
 import dataaccess.sql.MySqlGameDao;
 import model.GameData;
 import model.results.ListGamesData;
@@ -68,7 +67,6 @@ public class PostloginClient {
         int gameID = server.create(authToken, gameName.toString());
         gameIds.put(gameIds.size() + 1, gameID);
         return "Created game with name " + SET_TEXT_COLOR_GREEN + gameName + RESET_TEXT_COLOR;
-        // throw new DataAccessException(SET_TEXT_COLOR_RED + "Expected: <NAME>" + RESET_TEXT_COLOR);
     }
 
     public String list(String authToken) throws DataAccessException {

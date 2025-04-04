@@ -1,13 +1,12 @@
 package client;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
 import model.GameData;
 import ui.DataAccessException;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 
 import static ui.EscapeSequences.*;
 
@@ -28,7 +27,7 @@ public class GameplayClient {
             return switch (cmd) {
                 case "redraw" -> redraw(gameData, teamColor);
                 case "move" -> move(gameData, teamColor, params);
-                case "highlight" -> highlight(gameData, params);
+                case "highlight" -> highlight(gameData, teamColor, params);
                 case "leave" -> leave();
                 case "resign" -> resign();
                 default -> help();
@@ -41,14 +40,14 @@ public class GameplayClient {
     public String help() {
         return SET_TEXT_COLOR_BLUE + "redraw " +
                 RESET_TEXT_COLOR + "- chess board\n" +
-                SET_TEXT_COLOR_BLUE + "move <x1,y1> <x2,y2> " +
-                RESET_TEXT_COLOR + "- piece from <x1,y1> to <x2,y2>\n" +
-                SET_TEXT_COLOR_BLUE + "highlight <x,y> " +
-                RESET_TEXT_COLOR + "- possible moves from piece at <x1,y1> \n" +
+                SET_TEXT_COLOR_BLUE + "move <a1> <b2> " +
+                RESET_TEXT_COLOR + "- piece from position a1 to b2\n" +
+                SET_TEXT_COLOR_BLUE + "highlight <a1> " +
+                RESET_TEXT_COLOR + "- possible moves from piece at location a1\n" +
                 SET_TEXT_COLOR_BLUE + "leave " +
-                RESET_TEXT_COLOR + "- the game \n" +
+                RESET_TEXT_COLOR + "- the game\n" +
                 SET_TEXT_COLOR_BLUE + "resign " +
-                RESET_TEXT_COLOR + "- if you want to forfeit \n" +
+                RESET_TEXT_COLOR + "- if you want to forfeit\n" +
                 SET_TEXT_COLOR_BLUE + "help " +
                 RESET_TEXT_COLOR + "- with possible commands";
     }
@@ -61,21 +60,54 @@ public class GameplayClient {
         return "You left the game";
     }
 
-    private String highlight(GameData gameData, String[] params) throws DataAccessException {
-        return null;
+    private String highlight(GameData gameData, String teamColor, String... params) throws DataAccessException {
+        try {
+            // Validate the input position (e.g., 'a1', 'h8')
+            char col = params[0].charAt(0);
+            char row = params[0].charAt(1);
+
+            // Ensure the position is within the valid chess range
+            if ((params.length == 1) && (col >= 'a' && col <= 'h') && (row >= '1' && row <= '8')) {
+                // Convert the column and row to board coordinates (1-indexed)
+                int colNum = col - 'a' + 1;  // 'a' → 1, 'h' → 8
+                int rowNum = Character.getNumericValue(row);  // '1' → 1, '8' → 8
+
+                // Create a ChessPosition for the selected piece
+                ChessPosition piecePosition = new ChessPosition(rowNum, colNum);
+
+                // Get all the valid moves for the piece
+                Collection<ChessMove> possibleMoves = gameData.game().validMoves(piecePosition);
+
+                // Return the modified board with highlights
+                return drawBoard(gameData, teamColor, possibleMoves);
+            } else {
+                throw new DataAccessException("Expected: <a1>");
+            }
+        } catch (DataAccessException e) {
+            throw new DataAccessException(SET_TEXT_COLOR_RED + e.getMessage() + RESET_TEXT_COLOR);
+        }
     }
 
     public String redraw(GameData gameData, String teamColor) {
-        return drawBoard(gameData, teamColor);
+        return drawBoard(gameData, teamColor, null);
     }
 
     private String move(GameData gameData, String teamColor, String... params) throws DataAccessException {
         return null;
     }
 
-    private String drawBoard(GameData gameData, String teamColor) {
+    private String drawBoard(GameData gameData, String teamColor, Collection<ChessMove> possibleMoves) {
         ChessBoard board = gameData.game().getBoard();
         StringBuilder boardString = new StringBuilder();
+        Collection<ChessPosition> endPositions = new ArrayList<>();
+        ChessPosition startPosition = new ChessPosition(0,0);
+        if (possibleMoves != null) {
+            for (ChessMove move : possibleMoves) {
+                startPosition = move.getStartPosition();
+                endPositions.add(move.getEndPosition());
+            }
+        }
+
         // Place top columns
         if (teamColor.equals("white")) {
             boardString.append(getWhiteColumns());
@@ -89,13 +121,31 @@ public class GameplayClient {
                 boardString.append(SET_BG_COLOR_WHITE + " ").append(SET_TEXT_COLOR_BLACK).append(i).append(" " + RESET_TEXT_COLOR + RESET_BG_COLOR);
             }
             for (int j = 1; j <= 8; j++) {
-                ChessPiece piece = board.getPiece(new ChessPosition(i,j));
-                if ((i + j) % 2 == 0) {
-                    boardString.append(SET_BG_COLOR_LIGHT_GREY);
-                } else {
-                    boardString.append(SET_BG_COLOR_BLACK);
+                ChessPosition currentPosition = new ChessPosition(i,9-j);
+                if (teamColor.equals("white")) {
+                    currentPosition = new ChessPosition(9-i,j);
                 }
-                boardString.append(" ").append(getPiece(piece)).append(" ");
+                if (endPositions.contains(currentPosition)) {
+                    ChessPiece piece = board.getPiece(currentPosition);
+                    if ((i + j) % 2 == 0) {
+                        boardString.append(SET_BG_COLOR_GREEN);
+                    } else {
+                        boardString.append(SET_BG_COLOR_DARK_GREEN);
+                    }
+                    boardString.append(" ").append(getPiece(piece, true)).append(" ");
+                } else if (startPosition.equals(currentPosition)) {
+                    ChessPiece piece = board.getPiece(currentPosition);
+                    boardString.append(SET_BG_COLOR_YELLOW);
+                    boardString.append(" ").append(getPiece(piece, true)).append(" ");
+                } else {
+                    ChessPiece piece = board.getPiece(currentPosition);
+                    if ((i + j) % 2 == 0) {
+                        boardString.append(SET_BG_COLOR_LIGHT_GREY);
+                    } else {
+                        boardString.append(SET_BG_COLOR_BLACK);
+                    }
+                    boardString.append(" ").append(getPiece(piece, false)).append(" ");
+                }
             }
             if (teamColor.equals("white")) {
                 boardString.append(SET_BG_COLOR_WHITE + " ").append(SET_TEXT_COLOR_BLACK).append(9-i).append(" " + RESET_BG_COLOR + "\n");
@@ -138,7 +188,7 @@ public class GameplayClient {
                 "   " + RESET_BG_COLOR + RESET_TEXT_COLOR + "\n";
     }
 
-    private String getPiece(ChessPiece piece) {
+    private String getPiece(ChessPiece piece, boolean highlight) {
         StringBuilder pieceString = new StringBuilder();
         if (piece == null) {
             return EMPTY;
@@ -146,7 +196,11 @@ public class GameplayClient {
         ChessPiece.PieceType pieceType = piece.getPieceType();
         ChessGame.TeamColor teamColor = piece.getTeamColor();
         if (teamColor.equals(ChessGame.TeamColor.WHITE)) {
-            pieceString.append(SET_TEXT_COLOR_RED);
+            if (highlight) {
+                pieceString.append(SET_TEXT_COLOR_BLACK);
+            } else {
+                pieceString.append(SET_TEXT_COLOR_RED);
+            }
             if (pieceType.equals(ChessPiece.PieceType.PAWN)) {
                 pieceString.append(WHITE_PAWN);
             } else if (pieceType.equals(ChessPiece.PieceType.ROOK)) {
@@ -160,10 +214,12 @@ public class GameplayClient {
             } else {
                 pieceString.append(WHITE_KING);
             }
-            pieceString.append(RESET_TEXT_COLOR);
-            return pieceString.toString();
         } else {
-            pieceString.append(SET_TEXT_COLOR_BLUE);
+            if (highlight) {
+                pieceString.append(SET_TEXT_COLOR_BLACK);
+            } else {
+                pieceString.append(SET_TEXT_COLOR_BLUE);
+            }
             if (pieceType.equals(ChessPiece.PieceType.PAWN)) {
                 pieceString.append(BLACK_PAWN);
             } else if (pieceType.equals(ChessPiece.PieceType.ROOK)) {
@@ -177,8 +233,8 @@ public class GameplayClient {
             } else {
                 pieceString.append(BLACK_KING);
             }
-            pieceString.append(RESET_TEXT_COLOR);
-            return pieceString.toString();
         }
+        pieceString.append(RESET_TEXT_COLOR);
+        return pieceString.toString();
     }
 }
