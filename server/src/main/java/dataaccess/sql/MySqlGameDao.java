@@ -167,15 +167,23 @@ public class MySqlGameDao implements GameDAO {
                 if (game == null) {
                     throw new dataaccess.DataAccessException("Error: Game not found");
                 }
-                var statement2 = getString(teamColor, game);
-                try (var preparedStatement2 = conn.prepareStatement(statement2)) {
-                    preparedStatement2.setString(1, username);
-                    preparedStatement2.setInt(2, gameID);
-                    preparedStatement2.executeUpdate();
-                } catch (SQLException e) {
-                    throw new dataaccess.DataAccessException(String.format("Unable to update game: %s", e.getMessage()));
+                if (username.equals(game.whiteUsername()) || username.equals(game.blackUsername())) {
+                    // Check to see if it is their turn
+                    if (username.equals(game.whiteUsername()) && !game.game().getTeamTurn().equals(teamColor)) {
+                        throw new dataaccess.DataAccessException("It is not your turn");
+                    } else if (username.equals(game.blackUsername()) && !game.game().getTeamTurn().equals(teamColor)) {
+                        throw new dataaccess.DataAccessException("It is not your turn");
+                    }
+                } else {
+                    var statement2 = getString(teamColor, game);
+                    try (var preparedStatement2 = conn.prepareStatement(statement2)) {
+                        preparedStatement2.setString(1, username);
+                        preparedStatement2.setInt(2, gameID);
+                        preparedStatement2.executeUpdate();
+                    } catch (SQLException e) {
+                        throw new dataaccess.DataAccessException(String.format("Unable to update game: %s", e.getMessage()));
+                    }
                 }
-
             }
         } catch (SQLException e) {
             throw new dataaccess.DataAccessException(String.format("Unable to update game: %s", e.getMessage()));

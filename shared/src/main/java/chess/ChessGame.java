@@ -97,7 +97,7 @@ public class ChessGame {
                 throw new InvalidMoveException("Error: Invalid move");
             }
         } else {
-            throw new InvalidMoveException("Error: Invalid move");
+            throw new InvalidMoveException("Not your piece");
         }
     }
 
