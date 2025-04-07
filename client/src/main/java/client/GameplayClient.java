@@ -8,6 +8,7 @@ import ui.DataAccessException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import static ui.EscapeSequences.*;
 
@@ -64,6 +65,7 @@ public class GameplayClient {
 
     private String highlight(GameData gameData, String teamColor, String... params) throws DataAccessException {
         try {
+            Collection<ChessMove> possibleMoves;
             // Validate the input position (e.g., 'a1', 'h8')
             if ((params.length != 1) || (params[0].length() != 2)) {
                 throw new DataAccessException("Expected: <a1>");
@@ -80,11 +82,13 @@ public class GameplayClient {
                 ChessPosition piecePosition = new ChessPosition(rowNum, colNum);
 
                 // Get all the valid moves for the piece
-                Collection<ChessMove> possibleMoves = gameData.game().validMoves(piecePosition);
-                possibleMoves.add(new ChessMove(piecePosition, piecePosition, null));
-
-                // Return the modified board with highlights
-                return drawBoard(gameData, teamColor, possibleMoves);
+                possibleMoves = gameData.game().validMoves(piecePosition);
+                if (possibleMoves == null) {
+                    return String.format("No valid moves from " + col + "," + row);
+                } else {
+                    // Return the modified board with highlights
+                    return drawBoard(gameData, teamColor, possibleMoves);
+                }
             } else {
                 throw new DataAccessException("Expected: <a1>");
             }

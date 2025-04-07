@@ -166,16 +166,8 @@ public class MySqlGameDao implements GameDAO {
                 }
                 if (game == null) {
                     throw new dataaccess.DataAccessException("Error: Game not found");
-                }
-                if (username.equals(game.whiteUsername()) || username.equals(game.blackUsername())) {
-                    // Check to see if it is their turn
-                    if (username.equals(game.whiteUsername()) && !game.game().getTeamTurn().equals(teamColor)) {
-                        throw new dataaccess.DataAccessException("It is not your turn");
-                    } else if (username.equals(game.blackUsername()) && !game.game().getTeamTurn().equals(teamColor)) {
-                        throw new dataaccess.DataAccessException("It is not your turn");
-                    }
                 } else {
-                    var statement2 = getString(teamColor, game);
+                    var statement2 = updateUsernameGetString(teamColor, game);
                     try (var preparedStatement2 = conn.prepareStatement(statement2)) {
                         preparedStatement2.setString(1, username);
                         preparedStatement2.setInt(2, gameID);
@@ -190,7 +182,7 @@ public class MySqlGameDao implements GameDAO {
         }
     }
 
-    private static String getString(ChessGame.TeamColor teamColor, GameData game) throws dataaccess.DataAccessException {
+    private static String updateUsernameGetString(ChessGame.TeamColor teamColor, GameData game) throws dataaccess.DataAccessException {
         var statement2 = "";
         if (teamColor == ChessGame.TeamColor.WHITE) {
             if (game.whiteUsername() != null) {
