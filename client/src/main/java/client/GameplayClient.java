@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import static ui.EscapeSequences.*;
+import static ui.Repl.SCANNER;
 
 public class GameplayClient {
     private final ServerFacade server;
@@ -55,12 +56,26 @@ public class GameplayClient {
     }
 
     private String resign() {
-        return "Do you want to resign? (Y)es/(N)o ";
+        System.out.print("Do you want to resign? (Y)es/(N)o: ");
+        String confirmation = SCANNER.nextLine();
+
+        while (true) {
+            if (confirmation.equalsIgnoreCase("y")) {
+                return "You resigned";
+            } else if (confirmation.equalsIgnoreCase("n")) {
+                return "You did not resign";
+            } else {
+                System.out.print("Invalid input. Please enter Y or N: ");
+                confirmation = SCANNER.nextLine();
+            }
+        }
     }
 
     private String leave(GameData gameData, String teamColor) throws dataaccess.DataAccessException {
         // Remove player from game
-        if (teamColor.equalsIgnoreCase("white")) {
+        if (teamColor == null) {
+            return "You stopped watching the game";
+        } else if (teamColor.equalsIgnoreCase("white")) {
             gameDao.updateGameUsername(null, ChessGame.TeamColor.WHITE, gameData.gameID());
         } else if (teamColor.equalsIgnoreCase("black")){
             gameDao.updateGameUsername(null, ChessGame.TeamColor.BLACK, gameData.gameID());

@@ -13,7 +13,7 @@ public class Repl {
     private final PreloginClient preloginClient;
     private final PostloginClient postloginClient;
     private final GameplayClient gameplayClient;
-    private static final Scanner SCANNER = new Scanner(System.in);
+    public static final Scanner SCANNER = new Scanner(System.in);
     private static String result = "";
 
 
@@ -77,23 +77,13 @@ public class Repl {
 
     public void runGameplay(GameData gameData, String teamColor) {
         System.out.print("\n" + gameplayClient.redraw(gameData, teamColor));
-        while (!result.equals("You left the game")) {
+        while (!(result.equals("You left the game") || result.equals("You stopped watching the game"))) {
             printGameplayPrompt();
             String line = SCANNER.nextLine();
             System.out.print(RESET_TEXT_COLOR);
             try {
                 result = gameplayClient.eval(line, gameData, teamColor);
                 System.out.print(result);
-                if (result.equals("Do you want to resign? (Y)es/(N)o ")) {
-                    String confirmation = SCANNER.nextLine();
-                    if (confirmation.equalsIgnoreCase("y")) {
-                        System.out.print("You resigned");
-                    } else if (confirmation.equalsIgnoreCase("n")){
-                        System.out.print("You did not resign");
-                    } else {
-                        System.out.print("Not a valid input. Expected 'Y' or 'N'");
-                    }
-                }
             } catch (Throwable e) {
                 var msg = e.toString();
                 System.out.print(msg);
