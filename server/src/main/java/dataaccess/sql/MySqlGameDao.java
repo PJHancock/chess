@@ -184,12 +184,12 @@ public class MySqlGameDao implements GameDAO {
     private static String getUsernameUpdateQuery(String username, ChessGame.TeamColor teamColor, GameData game) throws dataaccess.DataAccessException {
         if (teamColor == ChessGame.TeamColor.WHITE) {
             if (username != null && game.whiteUsername() != null && !Objects.equals(username, game.whiteUsername())) {
-                throw new dataaccess.DataAccessException("Error: white username already taken");
+                throw new dataaccess.DataAccessException("Error: already taken");
             }
             return "UPDATE game SET whiteUsername=? WHERE gameID=?";
         } else {
             if (username != null && game.blackUsername() != null && !Objects.equals(username, game.blackUsername())) {
-                throw new dataaccess.DataAccessException("Error: black username already taken");
+                throw new dataaccess.DataAccessException("Error: already taken");
             }
             return "UPDATE game SET blackUsername=? WHERE gameID=?";
         }

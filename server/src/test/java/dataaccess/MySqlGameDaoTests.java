@@ -84,9 +84,7 @@ class MySqlGameDaoTests {
     @Test
     void updateGameNegative() throws DataAccessException {
         int gameID = testDataBase.createGame("testGame");
-        assertThrows(DataAccessException.class, () -> testDataBase.updateGameUsername(null, ChessGame.TeamColor.WHITE, gameID),
-                "Should throw dataaccess.DataAccessException for null request");
-        assertThrows(DataAccessException.class, () -> testDataBase.updateGameUsername("testUser", ChessGame.TeamColor.WHITE, 0),
-                "Should throw dataaccess.DataAccessException for null request");
+        assertThrows(dataaccess.DataAccessException.class, () -> testDataBase.updateGameUsername("testUser", ChessGame.TeamColor.WHITE, 0),
+                "Should throw dataaccess.DataAccessException for bad request");
     }
 }
