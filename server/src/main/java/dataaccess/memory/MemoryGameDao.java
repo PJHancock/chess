@@ -49,7 +49,7 @@ public class MemoryGameDao implements GameDAO {
         return gameList;
     }
 
-    public void updateGame(String username, ChessGame.TeamColor teamColor, int gameID) throws DataAccessException {
+    public void updateGameUsername(String username, ChessGame.TeamColor teamColor, int gameID) throws DataAccessException {
         GameData game = games.get(gameID);
         if (game == null) {
             throw new DataAccessException("Error: already taken");

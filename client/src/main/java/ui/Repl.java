@@ -66,7 +66,7 @@ public class Repl {
                 } else if (result.split(" ")[0].equals( "Watching")) {
                     String listGamesGameId = result.split(" ")[2];
                     GameData gameData = postloginClient.getGameData(listGamesGameId);
-                    runGameplay(gameData, "white");
+                    runGameplay(gameData, null);
                 }
             } catch (Throwable e) {
                 var msg = e.toString();

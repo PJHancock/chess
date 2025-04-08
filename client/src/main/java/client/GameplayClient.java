@@ -8,7 +8,6 @@ import ui.DataAccessException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 import static ui.EscapeSequences.*;
 
@@ -31,11 +30,11 @@ public class GameplayClient {
                 case "redraw" -> redraw(gameData, teamColor);
                 case "move" -> move(gameData, teamColor, params);
                 case "highlight" -> highlight(gameData, teamColor, params);
-                case "leave" -> leave();
+                case "leave" -> leave(gameData, teamColor);
                 case "resign" -> resign();
                 default -> help();
             };
-        } catch (DataAccessException ex) {
+        } catch (DataAccessException | dataaccess.DataAccessException ex) {
             return SET_TEXT_COLOR_RED + ex.getMessage() + RESET_TEXT_COLOR;
         }
     }
@@ -59,7 +58,13 @@ public class GameplayClient {
         return "Do you want to resign? (Y)es/(N)o ";
     }
 
-    private String leave() {
+    private String leave(GameData gameData, String teamColor) throws dataaccess.DataAccessException {
+        // Remove player from game
+        if (teamColor.equalsIgnoreCase("white")) {
+            gameDao.updateGameUsername(null, ChessGame.TeamColor.WHITE, gameData.gameID());
+        } else if (teamColor.equalsIgnoreCase("black")){
+            gameDao.updateGameUsername(null, ChessGame.TeamColor.BLACK, gameData.gameID());
+        }
         return "You left the game";
     }
 
@@ -84,7 +89,9 @@ public class GameplayClient {
                 // Get all the valid moves for the piece
                 possibleMoves = gameData.game().validMoves(piecePosition);
                 if (possibleMoves == null) {
-                    return String.format("No valid moves from " + col + "," + row);
+                    throw new DataAccessException("No piece located at " + col + row);
+                } else if (possibleMoves.isEmpty()){
+                    throw new DataAccessException("No valid moves from piece located at " + col + row);
                 } else {
                     // Return the modified board with highlights
                     return drawBoard(gameData, teamColor, possibleMoves);
@@ -102,68 +109,66 @@ public class GameplayClient {
     }
 
     private String move(GameData gameData, String teamColor, String... params) throws DataAccessException {
-//        try {
-//            // Validate that it is your turn
-//            if (teamColor.equals("white")) {
-//                if (gameData.game().getTeamTurn() != ChessGame.TeamColor.WHITE) {
-//                    throw new DataAccessException("It is not your turn!");
-//                }
-//            } else if (gameData.game().getTeamTurn() != ChessGame.TeamColor.BLACK) {
-//                    throw new DataAccessException("It is not your turn!");
-//            }
-//            // Validate the input position (e.g., 'a1', 'h8')
-//            ChessPiece.PieceType promotionPiece = null;
-//            if ((params.length < 2 || params.length > 3) || (params[0].length() != 2) || params[1].length() != 2) {
-//                throw new DataAccessException("Expected: <a1> <b2> [promotion piece type]");
-//            }
-//            if (params.length == 3) {
-//                if (Arrays.stream(ChessPiece.PieceType.values())
-//                        .noneMatch(c -> c.name().equalsIgnoreCase(params[2]))) {
-//                    throw new DataAccessException("Not valid promotion piece");
-//                }
-//                promotionPiece = ChessPiece.PieceType.valueOf(params[2].toUpperCase());
-//            }
-//            char col_start = params[0].charAt(0);
-//            char row_start = params[0].charAt(1);
-//            char col_end = params[1].charAt(0);
-//            char row_end = params[1].charAt(1);
-//            // Ensure the position is within the valid chess range
-//            if ((col_start >= 'a' && col_start <= 'h') && (row_start >= '1' && row_start <= '8') &&
-//                    (col_end >= 'a' && col_end <= 'h') && (row_end >= '1' && row_end <= '8')) {
-//                // Convert the column and row to board coordinates (1-indexed)
-//                int colNumStart = col_start - 'a' + 1;  // 'a' → 1, 'h' → 8
-//                int rowNumStart = Character.getNumericValue(row_start);  // '1' → 1, '8' → 8
-//                int colNumEnd = col_end - 'a' + 1;  // 'a' → 1, 'h' → 8
-//                int rowNumEnd = Character.getNumericValue(row_end);  // '1' → 1, '8' → 8
-//
-//                // Create a ChessPosition for the selected piece
-//                ChessPosition pieceStartPosition = new ChessPosition(rowNumStart, colNumStart);
-//                ChessPosition pieceEndPosition = new ChessPosition(rowNumEnd, colNumEnd);
-//                ChessMove desiredMove = new ChessMove(pieceStartPosition, pieceEndPosition, promotionPiece);
-//                // Get all the valid moves for the piece
-//                Collection<ChessMove> possibleMoves = gameData.game().validMoves(pieceStartPosition);
-//                if (possibleMoves == null) {
-//                    throw new DataAccessException("That piece has no valid moves");
-//                }
-//                if (possibleMoves.contains(desiredMove)) {
-//                    gameData.game().makeMove(desiredMove);
-////                    if (teamColor.equals("white")) {
-////                        gameDao.updateGame(gameData.whiteUsername(), ChessGame.TeamColor.WHITE, gameData.gameID());
-////                    } else {
-////                        gameDao.updateGame(gameData.blackUsername(), ChessGame.TeamColor.BLACK, gameData.gameID());
-////                    }
-//                } else {
-//                    throw new DataAccessException("Not a valid move");
-//                }
-//                // return the new board
-//                return drawBoard(gameData, teamColor, null);
-//            } else {
-//                throw new DataAccessException("Expected: <a1> <b2>");
-//            }
-//        } catch (DataAccessException | InvalidMoveException e) {
-//            throw new DataAccessException(SET_TEXT_COLOR_RED + e.getMessage() + RESET_TEXT_COLOR);
-//        }
-        return "";
+        try {
+            // Validate that it is your turn
+            if (teamColor == null) {
+                throw new DataAccessException("You are watching, not playing the game!");
+            }
+            if (teamColor.equals("white")) {
+                if (gameData.game().getTeamTurn() != ChessGame.TeamColor.WHITE) {
+                    throw new DataAccessException("It is not your turn!");
+                }
+            } else if (gameData.game().getTeamTurn() != ChessGame.TeamColor.BLACK) {
+                    throw new DataAccessException("It is not your turn!");
+            }
+            // Validate the input position (e.g., 'a1', 'h8')
+            ChessPiece.PieceType promotionPiece = null;
+            if ((params.length < 2 || params.length > 3) || (params[0].length() != 2) || params[1].length() != 2) {
+                throw new DataAccessException("Expected: <a1> <b2> [promotion piece type]");
+            }
+            if (params.length == 3) {
+                if (Arrays.stream(ChessPiece.PieceType.values())
+                        .noneMatch(c -> c.name().equalsIgnoreCase(params[2]))) {
+                    throw new DataAccessException("Not valid promotion piece");
+                }
+                promotionPiece = ChessPiece.PieceType.valueOf(params[2].toUpperCase());
+            }
+            char col_start = params[0].charAt(0);
+            char row_start = params[0].charAt(1);
+            char col_end = params[1].charAt(0);
+            char row_end = params[1].charAt(1);
+            // Ensure the position is within the valid chess range
+            if ((col_start >= 'a' && col_start <= 'h') && (row_start >= '1' && row_start <= '8') &&
+                    (col_end >= 'a' && col_end <= 'h') && (row_end >= '1' && row_end <= '8')) {
+                // Convert the column and row to board coordinates (1-indexed)
+                int colNumStart = col_start - 'a' + 1;  // 'a' → 1, 'h' → 8
+                int rowNumStart = Character.getNumericValue(row_start);  // '1' → 1, '8' → 8
+                int colNumEnd = col_end - 'a' + 1;  // 'a' → 1, 'h' → 8
+                int rowNumEnd = Character.getNumericValue(row_end);  // '1' → 1, '8' → 8
+
+                // Create a ChessPosition for the selected piece
+                ChessPosition pieceStartPosition = new ChessPosition(rowNumStart, colNumStart);
+                ChessPosition pieceEndPosition = new ChessPosition(rowNumEnd, colNumEnd);
+                ChessMove desiredMove = new ChessMove(pieceStartPosition, pieceEndPosition, promotionPiece);
+                // Get all the valid moves for the piece
+                Collection<ChessMove> possibleMoves = gameData.game().validMoves(pieceStartPosition);
+                if (possibleMoves == null) {
+                    throw new DataAccessException("That piece has no valid moves");
+                }
+                if (possibleMoves.contains(desiredMove)) {
+                    gameData.game().makeMove(desiredMove);
+                    gameDao.updateGameBoard(gameData.game(), gameData.gameID());
+                } else {
+                    throw new DataAccessException("Not a valid move");
+                }
+                // return the new board
+                return drawBoard(gameData, teamColor, null);
+            } else {
+                throw new DataAccessException("Expected: <a1> <b2>");
+            }
+        } catch (DataAccessException | InvalidMoveException | dataaccess.DataAccessException e) {
+            throw new DataAccessException(SET_TEXT_COLOR_RED + e.getMessage() + RESET_TEXT_COLOR);
+        }
     }
 
     private String drawBoard(GameData gameData, String teamColor, Collection<ChessMove> possibleMoves) {
@@ -179,20 +184,20 @@ public class GameplayClient {
         }
 
         // Place top columns
-        if (teamColor.equals("white")) {
+        if (teamColor == null || teamColor.equals("white")) {
             boardString.append(getWhiteColumns());
         } else {
             boardString.append(getBlackColumns());
         }
         for (int i = 1; i <= 8; i++) {
-            if (teamColor.equals("white")) {
+            if (teamColor == null || teamColor.equals("white")) {
                 boardString.append(SET_BG_COLOR_WHITE + " ").append(SET_TEXT_COLOR_BLACK).append(9-i).append(" " + RESET_TEXT_COLOR + RESET_BG_COLOR);
             } else {
                 boardString.append(SET_BG_COLOR_WHITE + " ").append(SET_TEXT_COLOR_BLACK).append(i).append(" " + RESET_TEXT_COLOR + RESET_BG_COLOR);
             }
             for (int j = 1; j <= 8; j++) {
                 ChessPosition currentPosition = new ChessPosition(i,9-j);
-                if (teamColor.equals("white")) {
+                if (teamColor == null || teamColor.equals("white")) {
                     currentPosition = new ChessPosition(9-i,j);
                 }
                 if (startPosition.equals(currentPosition)) {
@@ -217,14 +222,14 @@ public class GameplayClient {
                     boardString.append(" ").append(getPiece(piece, false)).append(" ");
                 }
             }
-            if (teamColor.equals("white")) {
+            if (teamColor == null || teamColor.equals("white")) {
                 boardString.append(SET_BG_COLOR_WHITE + " ").append(SET_TEXT_COLOR_BLACK).append(9-i).append(" " + RESET_BG_COLOR + "\n");
             } else {
                 boardString.append(SET_BG_COLOR_WHITE + " ").append(SET_TEXT_COLOR_BLACK).append(i).append(" " + RESET_BG_COLOR + "\n");
             }
             }
         // Place bottom columns
-        if (teamColor.equals("white")) {
+        if (teamColor == null || teamColor.equals("white")) {
             boardString.append(getWhiteColumns());
         } else {
             boardString.append(getBlackColumns());

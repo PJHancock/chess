@@ -58,7 +58,7 @@ public class ChessService {
             throw new dataaccess.DataAccessException("Error: unauthorized");
         }
         String username = auth.getUser(joinGameRequest.authToken());
-        game.updateGame(username, joinGameRequest.playerColor(), joinGameRequest.gameID());
+        game.updateGameUsername(username, joinGameRequest.playerColor(), joinGameRequest.gameID());
         return null;
     }
 

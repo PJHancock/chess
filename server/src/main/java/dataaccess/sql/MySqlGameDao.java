@@ -146,10 +146,7 @@ public class MySqlGameDao implements GameDAO {
         return games;
     }
 
-    public void updateGame(String username, ChessGame.TeamColor teamColor, int gameID) throws dataaccess.DataAccessException {
-        if (username == null) {
-            throw new dataaccess.DataAccessException("Invalid request");
-        }
+    public void updateGameUsername(String username, ChessGame.TeamColor teamColor, int gameID) throws dataaccess.DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
             var statement = "SELECT gameID, whiteUsername, blackUsername, gameName, chessGame FROM game WHERE gameID = ?";
             try (var preparedStatement = conn.prepareStatement(statement)) {
@@ -164,37 +161,52 @@ public class MySqlGameDao implements GameDAO {
                     var chessGame = new Gson().fromJson(json, ChessGame.class);
                     game = new GameData(gameID, whiteUsername, blackUsername, gameName, chessGame);
                 }
+
                 if (game == null) {
                     throw new dataaccess.DataAccessException("Error: Game not found");
-                } else {
-                    var statement2 = updateUsernameGetString(teamColor, game);
-                    try (var preparedStatement2 = conn.prepareStatement(statement2)) {
-                        preparedStatement2.setString(1, username);
-                        preparedStatement2.setInt(2, gameID);
-                        preparedStatement2.executeUpdate();
-                    } catch (SQLException e) {
-                        throw new dataaccess.DataAccessException(String.format("Unable to update game: %s", e.getMessage()));
-                    }
+                }
+
+                // Update username if needed
+                var statement2 = getUsernameUpdateQuery(username, teamColor, game);
+                try (var preparedStatement2 = conn.prepareStatement(statement2)) {
+                    preparedStatement2.setString(1, username);
+                    preparedStatement2.setInt(2, gameID);
+                    preparedStatement2.executeUpdate();
+                } catch (SQLException e) {
+                    throw new dataaccess.DataAccessException("Unable to update game: " + e.getMessage());
                 }
             }
         } catch (SQLException e) {
-            throw new dataaccess.DataAccessException(String.format("Unable to update game: %s", e.getMessage()));
+            throw new dataaccess.DataAccessException("Unable to update game: " + e.getMessage());
         }
     }
 
-    private static String updateUsernameGetString(ChessGame.TeamColor teamColor, GameData game) throws dataaccess.DataAccessException {
-        var statement2 = "";
+    private static String getUsernameUpdateQuery(String username, ChessGame.TeamColor teamColor, GameData game) throws dataaccess.DataAccessException {
         if (teamColor == ChessGame.TeamColor.WHITE) {
-            if (game.whiteUsername() != null) {
-                throw new dataaccess.DataAccessException("Error: already taken");
+            if (username != null && game.whiteUsername() != null && !Objects.equals(username, game.whiteUsername())) {
+                throw new dataaccess.DataAccessException("Error: white username already taken");
             }
-            statement2 = "UPDATE game SET whiteUsername=? WHERE gameID=?";
+            return "UPDATE game SET whiteUsername=? WHERE gameID=?";
         } else {
-            if (game.blackUsername() != null) {
-                throw new DataAccessException("Error: already taken");
+            if (username != null && game.blackUsername() != null && !Objects.equals(username, game.blackUsername())) {
+                throw new dataaccess.DataAccessException("Error: black username already taken");
             }
-            statement2 = "UPDATE game SET blackUsername=? WHERE gameID=?";
+            return "UPDATE game SET blackUsername=? WHERE gameID=?";
         }
-        return statement2;
+    }
+
+    public void updateGameBoard(ChessGame updatedGame, int gameID) throws dataaccess.DataAccessException {
+        var statement = "UPDATE game SET chessGame=? WHERE gameID=?";
+        try (var conn = DatabaseManager.getConnection();
+             var preparedStatement = conn.prepareStatement(statement)) {
+
+            String serializedGame = new Gson().toJson(updatedGame);
+            preparedStatement.setString(1, serializedGame);
+            preparedStatement.setInt(2, gameID);
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new dataaccess.DataAccessException("Unable to update game board: " + e.getMessage());
+        }
     }
 }
