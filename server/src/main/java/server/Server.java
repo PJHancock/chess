@@ -24,7 +24,7 @@ public class Server {
 
     // Sql Dao implementation
     public static ChessService chessService;
-    private final WebSocketHandler webSocketHandler = new WebSocketHandler();
+    public WebSocketHandler webSocketHandler = new WebSocketHandler();
 
     static {
         try {

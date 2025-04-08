@@ -1,9 +1,12 @@
 package client;
 
 import chess.*;
+import dataaccess.sql.MySqlAuthDao;
 import dataaccess.sql.MySqlGameDao;
 import model.GameData;
 import ui.DataAccessException;
+import websocket.NotificationHandler;
+import websocket.WebSocketFacade;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,16 +16,22 @@ import static ui.EscapeSequences.*;
 import static ui.Repl.SCANNER;
 
 public class GameplayClient {
-    private final ServerFacade server;
-    // private final String serverUrl;
+    private final String serverUrl;
+    private final NotificationHandler notificationHandler;
     private final MySqlGameDao gameDao = new MySqlGameDao();
 
-    public GameplayClient(String serverUrl) throws dataaccess.DataAccessException {
-        server = new ServerFacade(serverUrl);
-        // this.serverUrl = serverUrl;
+    public GameplayClient(String serverUrl, NotificationHandler notificationHandler) throws dataaccess.DataAccessException, DataAccessException {
+        ServerFacade server = new ServerFacade(serverUrl);
+        this.serverUrl = serverUrl;
+        this.notificationHandler = notificationHandler;
     }
 
-    public String eval(String input, GameData gameData, String teamColor) {
+    public void connectWebsocket(String authToken, int gameId) throws DataAccessException, dataaccess.DataAccessException {
+        WebSocketFacade ws = new WebSocketFacade(serverUrl, notificationHandler);
+        ws.connectToGame(authToken, gameId);
+    }
+
+    public String eval(String input, String authToken, GameData gameData, String teamColor) {
         try {
             var tokens = input.toLowerCase().split(" ");
             var cmd = (tokens.length > 0) ? tokens[0] : "help";

@@ -5,11 +5,13 @@ import client.PostloginClient;
 import client.PreloginClient;
 import dataaccess.DataAccessException;
 import model.GameData;
+import websocket.NotificationHandler;
+import websocket.WebSocketFacade;
 
 import java.util.Scanner;
 import static ui.EscapeSequences.*;
 
-public class Repl {
+public class Repl implements NotificationHandler {
     private final PreloginClient preloginClient;
     private final PostloginClient postloginClient;
     private final GameplayClient gameplayClient;
@@ -17,10 +19,15 @@ public class Repl {
     private static String result = "";
 
 
-    public Repl(String serverUrl) throws DataAccessException {
+    public Repl(String serverUrl) throws DataAccessException, ui.DataAccessException {
         preloginClient = new PreloginClient(serverUrl);
         postloginClient = new PostloginClient(serverUrl);
-        gameplayClient = new GameplayClient(serverUrl);
+        gameplayClient = new GameplayClient(serverUrl, this);
+    }
+
+    public void notify(NotificationHandler notification) {
+        System.out.println(SET_TEXT_COLOR_RED + notification.toString() + RESET_TEXT_COLOR);
+        printGameplayPrompt();
     }
 
     public void runPrelogin() {
@@ -62,11 +69,13 @@ public class Repl {
                     // Pass in if joining as white or black
                     String listGamesGameId = result.split(" ")[2];
                     GameData gameData = postloginClient.getGameData(listGamesGameId);
-                    runGameplay(gameData, line.split(" ")[2]);
+                    gameplayClient.connectWebsocket(authToken, gameData.gameID());
+                    runGameplay(authToken, gameData, line.split(" ")[2]);
                 } else if (result.split(" ")[0].equals( "Watching")) {
                     String listGamesGameId = result.split(" ")[2];
                     GameData gameData = postloginClient.getGameData(listGamesGameId);
-                    runGameplay(gameData, null);
+                    gameplayClient.connectWebsocket(authToken, gameData.gameID());
+                    runGameplay(authToken, gameData, null);
                 }
             } catch (Throwable e) {
                 var msg = e.toString();
@@ -75,14 +84,15 @@ public class Repl {
         }
     }
 
-    public void runGameplay(GameData gameData, String teamColor) {
+    public void runGameplay(String authToken, GameData gameData, String teamColor) {
         System.out.print("\n" + gameplayClient.redraw(gameData, teamColor));
+
         while (!(result.equals("You left the game") || result.equals("You stopped watching the game"))) {
             printGameplayPrompt();
             String line = SCANNER.nextLine();
             System.out.print(RESET_TEXT_COLOR);
             try {
-                result = gameplayClient.eval(line, gameData, teamColor);
+                result = gameplayClient.eval(line, authToken, gameData, teamColor);
                 System.out.print(result);
             } catch (Throwable e) {
                 var msg = e.toString();

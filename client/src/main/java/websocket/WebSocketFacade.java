@@ -13,10 +13,10 @@ import java.net.URISyntaxException;
 public class WebSocketFacade extends Endpoint {
 
     Session session;
-    CommandHandler commandHandler;
+    NotificationHandler commandHandler;
 
 
-    public WebSocketFacade(String url, CommandHandler commandHandler) throws DataAccessException {
+    public WebSocketFacade(String url, NotificationHandler commandHandler) throws DataAccessException {
         try {
             url = url.replace("http", "ws");
             URI socketURI = new URI(url + "/ws");
@@ -30,7 +30,7 @@ public class WebSocketFacade extends Endpoint {
                 @Override
                 public void onMessage(String message) {
                     UserGameCommand.CommandType command = new Gson().fromJson(message, UserGameCommand.CommandType.class);
-                    CommandHandler.notify(command);
+                    NotificationHandler.notify(command);
                 }
             });
         } catch (DeploymentException | IOException | URISyntaxException ex) {
