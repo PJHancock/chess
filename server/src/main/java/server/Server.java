@@ -9,6 +9,7 @@ import dataaccess.sql.MySqlGameDao;
 import dataaccess.sql.MySqlUserDao;
 import model.requests.*;
 import model.results.*;
+import server.websocket.WebSocketHandler;
 import service.ChessService;
 import spark.*;
 import spark.Request;
@@ -23,6 +24,7 @@ public class Server {
 
     // Sql Dao implementation
     public static ChessService chessService;
+    private final WebSocketHandler webSocketHandler = new WebSocketHandler();
 
     static {
         try {
@@ -37,6 +39,7 @@ public class Server {
 
         Spark.staticFiles.location("web");
 
+        Spark.webSocket("/ws", webSocketHandler);
         // Register your endpoints and handle exceptions here.
         Spark.delete("/db", Server::clearHandler);
         Spark.post("/user", Server::registerHandler);
