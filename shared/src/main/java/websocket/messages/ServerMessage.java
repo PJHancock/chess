@@ -12,6 +12,7 @@ import java.util.Objects;
  */
 public class ServerMessage {
     ServerMessageType serverMessageType;
+    String errorMessage;
     String message;
     ChessGame game;
 
@@ -21,26 +22,30 @@ public class ServerMessage {
         NOTIFICATION
     }
 
+    public ServerMessage(ServerMessageType type, String message) {
+        this.serverMessageType = type;
+        if (type.equals(ServerMessageType.ERROR)) {
+            this.errorMessage = message;
+        } else {
+            this.message = message;
+        }
+    }
+
     public ServerMessage(ServerMessageType type, ChessGame game) {
         this.serverMessageType = type;
         this.game = game;
-    }
-
-    public ServerMessage(ServerMessageType type, String message) {
-        this.serverMessageType = type;
-        this.message = message;
     }
 
     public ServerMessageType getServerMessageType() {
         return this.serverMessageType;
     }
 
-    public String getMessage() {
-        return this.message;
-    }
-
     public ChessGame getGame() {
         return this.game;
+    }
+
+    public void setErrorMessage(String newErrorMessage) {
+        errorMessage = newErrorMessage;
     }
 
     public String toString() {
