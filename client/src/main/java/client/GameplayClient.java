@@ -1,8 +1,6 @@
 package client;
 
 import chess.*;
-import dataaccess.sql.MySqlAuthDao;
-import dataaccess.sql.MySqlGameDao;
 import model.GameData;
 import ui.DataAccessException;
 import websocket.NotificationHandler;
@@ -19,17 +17,15 @@ import static ui.Repl.SCANNER;
 public class GameplayClient {
     private final String serverUrl;
     private final NotificationHandler notificationHandler;
-    private final MySqlGameDao gameDao = new MySqlGameDao();
-    private final MySqlAuthDao authDao = new MySqlAuthDao();
     private WebSocketFacade ws;
 
-    public GameplayClient(String serverUrl, NotificationHandler notificationHandler) throws dataaccess.DataAccessException, DataAccessException {
+    public GameplayClient(String serverUrl, NotificationHandler notificationHandler) throws dataaccess.DataAccessException {
         ServerFacade server = new ServerFacade(serverUrl);
         this.serverUrl = serverUrl;
         this.notificationHandler = notificationHandler;
     }
 
-    public void connectWebsocket(String authToken, int gameId) throws DataAccessException, dataaccess.DataAccessException {
+    public void connectWebsocket(String authToken, int gameId) throws DataAccessException {
         ws = new WebSocketFacade(serverUrl, notificationHandler);
         ws.connectToGame(authToken, gameId);
     }
@@ -41,17 +37,17 @@ public class GameplayClient {
         }
     }
 
-    public String eval(String input, String authToken, GameData gameData, String teamColor) {
+    public String eval(String input, String authToken, int gameId, String teamColor) {
         try {
             var tokens = input.toLowerCase().split(" ");
             var cmd = (tokens.length > 0) ? tokens[0] : "help";
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
-                case "redraw" -> redraw(gameData, teamColor);
-                case "move" -> move(authToken, gameData, teamColor, params);
-                case "highlight" -> highlight(gameData, teamColor, params);
-                case "leave" -> leave(authToken, gameData, teamColor);
-                case "resign" -> resign(authToken, gameData.gameID());
+                case "redraw" -> redraw(authToken, gameId, teamColor);
+                case "move" -> move(authToken, gameId, teamColor, params);
+                case "highlight" -> highlight(authToken, gameId, params);
+                case "leave" -> leave(authToken, gameId, teamColor);
+                case "resign" -> resign(authToken, gameId);
                 default -> help();
             };
         } catch (DataAccessException | dataaccess.DataAccessException ex) {
@@ -91,24 +87,35 @@ public class GameplayClient {
         }
     }
 
-    private String leave(String authToken, GameData gameData, String teamColor) throws dataaccess.DataAccessException, DataAccessException {
+    private String leave(String authToken, int gameId, String teamColor) throws dataaccess.DataAccessException, DataAccessException {
         // Remove player from game
         if (teamColor == null) {
             return "You stopped watching the game";
         } else if (teamColor.equalsIgnoreCase("white")) {
-            gameDao.updateGameUsername(null, ChessGame.TeamColor.WHITE, gameData.gameID());
-            ws.leaveGame(authToken, gameData.gameID());
+            ws.leaveGame(authToken, gameId);
         } else if (teamColor.equalsIgnoreCase("black")){
-            gameDao.updateGameUsername(null, ChessGame.TeamColor.BLACK, gameData.gameID());
-            ws.leaveGame(authToken, gameData.gameID());
+            ws.leaveGame(authToken, gameId);
         }
         return "You left the game";
     }
 
-    private String highlight(GameData gameData, String teamColor, String... params) throws DataAccessException {
+    public String highlightedBoard(GameData gameData, String teamColor, ChessPosition piecePosition) throws DataAccessException {
+        Collection<ChessMove> possibleMoves = gameData.game().validMoves(piecePosition);
+        if (possibleMoves == null) {
+            throw new DataAccessException("No piece located at " + piecePosition.toString());
+        } else if (possibleMoves.isEmpty()){
+            throw new DataAccessException("No valid moves from piece located at " + piecePosition.toString());
+        } else {
+            // Return the modified board with highlights
+            return drawBoard(gameData, teamColor, possibleMoves);
+        }
+    }
+
+    public String highlight(String authToken, int gameId, String... params) throws DataAccessException {
         try {
+            ChessPosition piecePosition;
             Collection<ChessMove> possibleMoves;
-            // Validate the input position (e.g., 'a1', 'h8')
+            //  Validate the input position (e.g., 'a1', 'h8')
             if ((params.length != 1) || (params[0].length() != 2)) {
                 throw new DataAccessException("Expected: <a1>");
             }
@@ -121,18 +128,9 @@ public class GameplayClient {
                 int rowNum = Character.getNumericValue(row);  // '1' → 1, '8' → 8
 
                 // Create a ChessPosition for the selected piece
-                ChessPosition piecePosition = new ChessPosition(rowNum, colNum);
-
-                // Get all the valid moves for the piece
-                possibleMoves = gameData.game().validMoves(piecePosition);
-                if (possibleMoves == null) {
-                    throw new DataAccessException("No piece located at " + col + row);
-                } else if (possibleMoves.isEmpty()){
-                    throw new DataAccessException("No valid moves from piece located at " + col + row);
-                } else {
-                    // Return the modified board with highlights
-                    return drawBoard(gameData, teamColor, possibleMoves);
-                }
+                piecePosition = new ChessPosition(rowNum, colNum);
+                ws.highlight(authToken, gameId, piecePosition);
+                return String.format("highlight piece located at " + piecePosition.toString());
             } else {
                 throw new DataAccessException("Expected: <a1>");
             }
@@ -141,24 +139,21 @@ public class GameplayClient {
         }
     }
 
-    public String redraw(GameData gameData, String teamColor) {
+    public String redraw(String authToken, int gameId, String teamColor) throws DataAccessException {
+        ws.redraw(authToken, gameId);
+        return "";
+    }
+
+    public String redrawBoard(GameData gameData, String teamColor) {
         return drawBoard(gameData, teamColor, null);
     }
 
-    private String move(String authToken, GameData gameData, String teamColor, String... params) throws DataAccessException {
+    private String move(String authToken, int gameId, String teamColor, String... params) throws DataAccessException {
         try {
             // Validate that it is your turn
             if (teamColor == null) {
                 throw new DataAccessException("You are watching, not playing the game!");
             }
-            if (teamColor.equals("white")) {
-                if (gameData.game().getTeamTurn() != ChessGame.TeamColor.WHITE) {
-                    throw new DataAccessException("It is not your turn!");
-                }
-            } else if (gameData.game().getTeamTurn() != ChessGame.TeamColor.BLACK) {
-                    throw new DataAccessException("It is not your turn!");
-            }
-            // Validate the input position (e.g., 'a1', 'h8')
             ChessPiece.PieceType promotionPiece = null;
             if ((params.length < 2 || params.length > 3) || (params[0].length() != 2) || params[1].length() != 2) {
                 throw new DataAccessException("Expected: <a1> <b2> [promotion piece type]");
@@ -187,29 +182,17 @@ public class GameplayClient {
                 ChessPosition pieceStartPosition = new ChessPosition(rowNumStart, colNumStart);
                 ChessPosition pieceEndPosition = new ChessPosition(rowNumEnd, colNumEnd);
                 ChessMove desiredMove = new ChessMove(pieceStartPosition, pieceEndPosition, promotionPiece);
-                // Get all the valid moves for the piece
-                Collection<ChessMove> possibleMoves = gameData.game().validMoves(pieceStartPosition);
-                if (possibleMoves == null) {
-                    throw new DataAccessException("That piece has no valid moves");
-                }
-                if (possibleMoves.contains(desiredMove)) {
-                    gameData.game().makeMove(desiredMove);
-                    gameDao.updateGameBoard(gameData.game(), gameData.gameID());
-                    ws.makeMove(authToken, gameData.gameID(), desiredMove);
-                } else {
-                    throw new DataAccessException("Not a valid move");
-                }
-                // return the new board
-                return drawBoard(gameData, teamColor, null);
+                ws.makeMove(authToken, gameId, desiredMove);
+                return String.format("Made move from " + pieceStartPosition + " to " + pieceEndPosition);
             } else {
                 throw new DataAccessException("Expected: <a1> <b2>");
             }
-        } catch (DataAccessException | InvalidMoveException | dataaccess.DataAccessException e) {
+        } catch (DataAccessException e) {
             throw new DataAccessException(SET_TEXT_COLOR_RED + e.getMessage() + RESET_TEXT_COLOR);
         }
     }
 
-    private String drawBoard(GameData gameData, String teamColor, Collection<ChessMove> possibleMoves) {
+    public String drawBoard(GameData gameData, String teamColor, Collection<ChessMove> possibleMoves) {
         ChessBoard board = gameData.game().getBoard();
         StringBuilder boardString = new StringBuilder();
         Collection<ChessPosition> endPositions = new ArrayList<>();

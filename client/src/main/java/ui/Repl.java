@@ -21,18 +21,21 @@ public class Repl implements NotificationHandler {
     public String teamColor;
 
 
-    public Repl(String serverUrl) throws DataAccessException, ui.DataAccessException {
+    public Repl(String serverUrl) throws DataAccessException {
         preloginClient = new PreloginClient(serverUrl);
         postloginClient = new PostloginClient(serverUrl);
         gameplayClient = new GameplayClient(serverUrl, this);
     }
 
-    public void notify(ServerMessage serverMessage) {
+    public void notify(ServerMessage serverMessage) throws ui.DataAccessException {
         if (serverMessage.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION) {
             System.out.println("\n" + serverMessage.getMessage());
             printGameplayPrompt();
         } else if (serverMessage.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME) {
-            System.out.println("\n" + gameplayClient.redraw(serverMessage.getGameData(), teamColor));
+            System.out.println("\n" + gameplayClient.redrawBoard(serverMessage.getGameData(), teamColor));
+            printGameplayPrompt();
+        } else if (serverMessage.getServerMessageType() == ServerMessage.ServerMessageType.HIGHLIGHT_GAME) {
+            System.out.println("\n" + gameplayClient.highlightedBoard(serverMessage.getGameData(), teamColor, serverMessage.getPiecePosition()));
             printGameplayPrompt();
         }
     }
@@ -75,14 +78,16 @@ public class Repl implements NotificationHandler {
                 if (result.split(" ")[0].equals("Joined")) {
                     // Pass in if joining as white or black
                     String listGamesGameId = result.split(" ")[2];
-                    GameData gameData = postloginClient.getGameData(listGamesGameId);
-                    gameplayClient.connectWebsocket(authToken, gameData.gameID());
-                    runGameplay(authToken, gameData, line.split(" ")[2]);
+                    int gameId = PostloginClient.gameIds.get(Integer.parseInt(listGamesGameId));
+                    gameplayClient.connectWebsocket(authToken, gameId);
+
+                    runGameplay(authToken, gameId, line.split(" ")[2]);
                 } else if (result.split(" ")[0].equals( "Watching")) {
                     String listGamesGameId = result.split(" ")[2];
-                    GameData gameData = postloginClient.getGameData(listGamesGameId);
-                    gameplayClient.connectWebsocket(authToken, gameData.gameID());
-                    runGameplay(authToken, gameData, null);
+                    int gameId = PostloginClient.gameIds.get(Integer.parseInt(listGamesGameId));
+                    gameplayClient.connectWebsocket(authToken, gameId);
+
+                    runGameplay(authToken, gameId, null);
                 }
             } catch (Throwable e) {
                 var msg = e.toString();
@@ -91,14 +96,13 @@ public class Repl implements NotificationHandler {
         }
     }
 
-    public void runGameplay(String authToken, GameData gameData, String teamColor) throws IOException {
-        System.out.print("\n" + gameplayClient.redraw(gameData, teamColor));
+    public void runGameplay(String authToken, int gameId, String teamColor) throws IOException {
         while (!(result.equals("You left the game") || result.equals("You stopped watching the game"))) {
             printGameplayPrompt();
             String line = SCANNER.nextLine();
             System.out.print(RESET_TEXT_COLOR);
             try {
-                result = gameplayClient.eval(line, authToken, gameData, teamColor);
+                result = gameplayClient.eval(line, authToken, gameId, teamColor);
                 System.out.print(result);
             } catch (Throwable e) {
                 var msg = e.toString();

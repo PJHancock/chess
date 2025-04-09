@@ -1,7 +1,6 @@
 package client;
 
-import dataaccess.sql.MySqlGameDao;
-import model.GameData;
+
 import model.results.ListGamesData;
 import ui.DataAccessException;
 
@@ -15,9 +14,8 @@ public class PostloginClient {
     private final ServerFacade server;
     // private final String serverUrl;
     public static HashMap<Integer, Integer> gameIds = new HashMap<>();
-    private final MySqlGameDao gameDao = new MySqlGameDao();
 
-    public PostloginClient(String serverUrl) throws dataaccess.DataAccessException {
+    public PostloginClient(String serverUrl) {
         server = new ServerFacade(serverUrl);
         // this.serverUrl = serverUrl;
     }
@@ -132,11 +130,6 @@ public class PostloginClient {
             return "Watching game " + params[0];
         }
         throw new DataAccessException(SET_TEXT_COLOR_RED + "Expected: <ID>" + RESET_TEXT_COLOR);
-    }
-
-    public GameData getGameData(String listGamesGameId) throws dataaccess.DataAccessException {
-        int gameId = gameIds.get(Integer.parseInt(listGamesGameId));
-        return gameDao.getGameUsingId(String.valueOf(gameId));
     }
 
     public String logout(String authToken) throws DataAccessException {

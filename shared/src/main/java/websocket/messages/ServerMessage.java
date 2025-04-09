@@ -1,8 +1,11 @@
 package websocket.messages;
 
+import chess.ChessMove;
+import chess.ChessPosition;
 import com.google.gson.Gson;
 import model.GameData;
 
+import java.util.Collection;
 import java.util.Objects;
 
 /**
@@ -15,9 +18,11 @@ public class ServerMessage {
     String errorMessage;
     String message;
     GameData game;
+    ChessPosition piecePosition;
 
     public enum ServerMessageType {
         LOAD_GAME,
+        HIGHLIGHT_GAME,
         ERROR,
         NOTIFICATION
     }
@@ -36,6 +41,12 @@ public class ServerMessage {
         this.game = game;
     }
 
+    public ServerMessage(ServerMessageType type, GameData game, ChessPosition piecePosition) {
+        this.serverMessageType = type;
+        this.game = game;
+        this.piecePosition = piecePosition;
+    }
+
     public ServerMessageType getServerMessageType() {
         return this.serverMessageType;
     }
@@ -46,6 +57,10 @@ public class ServerMessage {
 
     public String getMessage() {
         return this.message;
+    }
+
+    public ChessPosition getPiecePosition() {
+        return piecePosition;
     }
 
     public String toString() {

@@ -1,6 +1,7 @@
 package websocket;
 
 import chess.ChessMove;
+import chess.ChessPosition;
 import com.google.gson.Gson;
 import dataaccess.sql.MySqlGameDao;
 import model.GameData;
@@ -34,7 +35,11 @@ public class WebSocketFacade extends Endpoint {
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
                 public void onMessage(String message) {
                     ServerMessage notification = gson.fromJson(message, ServerMessage.class);
-                    commandHandler.notify(notification);
+                    try {
+                        commandHandler.notify(notification);
+                    } catch (DataAccessException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             });
         } catch (DeploymentException | IOException | URISyntaxException ex) {
@@ -52,6 +57,38 @@ public class WebSocketFacade extends Endpoint {
             var action = new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameId);
             this.session.getBasicRemote().sendText(gson.toJson(action));
         } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void highlight(String authToken, int gameId, ChessPosition piecePosition) throws DataAccessException {
+        try {
+            MySqlGameDao mySqlGameDao = new MySqlGameDao();
+            GameData gameData = mySqlGameDao.getGameUsingId(String.valueOf(gameId));
+            if (gameData.game().gameOver) {
+                return;
+            }
+            var action = new UserGameCommand(UserGameCommand.CommandType.HIGHLIGHT_GAME_BOARD, authToken, gameId, piecePosition);
+            this.session.getBasicRemote().sendText(gson.toJson(action));
+        } catch (IOException ex) {
+            throw new DataAccessException(ex.getMessage());
+        } catch (dataaccess.DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void redraw(String authToken, int gameId) throws DataAccessException {
+        try {
+            MySqlGameDao mySqlGameDao = new MySqlGameDao();
+            GameData gameData = mySqlGameDao.getGameUsingId(String.valueOf(gameId));
+            if (gameData.game().gameOver) {
+                return;
+            }
+            var action = new UserGameCommand(UserGameCommand.CommandType.REDRAW_GAME_BOARD, authToken, gameId);
+            this.session.getBasicRemote().sendText(gson.toJson(action));
+        } catch (IOException ex) {
+            throw new DataAccessException(ex.getMessage());
+        } catch (dataaccess.DataAccessException e) {
             throw new RuntimeException(e);
         }
     }

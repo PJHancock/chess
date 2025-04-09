@@ -7,7 +7,6 @@ import dataaccess.sql.MySqlAuthDao;
 import dataaccess.sql.MySqlGameDao;
 import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketError;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
@@ -47,6 +46,8 @@ public class WebSocketHandler {
             case LEAVE -> leave(action.getAuthToken(), action.getGameID(), session);
             case MAKE_MOVE -> makeMove(action.getAuthToken(), action.getGameID(), action.getMove(), session);
             case RESIGN -> resign(action.getAuthToken(), action.getGameID(), session);
+            case REDRAW_GAME_BOARD -> redrawGameBoard(action.getGameID(), session);
+            case HIGHLIGHT_GAME_BOARD -> highlightGameBoard(action.getGameID(), action.getPiecePosition(), session);
             default -> {
                 // If the command type is unknown, send an error message
                 String errorMessage = "Error: Invalid command type";
@@ -223,5 +224,23 @@ public class WebSocketHandler {
 
         ServerMessage resignNotification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, resignMessage);
         connections.broadcast("", gameId, resignNotification);
+    }
+
+    public void redrawGameBoard(int gameId, Session session) throws DataAccessException, IOException {
+        MySqlGameDao mySqlGameDao = new MySqlGameDao();
+        GameData gameData = mySqlGameDao.getGameUsingId(String.valueOf(gameId));
+        mySqlGameDao.updateGameBoard(gameData.game(), gameId);
+        // Send LOAD_GAME message to all clients
+        var redrawGameNotification = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameData);
+        session.getRemote().sendString(redrawGameNotification.toString());
+    }
+
+    public void highlightGameBoard(int gameId, ChessPosition piecePosition, Session session) throws DataAccessException, IOException {
+        MySqlGameDao mySqlGameDao = new MySqlGameDao();
+        GameData gameData = mySqlGameDao.getGameUsingId(String.valueOf(gameId));
+        mySqlGameDao.updateGameBoard(gameData.game(), gameId);
+        // Send LOAD_GAME message to all clients
+        var highlightGameNotification = new ServerMessage(ServerMessage.ServerMessageType.HIGHLIGHT_GAME, gameData, piecePosition);
+        session.getRemote().sendString(highlightGameNotification.toString());
     }
 }
