@@ -13,10 +13,12 @@ import java.util.Iterator;
 public class ChessGame {
     private TeamColor teamTurn = TeamColor.WHITE;
     public ChessBoard gameBoard = new ChessBoard();
+    public boolean gameOver = false;
 
     public ChessGame() {
         gameBoard.resetBoard();
         setTeamTurn(TeamColor.WHITE);
+        gameOver = false;
     }
 
     /**
@@ -35,6 +37,9 @@ public class ChessGame {
         teamTurn = team;
     }
 
+    public void setGameOver(boolean gameStatus) {
+        gameOver = gameStatus;
+    }
     /**
      * Enum identifying the 2 possible teams in a chess game
      */

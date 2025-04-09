@@ -16,21 +16,18 @@ public class UserGameCommand {
     String authToken;
     Integer gameID;
     ChessMove move;
-    String message;
 
-    public UserGameCommand(CommandType commandType, String authToken, Integer gameID, String message) {
+    public UserGameCommand(CommandType commandType, String authToken, Integer gameID) {
         this.commandType = commandType;
         this.authToken = authToken;
         this.gameID = gameID;
-        this.message = message;
     }
 
-    public UserGameCommand(CommandType commandType, String authToken, Integer gameID, ChessMove move, String message) {
+    public UserGameCommand(CommandType commandType, String authToken, Integer gameID, ChessMove move) {
         this.commandType = commandType;
         this.authToken = authToken;
         this.gameID = gameID;
         this.move = move;
-        this.message = message;
     }
 
     public enum CommandType {
@@ -54,10 +51,6 @@ public class UserGameCommand {
 
     public ChessMove getMove() {
         return this.move;
-    }
-
-    public String getMessage() {
-        return this.message;
     }
 
     public String toString() {
