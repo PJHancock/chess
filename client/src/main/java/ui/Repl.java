@@ -7,7 +7,9 @@ import dataaccess.DataAccessException;
 import model.GameData;
 import websocket.NotificationHandler;
 import websocket.WebSocketFacade;
+import websocket.commands.UserGameCommand;
 
+import java.io.IOException;
 import java.util.Scanner;
 import static ui.EscapeSequences.*;
 
@@ -25,8 +27,8 @@ public class Repl implements NotificationHandler {
         gameplayClient = new GameplayClient(serverUrl, this);
     }
 
-    public void notify(NotificationHandler notification) {
-        System.out.println(SET_TEXT_COLOR_RED + notification.toString() + RESET_TEXT_COLOR);
+    public void notify(UserGameCommand command) {
+        System.out.println(SET_TEXT_COLOR_RED + command.getMessage() + RESET_TEXT_COLOR);
         printGameplayPrompt();
     }
 
@@ -84,7 +86,7 @@ public class Repl implements NotificationHandler {
         }
     }
 
-    public void runGameplay(String authToken, GameData gameData, String teamColor) {
+    public void runGameplay(String authToken, GameData gameData, String teamColor) throws IOException {
         System.out.print("\n" + gameplayClient.redraw(gameData, teamColor));
 
         while (!(result.equals("You left the game") || result.equals("You stopped watching the game"))) {
@@ -99,6 +101,7 @@ public class Repl implements NotificationHandler {
                 System.out.print(msg);
             }
         }
+        gameplayClient.disconnectWebsocket();
     }
 
     private void printPreloginPrompt() {

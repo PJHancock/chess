@@ -176,7 +176,6 @@ public class Server {
             JoinGameRequest request = new JoinGameRequest(playerColor, gameID, authToken);
 
             JoinGameResult result = chessService.joinGame(request);
-
             res.type("application/json");
             return gson.toJson(result);
         } catch (IllegalArgumentException e) {

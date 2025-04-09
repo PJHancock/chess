@@ -8,6 +8,7 @@ import ui.DataAccessException;
 import websocket.NotificationHandler;
 import websocket.WebSocketFacade;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -19,7 +20,8 @@ public class GameplayClient {
     private final String serverUrl;
     private final NotificationHandler notificationHandler;
     private final MySqlGameDao gameDao = new MySqlGameDao();
-    private final MySqlGameDao authDao = new MySqlGameDao();
+    private final MySqlAuthDao authDao = new MySqlAuthDao();
+    private WebSocketFacade ws;
 
     public GameplayClient(String serverUrl, NotificationHandler notificationHandler) throws dataaccess.DataAccessException, DataAccessException {
         ServerFacade server = new ServerFacade(serverUrl);
@@ -28,8 +30,15 @@ public class GameplayClient {
     }
 
     public void connectWebsocket(String authToken, int gameId) throws DataAccessException, dataaccess.DataAccessException {
-        WebSocketFacade ws = new WebSocketFacade(serverUrl, notificationHandler);
+        ws = new WebSocketFacade(serverUrl, notificationHandler);
         ws.connectToGame(authToken, gameId);
+    }
+
+    public void disconnectWebsocket() throws IOException {
+        if (ws != null && ws.session.isOpen()) {
+            ws.session.close();
+            System.out.println("WebSocket connection closed.");
+        }
     }
 
     public String eval(String input, String authToken, GameData gameData, String teamColor) {
@@ -39,10 +48,10 @@ public class GameplayClient {
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
                 case "redraw" -> redraw(gameData, teamColor);
-                case "move" -> move(gameData, teamColor, params);
+                case "move" -> move(authToken, gameData, teamColor, params);
                 case "highlight" -> highlight(gameData, teamColor, params);
-                case "leave" -> leave(gameData, teamColor);
-                case "resign" -> resign();
+                case "leave" -> leave(authToken, gameData, teamColor);
+                case "resign" -> resign(authToken, gameData.gameID());
                 default -> help();
             };
         } catch (DataAccessException | dataaccess.DataAccessException ex) {
@@ -65,12 +74,13 @@ public class GameplayClient {
                 RESET_TEXT_COLOR + "- with possible commands";
     }
 
-    private String resign() {
+    private String resign(String authToken, int gameId) throws DataAccessException {
         System.out.print("Do you want to resign? (Y)es/(N)o: ");
         String confirmation = SCANNER.nextLine();
 
         while (true) {
             if (confirmation.equalsIgnoreCase("y")) {
+                ws.resign(authToken, gameId);
                 return "You resigned";
             } else if (confirmation.equalsIgnoreCase("n")) {
                 return "You did not resign";
@@ -81,14 +91,16 @@ public class GameplayClient {
         }
     }
 
-    private String leave(GameData gameData, String teamColor) throws dataaccess.DataAccessException {
+    private String leave(String authToken, GameData gameData, String teamColor) throws dataaccess.DataAccessException, DataAccessException {
         // Remove player from game
         if (teamColor == null) {
             return "You stopped watching the game";
         } else if (teamColor.equalsIgnoreCase("white")) {
             gameDao.updateGameUsername(null, ChessGame.TeamColor.WHITE, gameData.gameID());
+            ws.leaveGame(authToken, gameData.gameID());
         } else if (teamColor.equalsIgnoreCase("black")){
             gameDao.updateGameUsername(null, ChessGame.TeamColor.BLACK, gameData.gameID());
+            ws.leaveGame(authToken, gameData.gameID());
         }
         return "You left the game";
     }
@@ -133,7 +145,7 @@ public class GameplayClient {
         return drawBoard(gameData, teamColor, null);
     }
 
-    private String move(GameData gameData, String teamColor, String... params) throws DataAccessException {
+    private String move(String authToken, GameData gameData, String teamColor, String... params) throws DataAccessException {
         try {
             // Validate that it is your turn
             if (teamColor == null) {
@@ -183,6 +195,7 @@ public class GameplayClient {
                 if (possibleMoves.contains(desiredMove)) {
                     gameData.game().makeMove(desiredMove);
                     gameDao.updateGameBoard(gameData.game(), gameData.gameID());
+                    ws.makeMove(authToken, gameData.gameID());
                 } else {
                     throw new DataAccessException("Not a valid move");
                 }
