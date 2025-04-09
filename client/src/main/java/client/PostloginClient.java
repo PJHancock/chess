@@ -15,7 +15,7 @@ public class PostloginClient {
     private final ServerFacade server;
     // private final String serverUrl;
     private HashMap<Integer, Integer> gameIds = new HashMap<>();
-    private MySqlGameDao gameDao = new MySqlGameDao();
+    private final MySqlGameDao gameDao = new MySqlGameDao();
 
     public PostloginClient(String serverUrl) throws dataaccess.DataAccessException {
         server = new ServerFacade(serverUrl);

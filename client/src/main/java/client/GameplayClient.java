@@ -19,6 +19,7 @@ public class GameplayClient {
     private final String serverUrl;
     private final NotificationHandler notificationHandler;
     private final MySqlGameDao gameDao = new MySqlGameDao();
+    private final MySqlGameDao authDao = new MySqlGameDao();
 
     public GameplayClient(String serverUrl, NotificationHandler notificationHandler) throws dataaccess.DataAccessException, DataAccessException {
         ServerFacade server = new ServerFacade(serverUrl);

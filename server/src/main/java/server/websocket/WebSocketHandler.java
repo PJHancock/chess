@@ -17,7 +17,6 @@ import java.util.Timer;
 public class WebSocketHandler {
 
     private final ConnectionManager connections = new ConnectionManager();
-    private MySqlAuthDao authDao;
 
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws IOException, DataAccessException {
@@ -28,37 +27,29 @@ public class WebSocketHandler {
         }
     }
 
-    private void connect(String authToken, int gameId, Session session) throws IOException, DataAccessException {
-        connections.add(authToken, gameId, session);
-        String username = authDao.getUser(authToken);
+    private void connect(String username, int gameId, Session session) throws IOException, DataAccessException {
+        connections.add(username, gameId, session);
         var message = String.format("%s joined the game", username);
         var notification = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, message);
         connections.broadcast(username, notification);
     }
 
-    private void leave(String authToken, int gameId) throws DataAccessException, IOException {
-        String username = authDao.getUser(authToken);
+    private void leave(String username, int gameId) throws DataAccessException, IOException {
         var message = String.format("%s left the game", username);
         var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
-        connections.broadcast(authToken, notification);
+        connections.broadcast(username, notification);
     }
 
-    public void makeMove(String authToken, String startPosition, String endPosition, Session session) throws IOException, DataAccessException {
-        try {
-            connections.remove(authToken);
-            String username = authDao.getUser(authToken);
-            var message = String.format("%s moved piece from %s to %s", username, startPosition, endPosition);
-            var notification = new ServerMessage(ServerMessage.ServerMessageType.ERROR, message);
-            connections.broadcast("", notification);
-        } catch (DataAccessException ex) {
-            throw new DataAccessException(ex.getMessage());
-        }
+    public void makeMove(String username, String startPosition, String endPosition, Session session) throws IOException, DataAccessException {
+        connections.remove(username);
+        var message = String.format("%s moved piece from %s to %s", username, startPosition, endPosition);
+        var notification = new ServerMessage(ServerMessage.ServerMessageType.ERROR, message);
+        connections.broadcast("", notification);
     }
 
-    public void resign(String authToken, int gameId, Session session) throws DataAccessException, IOException {
-        String username = authDao.getUser(authToken);
+    public void resign(String username, int gameId, Session session) throws DataAccessException, IOException {
         var message = String.format("%s resigned from the game", username);
         var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
-        connections.broadcast(authToken, notification);
+        connections.broadcast(username, notification);
     }
 }
