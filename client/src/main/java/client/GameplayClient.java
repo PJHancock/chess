@@ -195,7 +195,7 @@ public class GameplayClient {
                 if (possibleMoves.contains(desiredMove)) {
                     gameData.game().makeMove(desiredMove);
                     gameDao.updateGameBoard(gameData.game(), gameData.gameID());
-                    ws.makeMove(authToken, gameData.gameID());
+                    ws.makeMove(authToken, gameData.gameID(), desiredMove);
                 } else {
                     throw new DataAccessException("Not a valid move");
                 }
