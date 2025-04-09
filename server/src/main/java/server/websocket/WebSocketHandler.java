@@ -1,8 +1,11 @@
 package server.websocket;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import dataaccess.sql.MySqlAuthDao;
+import dataaccess.sql.MySqlGameDao;
+import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketError;
@@ -36,12 +39,40 @@ public class WebSocketHandler {
         }
     }
 
+    @OnWebSocketClose
+    public void onClose(Session session, int statusCode, String reason) {
+        // Cleanup when the WebSocket is closed
+        System.out.println("WebSocket closed: " + reason);
+        connections.removeAuth(session);
+    }
+
+    @OnWebSocketError
+    public void onError(Session session, Throwable throwable) {
+        // Handle WebSocket errors
+        System.err.println("WebSocket error: " + throwable.getMessage());
+    }
+
     private void connect(String authToken, int gameId, Session session) throws IOException, DataAccessException {
+        // Add the root client to the connection manager
+        connections.addAuth(session, authToken);
         connections.add(authToken, gameId, session);
+
+        // Retrieve the username for the root client
         MySqlAuthDao mySqlAuthDao = new MySqlAuthDao();
         String username = mySqlAuthDao.getUser(authToken);
-        var message = String.format("%s joined the game", username);
-        var notification = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, message);
+
+        // Create a message for the root client (LOAD_GAME)
+        MySqlGameDao mySqlGameDao = new MySqlGameDao();
+        GameData gameData = mySqlGameDao.getGameUsingId(String.valueOf(gameId));
+        var loadGameNotification = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameData.game());
+
+        // Send LOAD_GAME to the root client
+        session.getRemote().sendString(loadGameNotification.toString());
+
+        // Now broadcast a notification to all other connected clients in the game
+        var notificationMessage = String.format("%s has connected to the game as %s", username, "[insert color]");
+        var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, notificationMessage);
+
         connections.broadcast(authToken, gameId, notification);
     }
 
@@ -49,38 +80,55 @@ public class WebSocketHandler {
         connections.remove(authToken);
         MySqlAuthDao mySqlAuthDao = new MySqlAuthDao();
         String username = mySqlAuthDao.getUser(authToken);
-        var message = String.format("%s left the game", username);
-        var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
-        connections.broadcast(authToken, gameId, notification);
-    }
-
-//    @OnWebSocketClose
-//    public void onClose(Session session, int statusCode) throws IOException {
-//        String authToken = getAuthTokenFromSession(session); // You will need to implement a way to retrieve the authToken
-//        int gameId = getGameIdFromSession(session); // Similarly, implement to fetch the gameId
-//        leave(authToken, gameId); // Handle clean-up after disconnection
-//        System.out.println("Connection closed with status: " + statusCode);
-//    }
-
-    // Handles any errors that occur during the WebSocket connection
-    @OnWebSocketError
-    public void onError(Session session, Throwable throwable) {
-        System.out.println("WebSocket error: " + throwable.getMessage());
+        String leaveMessage = String.format("%s left the game", username);
+        ServerMessage leaveNotification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, leaveMessage);
+        connections.broadcast(authToken, gameId, leaveNotification);
     }
 
     public void makeMove(String authToken, int gameId, String startPosition, String endPosition, Session session) throws IOException, DataAccessException {
+        MySqlGameDao mySqlGameDao = new MySqlGameDao();
+        GameData gameData = mySqlGameDao.getGameUsingId(String.valueOf(gameId));
+
+        // Validate the move (implement your chess logic here)
+//        boolean isValidMove = validateMove(startPosition, endPosition, gameId);
+//        if (!isValidMove) {
+//            session.getRemote().sendString(new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Invalid move")));
+//            return;
+//        }
+
         MySqlAuthDao mySqlAuthDao = new MySqlAuthDao();
         String username = mySqlAuthDao.getUser(authToken);
-        var message = String.format("%s moved piece from %s to %s", username, startPosition, endPosition);
-        var notification = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, message);
+
+        // Send LOAD_GAME message to all clients
+        var loadGameNotification = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameData.game());
+        connections.broadcast("", gameId, loadGameNotification);
+
+        // Now broadcast a notification to all other connected clients in the game
+        String moveMessage = String.format("%s moved piece from %s to %s", username, startPosition, endPosition);
+        ServerMessage notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, moveMessage);
         connections.broadcast(authToken, gameId, notification);
+
+        // Check for check, checkmate, or stalemate
+        if (gameData.game().isInCheckmate(gameData.game().getTeamTurn())) {
+            String checkmateMessage = String.format("%s is in checkmate", gameData.game().getTeamTurn());
+            ServerMessage checkmateNotification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, checkmateMessage);
+            connections.broadcast(authToken, gameId, checkmateNotification);
+        } else if (gameData.game().isInStalemate(gameData.game().getTeamTurn())) {
+            String stalemateMessage = String.format("%s is in stalemate", gameData.game().getTeamTurn());
+            ServerMessage stalemateNotification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, stalemateMessage);
+            connections.broadcast(authToken, gameId, stalemateNotification);
+        } else if (gameData.game().isInCheck(gameData.game().getTeamTurn())) {
+            String checkMessage = String.format("%s is in checkmate", gameData.game().getTeamTurn());
+            ServerMessage checkNotification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, checkMessage);
+            connections.broadcast(authToken, gameId, checkNotification);
+        }
     }
 
     public void resign(String authToken, int gameId, Session session) throws DataAccessException, IOException {
         MySqlAuthDao mySqlAuthDao = new MySqlAuthDao();
         String username = mySqlAuthDao.getUser(authToken);
-        var message = String.format("%s resigned from the game", username);
-        var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
-        connections.broadcast(authToken, gameId, notification);
+        String resignMessage = String.format("%s resigned from the game", username);
+        ServerMessage resignNotification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, resignMessage);
+        connections.broadcast(authToken, gameId, resignNotification);
     }
 }

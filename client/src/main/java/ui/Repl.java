@@ -8,8 +8,10 @@ import model.GameData;
 import websocket.NotificationHandler;
 import websocket.WebSocketFacade;
 import websocket.commands.UserGameCommand;
+import websocket.messages.ServerMessage;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Scanner;
 import static ui.EscapeSequences.*;
 
@@ -28,8 +30,10 @@ public class Repl implements NotificationHandler {
     }
 
     public void notify(UserGameCommand command) {
-        System.out.println(SET_TEXT_COLOR_RED + command.getMessage() + RESET_TEXT_COLOR);
-        printGameplayPrompt();
+        // This method will be invoked when a notification is received from the server
+        if (Objects.equals(command.getCommandType().toString(), ServerMessage.ServerMessageType.NOTIFICATION.toString())) {
+            System.out.println(command.getMessage()); // Inform the user that someone has joined the game
+        }
     }
 
     public void runPrelogin() {
