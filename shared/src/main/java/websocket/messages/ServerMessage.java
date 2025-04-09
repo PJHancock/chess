@@ -44,8 +44,8 @@ public class ServerMessage {
         return this.game;
     }
 
-    public void setErrorMessage(String newErrorMessage) {
-        errorMessage = newErrorMessage;
+    public String getMessage() {
+        return this.message;
     }
 
     public String toString() {

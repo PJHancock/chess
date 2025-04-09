@@ -132,7 +132,7 @@ public class WebSocketHandler {
         GameData gameData = mySqlGameDao.getGameUsingId(String.valueOf(gameId));
         // Validate the move (implement your chess logic here)
         if (gameData.game().gameOver) {
-            session.getRemote().sendString(new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameData.game())));
+            session.getRemote().sendString(new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Game is over")));
             return;
         }
 
@@ -150,27 +150,27 @@ public class WebSocketHandler {
         var loadGameNotification = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameData.game());
         session.getRemote().sendString(loadGameNotification.toString());
         connections.broadcast(authToken, gameId, loadGameNotification);
-        // Now broadcast a notification to all other connected clients in the game
         String moveMessage = String.format("%s moved piece from %s to %s", username, move.getStartPosition().toString(), move.getEndPosition().toString());
-        ServerMessage moveNotification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, moveMessage);
-        connections.broadcast(authToken, gameId, moveNotification);
-
         // Check for check, checkmate, or stalemate
         if (gameData.game().isInCheckmate(gameData.game().getTeamTurn())) {
-            String checkmateMessage = String.format("%s is in checkmate. Game over", gameData.game().getTeamTurn());
+            String checkmateMessage = moveMessage.concat(String.format("%s is in checkmate. Game over", gameData.game().getTeamTurn()));
             ServerMessage checkmateNotification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, checkmateMessage);
             connections.broadcast(authToken, gameId, checkmateNotification);
             // Mark game as over
             gameData.game().setGameOver(true);
             mySqlGameDao.updateGameBoard(gameData.game(), gameId);
         } else if (gameData.game().isInStalemate(gameData.game().getTeamTurn())) {
-            String stalemateMessage = String.format("%s is in stalemate", gameData.game().getTeamTurn());
+            String stalemateMessage = moveMessage.concat(String.format("%s is in stalemate", gameData.game().getTeamTurn()));
             ServerMessage stalemateNotification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, stalemateMessage);
             connections.broadcast(authToken, gameId, stalemateNotification);
         } else if (gameData.game().isInCheck(gameData.game().getTeamTurn())) {
-            String checkMessage = String.format("%s is in checkmate", gameData.game().getTeamTurn());
+            String checkMessage = moveMessage.concat(String.format("%s is in checkmate", gameData.game().getTeamTurn()));
             ServerMessage checkNotification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, checkMessage);
             connections.broadcast(authToken, gameId, checkNotification);
+        } else {
+            // Now broadcast a notification to all other connected clients in the game
+            ServerMessage moveNotification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, moveMessage);
+            connections.broadcast(authToken, gameId, moveNotification);
         }
     }
 

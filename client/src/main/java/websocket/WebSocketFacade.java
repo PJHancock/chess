@@ -33,8 +33,8 @@ public class WebSocketFacade extends Endpoint {
             //set message handler
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
                 public void onMessage(String message) {
-                    UserGameCommand command = gson.fromJson(message, UserGameCommand.class);
-                    commandHandler.notify(command);
+                    ServerMessage notification = gson.fromJson(message, ServerMessage.class);
+                    commandHandler.notify(notification);
                 }
             });
         } catch (DeploymentException | IOException | URISyntaxException ex) {

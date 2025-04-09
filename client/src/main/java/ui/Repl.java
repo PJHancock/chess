@@ -29,10 +29,12 @@ public class Repl implements NotificationHandler {
         gameplayClient = new GameplayClient(serverUrl, this);
     }
 
-    public void notify(UserGameCommand command) {
-        // This method will be invoked when a notification is received from the server
-        if (Objects.equals(command.getCommandType().toString(), ServerMessage.ServerMessageType.NOTIFICATION.toString())) {
-            System.out.println(command.getMessage()); // Inform the user that someone has joined the game
+    public void notify(ServerMessage serverMessage) {
+        if (serverMessage.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION) {
+            System.out.println(serverMessage.getMessage());
+        } else if (serverMessage.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME) {
+            System.out.println(serverMessage.getMessage());
+            // Optionally, display the board or other info
         }
     }
 
