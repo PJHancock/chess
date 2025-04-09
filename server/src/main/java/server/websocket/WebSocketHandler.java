@@ -91,8 +91,16 @@ public class WebSocketHandler {
             // Send LOAD_GAME to the root client
             session.getRemote().sendString(loadGameNotification.toString());
 
+            // Get username color
+            String userColor = "an observer";
+            if (username.equals(gameData.whiteUsername())) {
+                userColor = "white";
+            } else if (username.equals(gameData.blackUsername())) {
+                userColor = "black";
+            }
+
             // Now broadcast a notification to all other connected clients in the game
-            var notificationMessage = String.format("%s has connected to the game as %s", username, "[insert color]");
+            var notificationMessage = String.format("User %s has connected to the game as %s", username, userColor);
             var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, notificationMessage);
 
             connections.broadcast(authToken, gameId, notification);
@@ -134,9 +142,15 @@ public class WebSocketHandler {
         String username = mySqlAuthDao.getUser(authToken);
 
         if (username == null) {
-            session.getRemote().sendString(new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.ERROR, "You are observing the game")));
+            session.getRemote().sendString(new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Invalid auth")));
             return;
         }
+
+        if (!username.equals(gameData.whiteUsername()) && !username.equals(gameData.blackUsername())) {
+            session.getRemote().sendString(new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.ERROR, "You are an observer")));
+            return;
+        }
+
         // Validate the move (implement your chess logic here)
         if (gameData.game().gameOver) {
             session.getRemote().sendString(new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Game is over")));
@@ -191,14 +205,22 @@ public class WebSocketHandler {
     public void resign(String authToken, int gameId, Session session) throws DataAccessException, IOException {
         MySqlAuthDao mySqlAuthDao = new MySqlAuthDao();
         String username = mySqlAuthDao.getUser(authToken);
-        String resignMessage = String.format("%s resigned from the game", username);
-
         MySqlGameDao mySqlGameDao = new MySqlGameDao();
         GameData gameData = mySqlGameDao.getGameUsingId(String.valueOf(gameId));
+
+        if (!username.equals(gameData.whiteUsername()) && !username.equals(gameData.blackUsername())) {
+            session.getRemote().sendString(new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.ERROR, "You are an observer")));
+            return;
+        } else if (gameData.game().gameOver) {
+            session.getRemote().sendString(new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Game is over")));
+            return;
+        }
+
+        String resignMessage = String.format("%s resigned from the game", username);
         gameData.game().setGameOver(true); // mark game as over
         mySqlGameDao.updateGameBoard(gameData.game(), gameId);
 
         ServerMessage resignNotification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, resignMessage);
-        connections.broadcast(authToken, gameId, resignNotification);
+        connections.broadcast("", gameId, resignNotification);
     }
 }
