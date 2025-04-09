@@ -49,6 +49,7 @@ public class WebSocketHandler {
         switch (action.getCommandType()) {
             case CONNECT -> connect(action.getAuthToken(), action.getGameID(), session);
             case LEAVE -> leave(action.getAuthToken(), action.getGameID(), session);
+            case MAKE_MOVE -> makeMove(action.getAuthToken(), action.getGameID(), action.getMove(), session);
             default -> {
                 // If the command type is unknown, send an error message
                 String errorMessage = "Error: Invalid command type";

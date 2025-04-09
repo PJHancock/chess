@@ -1,5 +1,6 @@
 package websocket.commands;
 
+import chess.ChessMove;
 import com.google.gson.Gson;
 
 import java.util.Objects;
@@ -11,18 +12,24 @@ import java.util.Objects;
  */
 public class UserGameCommand {
 
-    private final CommandType commandType;
-
-    private final String authToken;
-
-    private final Integer gameID;
-
-    private final String message;
+    CommandType commandType;
+    String authToken;
+    Integer gameID;
+    ChessMove move;
+    String message;
 
     public UserGameCommand(CommandType commandType, String authToken, Integer gameID, String message) {
         this.commandType = commandType;
         this.authToken = authToken;
         this.gameID = gameID;
+        this.message = message;
+    }
+
+    public UserGameCommand(CommandType commandType, String authToken, Integer gameID, ChessMove move, String message) {
+        this.commandType = commandType;
+        this.authToken = authToken;
+        this.gameID = gameID;
+        this.move = move;
         this.message = message;
     }
 
@@ -34,19 +41,23 @@ public class UserGameCommand {
     }
 
     public CommandType getCommandType() {
-        return commandType;
+        return this.commandType;
     }
 
     public String getAuthToken() {
-        return authToken;
+        return this.authToken;
     }
 
     public Integer getGameID() {
-        return gameID;
+        return this.gameID;
+    }
+
+    public ChessMove getMove() {
+        return this.move;
     }
 
     public String getMessage() {
-        return message;
+        return this.message;
     }
 
     public String toString() {
