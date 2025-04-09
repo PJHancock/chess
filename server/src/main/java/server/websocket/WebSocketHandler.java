@@ -130,6 +130,13 @@ public class WebSocketHandler {
     public void makeMove(String authToken, int gameId, ChessMove move, Session session) throws IOException, DataAccessException, InvalidMoveException {
         MySqlGameDao mySqlGameDao = new MySqlGameDao();
         GameData gameData = mySqlGameDao.getGameUsingId(String.valueOf(gameId));
+        MySqlAuthDao mySqlAuthDao = new MySqlAuthDao();
+        String username = mySqlAuthDao.getUser(authToken);
+
+        if (username == null) {
+            session.getRemote().sendString(new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.ERROR, "You are observing the game")));
+            return;
+        }
         // Validate the move (implement your chess logic here)
         if (gameData.game().gameOver) {
             session.getRemote().sendString(new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Game is over")));
@@ -142,8 +149,15 @@ public class WebSocketHandler {
             return;
         }
 
-        MySqlAuthDao mySqlAuthDao = new MySqlAuthDao();
-        String username = mySqlAuthDao.getUser(authToken);
+        if (gameData.game().getTeamTurn() == ChessGame.TeamColor.BLACK && gameData.whiteUsername().equals(username)) {
+            session.getRemote().sendString(new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.ERROR, "It is not your turn")));
+            return;
+        } else if (gameData.game().getTeamTurn() == ChessGame.TeamColor.WHITE && gameData.blackUsername().equals(username)) {
+            session.getRemote().sendString(new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.ERROR, "It is not your turn")));
+            return;
+        }
+
+
         gameData.game().makeMove(move);
         mySqlGameDao.updateGameBoard(gameData.game(), gameId);
         // Send LOAD_GAME message to all clients
