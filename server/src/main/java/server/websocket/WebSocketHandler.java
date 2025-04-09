@@ -80,13 +80,15 @@ public class WebSocketHandler {
             // Retrieve the username for the root client
             MySqlAuthDao mySqlAuthDao = new MySqlAuthDao();
             String username = mySqlAuthDao.getUser(authToken);
-            if (username == null) {
-                throw new DataAccessException("Error: invalid authToken");
-            }
-            // Create a message for the root client (LOAD_GAME)
             MySqlGameDao mySqlGameDao = new MySqlGameDao();
             GameData gameData = mySqlGameDao.getGameUsingId(String.valueOf(gameId));
-            var loadGameNotification = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameData.game());
+            if (username == null) {
+                throw new DataAccessException("Error: invalid authToken");
+            } else if (gameData == null) {
+                throw new DataAccessException("Error: invalid gameId");
+            }
+            // Create a message for the root client (LOAD_GAME)
+            var loadGameNotification = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameData);
 
             // Send LOAD_GAME to the root client
             session.getRemote().sendString(loadGameNotification.toString());
@@ -175,7 +177,7 @@ public class WebSocketHandler {
         gameData.game().makeMove(move);
         mySqlGameDao.updateGameBoard(gameData.game(), gameId);
         // Send LOAD_GAME message to all clients
-        var loadGameNotification = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameData.game());
+        var loadGameNotification = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameData);
         session.getRemote().sendString(loadGameNotification.toString());
         connections.broadcast(authToken, gameId, loadGameNotification);
         String moveMessage = String.format("%s moved piece from %s to %s", username, move.getStartPosition().toString(), move.getEndPosition().toString());

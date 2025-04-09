@@ -6,12 +6,9 @@ import client.PreloginClient;
 import dataaccess.DataAccessException;
 import model.GameData;
 import websocket.NotificationHandler;
-import websocket.WebSocketFacade;
-import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
 
 import java.io.IOException;
-import java.util.Objects;
 import java.util.Scanner;
 import static ui.EscapeSequences.*;
 
@@ -21,6 +18,7 @@ public class Repl implements NotificationHandler {
     private final GameplayClient gameplayClient;
     public static final Scanner SCANNER = new Scanner(System.in);
     private static String result = "";
+    public String teamColor;
 
 
     public Repl(String serverUrl) throws DataAccessException, ui.DataAccessException {
@@ -34,9 +32,8 @@ public class Repl implements NotificationHandler {
             System.out.println("\n" + serverMessage.getMessage());
             printGameplayPrompt();
         } else if (serverMessage.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME) {
-            System.out.println("\n" + serverMessage.getMessage());
+            System.out.println("\n" + gameplayClient.redraw(serverMessage.getGameData(), teamColor));
             printGameplayPrompt();
-            // Optionally, display the board or other info
         }
     }
 
@@ -96,7 +93,6 @@ public class Repl implements NotificationHandler {
 
     public void runGameplay(String authToken, GameData gameData, String teamColor) throws IOException {
         System.out.print("\n" + gameplayClient.redraw(gameData, teamColor));
-
         while (!(result.equals("You left the game") || result.equals("You stopped watching the game"))) {
             printGameplayPrompt();
             String line = SCANNER.nextLine();

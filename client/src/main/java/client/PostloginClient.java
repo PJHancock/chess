@@ -14,7 +14,7 @@ import static ui.EscapeSequences.*;
 public class PostloginClient {
     private final ServerFacade server;
     // private final String serverUrl;
-    private HashMap<Integer, Integer> gameIds = new HashMap<>();
+    public static HashMap<Integer, Integer> gameIds = new HashMap<>();
     private final MySqlGameDao gameDao = new MySqlGameDao();
 
     public PostloginClient(String serverUrl) throws dataaccess.DataAccessException {
