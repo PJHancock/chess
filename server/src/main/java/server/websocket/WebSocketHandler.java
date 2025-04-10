@@ -206,6 +206,9 @@ public class WebSocketHandler {
             String stalemateMessage = moveMessage.concat(String.format("\n%s is in stalemate", gameData.game().getTeamTurn()));
             ServerMessage stalemateNotification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, stalemateMessage);
             connections.broadcast(authToken, gameId, stalemateNotification);
+            // Mark game as over
+            gameData.game().setGameOver(true);
+            mySqlGameDao.updateGameBoard(gameData.game(), gameId);
         } else if (gameData.game().isInCheck(gameData.game().getTeamTurn())) {
             String checkMessage = moveMessage.concat(String.format("\n%s is in check", gameData.game().getTeamTurn()));
             ServerMessage checkNotification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, checkMessage);
