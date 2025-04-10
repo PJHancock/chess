@@ -3,7 +3,6 @@ package websocket;
 import chess.ChessMove;
 import chess.ChessPosition;
 import com.google.gson.Gson;
-import dataaccess.sql.MySqlGameDao;
 import model.GameData;
 import ui.DataAccessException;
 import websocket.commands.UserGameCommand;
@@ -63,49 +62,28 @@ public class WebSocketFacade extends Endpoint {
 
     public void highlight(String authToken, int gameId, ChessPosition piecePosition) throws DataAccessException {
         try {
-            MySqlGameDao mySqlGameDao = new MySqlGameDao();
-            GameData gameData = mySqlGameDao.getGameUsingId(String.valueOf(gameId));
-            if (gameData.game().gameOver) {
-                return;
-            }
             var action = new UserGameCommand(UserGameCommand.CommandType.HIGHLIGHT_GAME_BOARD, authToken, gameId, piecePosition);
             this.session.getBasicRemote().sendText(gson.toJson(action));
         } catch (IOException ex) {
             throw new DataAccessException(ex.getMessage());
-        } catch (dataaccess.DataAccessException e) {
-            throw new RuntimeException(e);
         }
     }
 
     public void redraw(String authToken, int gameId) throws DataAccessException {
         try {
-            MySqlGameDao mySqlGameDao = new MySqlGameDao();
-            GameData gameData = mySqlGameDao.getGameUsingId(String.valueOf(gameId));
-            if (gameData.game().gameOver) {
-                return;
-            }
             var action = new UserGameCommand(UserGameCommand.CommandType.REDRAW_GAME_BOARD, authToken, gameId);
             this.session.getBasicRemote().sendText(gson.toJson(action));
         } catch (IOException ex) {
             throw new DataAccessException(ex.getMessage());
-        } catch (dataaccess.DataAccessException e) {
-            throw new RuntimeException(e);
         }
     }
 
     public void makeMove(String authToken, int gameId, ChessMove move) throws DataAccessException {
         try {
-            MySqlGameDao mySqlGameDao = new MySqlGameDao();
-            GameData gameData = mySqlGameDao.getGameUsingId(String.valueOf(gameId));
-            if (gameData.game().gameOver) {
-                return;
-            }
             var action = new UserGameCommand(UserGameCommand.CommandType.MAKE_MOVE, authToken, gameId, move);
             this.session.getBasicRemote().sendText(gson.toJson(action));
         } catch (IOException ex) {
             throw new DataAccessException(ex.getMessage());
-        } catch (dataaccess.DataAccessException e) {
-            throw new RuntimeException(e);
         }
     }
 

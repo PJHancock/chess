@@ -19,7 +19,7 @@ public class GameplayClient {
     private final NotificationHandler notificationHandler;
     private WebSocketFacade ws;
 
-    public GameplayClient(String serverUrl, NotificationHandler notificationHandler) throws dataaccess.DataAccessException {
+    public GameplayClient(String serverUrl, NotificationHandler notificationHandler) {
         ServerFacade server = new ServerFacade(serverUrl);
         this.serverUrl = serverUrl;
         this.notificationHandler = notificationHandler;

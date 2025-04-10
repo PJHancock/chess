@@ -21,7 +21,7 @@ public class Repl implements NotificationHandler {
     public static String teamColor;
 
 
-    public Repl(String serverUrl) throws DataAccessException {
+    public Repl(String serverUrl) {
         preloginClient = new PreloginClient(serverUrl);
         postloginClient = new PostloginClient(serverUrl);
         gameplayClient = new GameplayClient(serverUrl, this);
