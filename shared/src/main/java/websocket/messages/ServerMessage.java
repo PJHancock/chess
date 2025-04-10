@@ -59,6 +59,10 @@ public class ServerMessage {
         return this.message;
     }
 
+    public String getErrorMessage() {
+        return this.errorMessage;
+    }
+
     public ChessPosition getPiecePosition() {
         return piecePosition;
     }

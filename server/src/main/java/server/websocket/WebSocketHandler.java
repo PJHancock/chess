@@ -57,18 +57,18 @@ public class WebSocketHandler {
         }
     }
 
-    @OnWebSocketError
-    public void onError(Session session, Throwable throwable) throws IOException {
-        // Handle WebSocket errors
-        String errorMessage = throwable.getMessage();
-        if (errorMessage == null) {
-            errorMessage = "Unknown WebSocket error occurred";
-        }
-        // Create and send the error message with the errorMessage field populated
-        ServerMessage errorNotification = new ServerMessage(ServerMessage.ServerMessageType.ERROR, errorMessage);
-        session.getRemote().sendString(errorNotification.toString());
-        session.close();
-    }
+//    @OnWebSocketError
+//    public void onError(Session session, Throwable throwable) throws IOException {
+//        // Handle WebSocket errors
+//        String errorMessage = throwable.getMessage();
+//        if (errorMessage == null) {
+//            errorMessage = "Unknown WebSocket error occurred";
+//        }
+//        // Create and send the error message with the errorMessage field populated
+//        ServerMessage errorNotification = new ServerMessage(ServerMessage.ServerMessageType.ERROR, errorMessage);
+//        session.getRemote().sendString(errorNotification.toString());
+//        session.close();
+//    }
 
 
     private void connect(String authToken, int gameId, Session session) throws IOException, DataAccessException {
@@ -145,47 +145,57 @@ public class WebSocketHandler {
         String username = mySqlAuthDao.getUser(authToken);
 
         if (username == null) {
-            session.getRemote().sendString(new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Invalid auth")));
+            session.getRemote().sendString(new Gson().toJson(
+                    new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Invalid auth")));
             return;
         }
 
-        if (!username.equals(gameData.whiteUsername()) && !username.equals(gameData.blackUsername())) {
-            session.getRemote().sendString(new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.ERROR, "You are an observer")));
+        boolean isWhite = username.equals(gameData.whiteUsername());
+        boolean isBlack = username.equals(gameData.blackUsername());
+
+        if (!isWhite && !isBlack) {
+            session.getRemote().sendString(new Gson().toJson(
+                    new ServerMessage(ServerMessage.ServerMessageType.ERROR, "You are an observer")));
             return;
         }
 
-        // Validate the move (implement your chess logic here)
         if (gameData.game().gameOver) {
-            session.getRemote().sendString(new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Game is over")));
+            session.getRemote().sendString(new Gson().toJson(
+                    new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Game is over")));
             return;
         }
 
+        // Check turn
+        ChessGame.TeamColor currentTurn = gameData.game().getTeamTurn();
+        if ((currentTurn == ChessGame.TeamColor.WHITE && !isWhite) ||
+                (currentTurn == ChessGame.TeamColor.BLACK && !isBlack)) {
+            session.getRemote().sendString(new Gson().toJson(
+                    new ServerMessage(ServerMessage.ServerMessageType.ERROR, "It is not your turn")));
+            return;
+        }
+
+        // Validate piece ownership
+        ChessPiece piece = gameData.game().getBoard().getPiece(move.getStartPosition());
+        if (piece == null) {
+            session.getRemote().sendString(new Gson().toJson(
+                    new ServerMessage(ServerMessage.ServerMessageType.ERROR, "There is no piece on that square")));
+            return;
+        }
+
+        if ((isWhite && piece.getTeamColor() != ChessGame.TeamColor.WHITE) ||
+                (isBlack && piece.getTeamColor() != ChessGame.TeamColor.BLACK)) {
+            session.getRemote().sendString(new Gson().toJson(
+                    new ServerMessage(ServerMessage.ServerMessageType.ERROR, "That is not your piece")));
+            return;
+        }
+
+        // Validate move legality
         Collection<ChessMove> validMoves = gameData.game().validMoves(move.getStartPosition());
         if (!validMoves.contains(move)) {
-            session.getRemote().sendString(new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Invalid move")));
+            session.getRemote().sendString(new Gson().toJson(
+                    new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Invalid move")));
             return;
         }
-
-        if (gameData.game().getTeamTurn() == ChessGame.TeamColor.BLACK && gameData.whiteUsername().equals(username)) {
-            session.getRemote().sendString(new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.ERROR, "It is not your turn")));
-            return;
-        } else if (gameData.game().getTeamTurn() == ChessGame.TeamColor.WHITE && gameData.blackUsername().equals(username)) {
-            session.getRemote().sendString(new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.ERROR, "It is not your turn")));
-            return;
-        }
-
-        if (username.equals(gameData.whiteUsername())) {
-            if (gameData.game().getBoard().getPiece(move.getStartPosition()).getTeamColor() != ChessGame.TeamColor.WHITE) {
-                session.getRemote().sendString(new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.ERROR, "That is not your piece")));
-                return;
-            }
-        } else {
-            if (gameData.game().getBoard().getPiece(move.getStartPosition()).getTeamColor() != ChessGame.TeamColor.BLACK) {
-                session.getRemote().sendString(new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.ERROR, "That is not your piece")));
-                return;
-            }
-        }
-
 
         gameData.game().makeMove(move);
         mySqlGameDao.updateGameBoard(gameData.game(), gameId);
@@ -208,7 +218,7 @@ public class WebSocketHandler {
             ServerMessage stalemateNotification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, stalemateMessage);
             connections.broadcast(authToken, gameId, stalemateNotification);
         } else if (gameData.game().isInCheck(gameData.game().getTeamTurn())) {
-            String checkMessage = moveMessage.concat(String.format("%s is in checkmate", gameData.game().getTeamTurn()));
+            String checkMessage = moveMessage.concat(String.format("%s is in check", gameData.game().getTeamTurn()));
             ServerMessage checkNotification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, checkMessage);
             connections.broadcast(authToken, gameId, checkNotification);
         } else {

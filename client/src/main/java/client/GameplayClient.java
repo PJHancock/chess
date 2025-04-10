@@ -32,7 +32,6 @@ public class GameplayClient {
     public void disconnectWebsocket() throws IOException {
         if (ws != null && ws.session.isOpen()) {
             ws.session.close();
-            System.out.println("WebSocket connection closed.");
         }
     }
 
@@ -46,7 +45,7 @@ public class GameplayClient {
                 case "move" -> move(authToken, gameId, teamColor, params);
                 case "highlight" -> highlight(authToken, gameId, params);
                 case "leave" -> leave(authToken, gameId, teamColor);
-                case "resign" -> resign(authToken, gameId);
+                case "resign" -> resign(authToken, gameId, teamColor);
                 default -> help();
             };
         } catch (DataAccessException ex) {
@@ -69,7 +68,10 @@ public class GameplayClient {
                 RESET_TEXT_COLOR + "- with possible commands";
     }
 
-    private String resign(String authToken, int gameId) throws DataAccessException {
+    private String resign(String authToken, int gameId, String teamColor) throws DataAccessException {
+        if (teamColor == null) {
+            throw new DataAccessException("You are an observer and can't resign");
+        }
         System.out.print("Do you want to resign? (Y)es/(N)o: ");
         String confirmation = SCANNER.nextLine();
 
@@ -280,7 +282,7 @@ public class GameplayClient {
                 "  " + "c" + "  " +
                 "  " + "b" + "  " +
                 "  " + "a" + "  " +
-                "   " + RESET_BG_COLOR + RESET_TEXT_COLOR;
+                "   " + RESET_BG_COLOR + RESET_TEXT_COLOR + "\n";
     }
 
     private String getPiece(ChessPiece piece, boolean highlight) {

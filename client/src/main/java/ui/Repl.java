@@ -29,6 +29,9 @@ public class Repl implements NotificationHandler {
         if (serverMessage.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION) {
             System.out.println("\n" + serverMessage.getMessage());
             printGameplayPrompt();
+        } else if (serverMessage.getServerMessageType() == ServerMessage.ServerMessageType.ERROR) {
+            System.out.println("\n" + SET_TEXT_COLOR_RED + serverMessage.getErrorMessage() + RESET_TEXT_COLOR);
+            printGameplayPrompt();
         } else if (serverMessage.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME) {
             System.out.println("\n" + gameplayClient.redrawBoard(serverMessage.getGameData(), teamColor));
             printGameplayPrompt();
