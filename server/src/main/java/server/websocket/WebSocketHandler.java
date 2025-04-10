@@ -173,6 +173,18 @@ public class WebSocketHandler {
             return;
         }
 
+        if (username.equals(gameData.whiteUsername())) {
+            if (gameData.game().getBoard().getPiece(move.getStartPosition()).getTeamColor() != ChessGame.TeamColor.WHITE) {
+                session.getRemote().sendString(new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.ERROR, "That is not your piece")));
+                return;
+            }
+        } else {
+            if (gameData.game().getBoard().getPiece(move.getStartPosition()).getTeamColor() != ChessGame.TeamColor.BLACK) {
+                session.getRemote().sendString(new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.ERROR, "That is not your piece")));
+                return;
+            }
+        }
+
 
         gameData.game().makeMove(move);
         mySqlGameDao.updateGameBoard(gameData.game(), gameId);

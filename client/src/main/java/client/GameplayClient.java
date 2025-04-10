@@ -43,7 +43,7 @@ public class GameplayClient {
             var cmd = (tokens.length > 0) ? tokens[0] : "help";
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
-                case "redraw" -> redraw(authToken, gameId, teamColor);
+                case "redraw" -> redraw(authToken, gameId);
                 case "move" -> move(authToken, gameId, teamColor, params);
                 case "highlight" -> highlight(authToken, gameId, params);
                 case "leave" -> leave(authToken, gameId, teamColor);
@@ -100,11 +100,14 @@ public class GameplayClient {
     }
 
     public String highlightedBoard(GameData gameData, String teamColor, ChessPosition piecePosition) throws DataAccessException {
+//        if () {
+//            throw new DataAccessException("No piece located at " + piecePosition.toString());
+//        }
         Collection<ChessMove> possibleMoves = gameData.game().validMoves(piecePosition);
         if (possibleMoves == null) {
-            throw new DataAccessException("No piece located at " + piecePosition.toString());
+            return "No piece located at that position";
         } else if (possibleMoves.isEmpty()){
-            throw new DataAccessException("No valid moves from piece located at " + piecePosition.toString());
+            return "No valid moves from piece located at that position";
         } else {
             // Return the modified board with highlights
             return drawBoard(gameData, teamColor, possibleMoves);
@@ -130,7 +133,7 @@ public class GameplayClient {
                 // Create a ChessPosition for the selected piece
                 piecePosition = new ChessPosition(rowNum, colNum);
                 ws.highlight(authToken, gameId, piecePosition);
-                return String.format("highlight piece located at " + piecePosition.toString());
+                return "";
             } else {
                 throw new DataAccessException("Expected: <a1>");
             }
@@ -139,7 +142,7 @@ public class GameplayClient {
         }
     }
 
-    public String redraw(String authToken, int gameId, String teamColor) throws DataAccessException {
+    public String redraw(String authToken, int gameId) throws DataAccessException {
         ws.redraw(authToken, gameId);
         return "";
     }
@@ -183,7 +186,7 @@ public class GameplayClient {
                 ChessPosition pieceEndPosition = new ChessPosition(rowNumEnd, colNumEnd);
                 ChessMove desiredMove = new ChessMove(pieceStartPosition, pieceEndPosition, promotionPiece);
                 ws.makeMove(authToken, gameId, desiredMove);
-                return String.format("Made move from " + pieceStartPosition + " to " + pieceEndPosition);
+                return ""; // String.format("Made move from " + pieceStartPosition + " to " + pieceEndPosition);
             } else {
                 throw new DataAccessException("Expected: <a1> <b2>");
             }
@@ -281,7 +284,7 @@ public class GameplayClient {
                 "  " + "c" + "  " +
                 "  " + "b" + "  " +
                 "  " + "a" + "  " +
-                "   " + RESET_BG_COLOR + RESET_TEXT_COLOR + "\n";
+                "   " + RESET_BG_COLOR + RESET_TEXT_COLOR;
     }
 
     private String getPiece(ChessPiece piece, boolean highlight) {

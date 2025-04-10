@@ -18,7 +18,7 @@ public class Repl implements NotificationHandler {
     private final GameplayClient gameplayClient;
     public static final Scanner SCANNER = new Scanner(System.in);
     private static String result = "";
-    public String teamColor;
+    public static String teamColor;
 
 
     public Repl(String serverUrl) throws DataAccessException {
@@ -44,8 +44,8 @@ public class Repl implements NotificationHandler {
         System.out.println(SET_TEXT_COLOR_WHITE + WHITE_PAWN + RESET_TEXT_COLOR +
                 " Welcome to 240 chess. Type Help to get started" +
                 SET_TEXT_COLOR_WHITE + WHITE_PAWN + RESET_TEXT_COLOR);
+        printPreloginPrompt();
         while (!result.equals("quit")) {
-            printPreloginPrompt();
             String line = SCANNER.nextLine();
             System.out.print(RESET_TEXT_COLOR);
             try {
@@ -56,7 +56,7 @@ public class Repl implements NotificationHandler {
                 var msg = e.toString();
                 System.out.print(msg);
             }
-            System.out.println();
+            printPreloginPrompt();
         }
     }
 
@@ -80,13 +80,12 @@ public class Repl implements NotificationHandler {
                     String listGamesGameId = result.split(" ")[2];
                     int gameId = PostloginClient.gameIds.get(Integer.parseInt(listGamesGameId));
                     gameplayClient.connectWebsocket(authToken, gameId);
-
-                    runGameplay(authToken, gameId, line.split(" ")[2]);
+                    teamColor = line.split(" ")[2];
+                    runGameplay(authToken, gameId, teamColor);
                 } else if (result.split(" ")[0].equals( "Watching")) {
                     String listGamesGameId = result.split(" ")[2];
                     int gameId = PostloginClient.gameIds.get(Integer.parseInt(listGamesGameId));
                     gameplayClient.connectWebsocket(authToken, gameId);
-
                     runGameplay(authToken, gameId, null);
                 }
             } catch (Throwable e) {
