@@ -20,7 +20,6 @@ public class GameplayClient {
     private WebSocketFacade ws;
 
     public GameplayClient(String serverUrl, NotificationHandler notificationHandler) {
-        ServerFacade server = new ServerFacade(serverUrl);
         this.serverUrl = serverUrl;
         this.notificationHandler = notificationHandler;
     }
@@ -50,7 +49,7 @@ public class GameplayClient {
                 case "resign" -> resign(authToken, gameId);
                 default -> help();
             };
-        } catch (DataAccessException | dataaccess.DataAccessException ex) {
+        } catch (DataAccessException ex) {
             return SET_TEXT_COLOR_RED + ex.getMessage() + RESET_TEXT_COLOR;
         }
     }
@@ -87,7 +86,7 @@ public class GameplayClient {
         }
     }
 
-    private String leave(String authToken, int gameId, String teamColor) throws dataaccess.DataAccessException, DataAccessException {
+    private String leave(String authToken, int gameId, String teamColor) throws DataAccessException {
         // Remove player from game
         if (teamColor == null) {
             return "You stopped watching the game";
@@ -99,7 +98,7 @@ public class GameplayClient {
         return "You left the game";
     }
 
-    public String highlightedBoard(GameData gameData, String teamColor, ChessPosition piecePosition) throws DataAccessException {
+    public String highlightedBoard(GameData gameData, String teamColor, ChessPosition piecePosition) {
 //        if () {
 //            throw new DataAccessException("No piece located at " + piecePosition.toString());
 //        }
@@ -117,7 +116,6 @@ public class GameplayClient {
     public String highlight(String authToken, int gameId, String... params) throws DataAccessException {
         try {
             ChessPosition piecePosition;
-            Collection<ChessMove> possibleMoves;
             //  Validate the input position (e.g., 'a1', 'h8')
             if ((params.length != 1) || (params[0].length() != 2)) {
                 throw new DataAccessException("Expected: <a1>");
