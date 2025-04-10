@@ -194,29 +194,34 @@ public class WebSocketHandler {
         int endRow = move.getEndPosition().getRow();
         String moveMessage = String.format("User %s moved piece from %c%d to %c%d",
                 username, startCol, startRow, endCol, endRow);
+        ServerMessage moveNotification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, moveMessage);
+        connections.broadcast(authToken, gameId, moveNotification);
+
+        String userInTrouble = gameData.whiteUsername();
+        if (gameData.game().getTeamTurn() == ChessGame.TeamColor.WHITE) {
+            userInTrouble = gameData.whiteUsername();
+        } else if (gameData.game().getTeamTurn() == ChessGame.TeamColor.BLACK) {
+            userInTrouble = gameData.blackUsername();
+        }
         // Check for check, checkmate, or stalemate
         if (gameData.game().isInCheckmate(gameData.game().getTeamTurn())) {
-            String checkmateMessage = moveMessage.concat(String.format("\n%s is in checkmate. Game over", gameData.game().getTeamTurn()));
+            String checkmateMessage = String.format("\n%s is in checkmate. Game over", userInTrouble);
             ServerMessage checkmateNotification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, checkmateMessage);
-            connections.broadcast(authToken, gameId, checkmateNotification);
+            connections.broadcast("", gameId, checkmateNotification);
             // Mark game as over
             gameData.game().setGameOver(true);
             mySqlGameDao.updateGameBoard(gameData.game(), gameId);
         } else if (gameData.game().isInStalemate(gameData.game().getTeamTurn())) {
-            String stalemateMessage = moveMessage.concat(String.format("\n%s is in stalemate", gameData.game().getTeamTurn()));
+            String stalemateMessage = String.format("\n%s is in stalemate. Game over", userInTrouble);
             ServerMessage stalemateNotification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, stalemateMessage);
-            connections.broadcast(authToken, gameId, stalemateNotification);
+            connections.broadcast("", gameId, stalemateNotification);
             // Mark game as over
             gameData.game().setGameOver(true);
             mySqlGameDao.updateGameBoard(gameData.game(), gameId);
         } else if (gameData.game().isInCheck(gameData.game().getTeamTurn())) {
-            String checkMessage = moveMessage.concat(String.format("\n%s is in check", gameData.game().getTeamTurn()));
+            String checkMessage = String.format("\n%s is in check", userInTrouble);
             ServerMessage checkNotification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, checkMessage);
-            connections.broadcast(authToken, gameId, checkNotification);
-        } else {
-            // Now broadcast a notification to all other connected clients in the game
-            ServerMessage moveNotification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, moveMessage);
-            connections.broadcast(authToken, gameId, moveNotification);
+            connections.broadcast("", gameId, checkNotification);
         }
     }
 

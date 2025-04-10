@@ -160,7 +160,8 @@ public class GameplayClient {
             }
             ChessPiece.PieceType promotionPiece = null;
             if ((params.length < 2 || params.length > 3) || (params[0].length() != 2) || params[1].length() != 2) {
-                throw new DataAccessException("Expected: <a1> <b2> [promotion piece type]");
+                throw new DataAccessException("Expected: <a1> <b2> [promotion piece type]" +
+                        "\n" + RESET_TEXT_COLOR + "[Gameplay] >>> " + SET_TEXT_COLOR_GREEN);
             }
             if (params.length == 3) {
                 if (Arrays.stream(ChessPiece.PieceType.values())
@@ -190,7 +191,8 @@ public class GameplayClient {
                 return ""; //String.format(SET_TEXT_COLOR_GREEN + "You moved piece from %c%d to %c%d" + RESET_TEXT_COLOR,
                         // startCol, startRow, endCol, endRow); // String.format("Made move from " + pieceStartPosition + " to " + pieceEndPosition);
             } else {
-                throw new DataAccessException("Expected: <a1> <b2>");
+                throw new DataAccessException("Expected: <a1> <b2>"+
+                        "\n" + RESET_TEXT_COLOR + "[Gameplay] >>> " + SET_TEXT_COLOR_GREEN);
             }
         } catch (DataAccessException e) {
             throw new DataAccessException(SET_TEXT_COLOR_RED + e.getMessage() + RESET_TEXT_COLOR);
