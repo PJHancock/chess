@@ -99,9 +99,7 @@ public class GameplayClient {
     }
 
     public String highlightedBoard(GameData gameData, String teamColor, ChessPosition piecePosition) {
-//        if () {
-//            throw new DataAccessException("No piece located at " + piecePosition.toString());
-//        }
+
         Collection<ChessMove> possibleMoves = gameData.game().validMoves(piecePosition);
         if (possibleMoves == null) {
             return "No piece located at that position";
@@ -166,18 +164,18 @@ public class GameplayClient {
                 }
                 promotionPiece = ChessPiece.PieceType.valueOf(params[2].toUpperCase());
             }
-            char col_start = params[0].charAt(0);
-            char row_start = params[0].charAt(1);
-            char col_end = params[1].charAt(0);
-            char row_end = params[1].charAt(1);
+            char colStart = params[0].charAt(0);
+            char rowStart = params[0].charAt(1);
+            char colEnd = params[1].charAt(0);
+            char rowEnd = params[1].charAt(1);
             // Ensure the position is within the valid chess range
-            if ((col_start >= 'a' && col_start <= 'h') && (row_start >= '1' && row_start <= '8') &&
-                    (col_end >= 'a' && col_end <= 'h') && (row_end >= '1' && row_end <= '8')) {
+            if ((colStart >= 'a' && colStart <= 'h') && (rowStart >= '1' && rowStart <= '8') &&
+                    (colEnd >= 'a' && colEnd <= 'h') && (rowEnd >= '1' && rowEnd <= '8')) {
                 // Convert the column and row to board coordinates (1-indexed)
-                int colNumStart = col_start - 'a' + 1;  // 'a' → 1, 'h' → 8
-                int rowNumStart = Character.getNumericValue(row_start);  // '1' → 1, '8' → 8
-                int colNumEnd = col_end - 'a' + 1;  // 'a' → 1, 'h' → 8
-                int rowNumEnd = Character.getNumericValue(row_end);  // '1' → 1, '8' → 8
+                int colNumStart = colStart - 'a' + 1;  // 'a' → 1, 'h' → 8
+                int rowNumStart = Character.getNumericValue(rowStart);  // '1' → 1, '8' → 8
+                int colNumEnd = colEnd - 'a' + 1;  // 'a' → 1, 'h' → 8
+                int rowNumEnd = Character.getNumericValue(rowEnd);  // '1' → 1, '8' → 8
 
                 // Create a ChessPosition for the selected piece
                 ChessPosition pieceStartPosition = new ChessPosition(rowNumStart, colNumStart);

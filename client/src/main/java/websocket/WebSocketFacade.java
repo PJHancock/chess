@@ -16,7 +16,7 @@ public class WebSocketFacade extends Endpoint {
 
     public Session session;
     public NotificationHandler commandHandler;
-    private static final Gson gson = new Gson();
+    private static final Gson GSON = new Gson();
 
 
     public WebSocketFacade(String url, NotificationHandler commandHandler) throws DataAccessException {
@@ -31,7 +31,7 @@ public class WebSocketFacade extends Endpoint {
             //set message handler
             this.session.addMessageHandler( new MessageHandler.Whole<String>() {
                 public void onMessage(String message) {
-                    ServerMessage notification = gson.fromJson(message, ServerMessage.class);
+                    ServerMessage notification = GSON.fromJson(message, ServerMessage.class);
                     try {
                         commandHandler.notify(notification);
                     } catch (DataAccessException e) {
@@ -52,7 +52,7 @@ public class WebSocketFacade extends Endpoint {
     public void connectToGame(String authToken, int gameId){
         try {
             var action = new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameId);
-            this.session.getBasicRemote().sendText(gson.toJson(action));
+            this.session.getBasicRemote().sendText(GSON.toJson(action));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -61,7 +61,7 @@ public class WebSocketFacade extends Endpoint {
     public void highlight(String authToken, int gameId, ChessPosition piecePosition) throws DataAccessException {
         try {
             var action = new UserGameCommand(UserGameCommand.CommandType.HIGHLIGHT_GAME_BOARD, authToken, gameId, piecePosition);
-            this.session.getBasicRemote().sendText(gson.toJson(action));
+            this.session.getBasicRemote().sendText(GSON.toJson(action));
         } catch (IOException ex) {
             throw new DataAccessException(ex.getMessage());
         }
@@ -70,7 +70,7 @@ public class WebSocketFacade extends Endpoint {
     public void redraw(String authToken, int gameId) throws DataAccessException {
         try {
             var action = new UserGameCommand(UserGameCommand.CommandType.REDRAW_GAME_BOARD, authToken, gameId);
-            this.session.getBasicRemote().sendText(gson.toJson(action));
+            this.session.getBasicRemote().sendText(GSON.toJson(action));
         } catch (IOException ex) {
             throw new DataAccessException(ex.getMessage());
         }
@@ -79,7 +79,7 @@ public class WebSocketFacade extends Endpoint {
     public void makeMove(String authToken, int gameId, ChessMove move) throws DataAccessException {
         try {
             var action = new UserGameCommand(UserGameCommand.CommandType.MAKE_MOVE, authToken, gameId, move);
-            this.session.getBasicRemote().sendText(gson.toJson(action));
+            this.session.getBasicRemote().sendText(GSON.toJson(action));
         } catch (IOException ex) {
             throw new DataAccessException(ex.getMessage());
         }
@@ -88,7 +88,7 @@ public class WebSocketFacade extends Endpoint {
     public void leaveGame(String authToken, int gameId) throws DataAccessException {
         try {
             var action = new UserGameCommand(UserGameCommand.CommandType.LEAVE, authToken, gameId);
-            this.session.getBasicRemote().sendText(gson.toJson(action));
+            this.session.getBasicRemote().sendText(GSON.toJson(action));
             this.session.close();
         } catch (IOException ex) {
             throw new DataAccessException(ex.getMessage());
@@ -98,7 +98,7 @@ public class WebSocketFacade extends Endpoint {
     public void resign(String authToken, int gameId) throws DataAccessException {
         try {
             var action = new UserGameCommand(UserGameCommand.CommandType.RESIGN, authToken, gameId);
-            this.session.getBasicRemote().sendText(gson.toJson(action));
+            this.session.getBasicRemote().sendText(GSON.toJson(action));
         } catch (IOException ex) {
             throw new DataAccessException(ex.getMessage());
         }

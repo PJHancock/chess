@@ -137,7 +137,8 @@ public class WebSocketHandler {
         session.close();
     }
 
-    public void makeMove(String authToken, int gameId, ChessMove move, Session session) throws IOException, DataAccessException, InvalidMoveException {
+    public void makeMove(String authToken, int gameId, ChessMove move, Session session)
+            throws IOException, DataAccessException, InvalidMoveException {
         MySqlGameDao mySqlGameDao = new MySqlGameDao();
         GameData gameData = mySqlGameDao.getGameUsingId(String.valueOf(gameId));
         MySqlAuthDao mySqlAuthDao = new MySqlAuthDao();
@@ -192,7 +193,8 @@ public class WebSocketHandler {
         var loadGameNotification = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameData);
         session.getRemote().sendString(loadGameNotification.toString());
         connections.broadcast(authToken, gameId, loadGameNotification);
-        String moveMessage = String.format("%s moved piece from %s to %s", username, move.getStartPosition().toString(), move.getEndPosition().toString());
+        String moveMessage = String.format("%s moved piece from %s to %s", username,
+                move.getStartPosition().toString(), move.getEndPosition().toString());
         // Check for check, checkmate, or stalemate
         if (gameData.game().isInCheckmate(gameData.game().getTeamTurn())) {
             String checkmateMessage = moveMessage.concat(String.format("%s is in checkmate. Game over", gameData.game().getTeamTurn()));
