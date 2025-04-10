@@ -57,20 +57,6 @@ public class WebSocketHandler {
         }
     }
 
-//    @OnWebSocketError
-//    public void onError(Session session, Throwable throwable) throws IOException {
-//        // Handle WebSocket errors
-//        String errorMessage = throwable.getMessage();
-//        if (errorMessage == null) {
-//            errorMessage = "Unknown WebSocket error occurred";
-//        }
-//        // Create and send the error message with the errorMessage field populated
-//        ServerMessage errorNotification = new ServerMessage(ServerMessage.ServerMessageType.ERROR, errorMessage);
-//        session.getRemote().sendString(errorNotification.toString());
-//        session.close();
-//    }
-
-
     private void connect(String authToken, int gameId, Session session) throws IOException, DataAccessException {
         try {
             // Add the root client to the connection manager
