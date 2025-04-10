@@ -71,7 +71,8 @@ public class GameplayClient {
 
     private String resign(String authToken, int gameId, String teamColor) throws DataAccessException {
         if (teamColor == null) {
-            throw new DataAccessException("You are an observer and can't resign" + "\n" + RESET_TEXT_COLOR + "[Gameplay] >>> " + SET_TEXT_COLOR_GREEN);
+            throw new DataAccessException("You are an observer and can't resign" +
+                    "\n" + RESET_TEXT_COLOR + "[Gameplay] >>> " + SET_TEXT_COLOR_GREEN);
         }
         System.out.print("Do you want to resign? (Y)es/(N)o: ");
         String confirmation = SCANNER.nextLine();
@@ -154,7 +155,8 @@ public class GameplayClient {
         try {
             // Validate that it is your turn
             if (teamColor == null) {
-                throw new DataAccessException("You are watching, not playing the game!" + "\n" + RESET_TEXT_COLOR + "[Gameplay] >>> " + SET_TEXT_COLOR_GREEN);
+                throw new DataAccessException("You are watching, not playing the game!" +
+                        "\n" + RESET_TEXT_COLOR + "[Gameplay] >>> " + SET_TEXT_COLOR_GREEN);
             }
             ChessPiece.PieceType promotionPiece = null;
             if ((params.length < 2 || params.length > 3) || (params[0].length() != 2) || params[1].length() != 2) {

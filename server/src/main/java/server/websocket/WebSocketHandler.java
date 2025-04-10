@@ -230,7 +230,8 @@ public class WebSocketHandler {
             session.getRemote().sendString(new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.ERROR, "You are an observer")));
             return;
         } else if (gameData.game().gameOver) {
-            session.getRemote().sendString(new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Can't resign. Game is already over")));
+            session.getRemote().sendString(new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.ERROR,
+                    "Can't resign. Game is already over")));
             return;
         }
 
