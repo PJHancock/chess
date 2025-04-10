@@ -25,9 +25,9 @@ public class Repl implements NotificationHandler {
         gameplayClient = new GameplayClient(serverUrl, this);
     }
 
-    public void notify(ServerMessage serverMessage) throws ui.DataAccessException {
+    public void notify(ServerMessage serverMessage) {
         if (serverMessage.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION) {
-            System.out.println("\n" + serverMessage.getMessage());
+            System.out.println("\n" + SET_TEXT_COLOR_GREEN + serverMessage.getMessage() + RESET_TEXT_COLOR);
             printGameplayPrompt();
         } else if (serverMessage.getServerMessageType() == ServerMessage.ServerMessageType.ERROR) {
             System.out.println("\n" + SET_TEXT_COLOR_RED + serverMessage.getErrorMessage() + RESET_TEXT_COLOR);
@@ -98,7 +98,6 @@ public class Repl implements NotificationHandler {
 
     public void runGameplay(String authToken, int gameId, String teamColor) throws IOException {
         while (!(result.equals("You left the game") || result.equals("You stopped watching the game"))) {
-            printGameplayPrompt();
             String line = SCANNER.nextLine();
             System.out.print(RESET_TEXT_COLOR);
             try {
@@ -120,7 +119,7 @@ public class Repl implements NotificationHandler {
         System.out.print("\n" + RESET_TEXT_COLOR + "[LOGGED_IN] >>> " + SET_TEXT_COLOR_GREEN);
     }
 
-    private void printGameplayPrompt() {
+    public void printGameplayPrompt() {
         System.out.print("\n" + RESET_TEXT_COLOR + "[Gameplay] >>> " + SET_TEXT_COLOR_GREEN);
     }
 }

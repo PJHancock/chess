@@ -7,7 +7,6 @@ import dataaccess.sql.MySqlAuthDao;
 import dataaccess.sql.MySqlGameDao;
 import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketError;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import websocket.commands.*;
@@ -57,7 +56,7 @@ public class WebSocketHandler {
         }
     }
 
-    private void connect(String authToken, int gameId, Session session) throws IOException, DataAccessException {
+    private void connect(String authToken, int gameId, Session session) throws IOException {
         try {
             // Add the root client to the connection manager
 
@@ -147,7 +146,7 @@ public class WebSocketHandler {
 
         if (gameData.game().gameOver) {
             session.getRemote().sendString(new Gson().toJson(
-                    new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Game is over")));
+                    new ServerMessage(ServerMessage.ServerMessageType.ERROR, "No more moves can be made. Game is over")));
             return;
         }
 
@@ -189,22 +188,26 @@ public class WebSocketHandler {
         var loadGameNotification = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameData);
         session.getRemote().sendString(loadGameNotification.toString());
         connections.broadcast(authToken, gameId, loadGameNotification);
-        String moveMessage = String.format("%s moved piece from %s to %s", username,
-                move.getStartPosition().toString(), move.getEndPosition().toString());
+        char startCol = (char) ('a' + move.getStartPosition().getColumn() - 1);
+        int startRow = move.getStartPosition().getRow();
+        char endCol = (char) ('a' + move.getEndPosition().getColumn() - 1);
+        int endRow = move.getEndPosition().getRow();
+        String moveMessage = String.format("User %s moved piece from %c%d to %c%d",
+                username, startCol, startRow, endCol, endRow);
         // Check for check, checkmate, or stalemate
         if (gameData.game().isInCheckmate(gameData.game().getTeamTurn())) {
-            String checkmateMessage = moveMessage.concat(String.format("%s is in checkmate. Game over", gameData.game().getTeamTurn()));
+            String checkmateMessage = moveMessage.concat(String.format("\n%s is in checkmate. Game over", gameData.game().getTeamTurn()));
             ServerMessage checkmateNotification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, checkmateMessage);
             connections.broadcast(authToken, gameId, checkmateNotification);
             // Mark game as over
             gameData.game().setGameOver(true);
             mySqlGameDao.updateGameBoard(gameData.game(), gameId);
         } else if (gameData.game().isInStalemate(gameData.game().getTeamTurn())) {
-            String stalemateMessage = moveMessage.concat(String.format("%s is in stalemate", gameData.game().getTeamTurn()));
+            String stalemateMessage = moveMessage.concat(String.format("\n%s is in stalemate", gameData.game().getTeamTurn()));
             ServerMessage stalemateNotification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, stalemateMessage);
             connections.broadcast(authToken, gameId, stalemateNotification);
         } else if (gameData.game().isInCheck(gameData.game().getTeamTurn())) {
-            String checkMessage = moveMessage.concat(String.format("%s is in check", gameData.game().getTeamTurn()));
+            String checkMessage = moveMessage.concat(String.format("\n%s is in check", gameData.game().getTeamTurn()));
             ServerMessage checkNotification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, checkMessage);
             connections.broadcast(authToken, gameId, checkNotification);
         } else {
@@ -224,7 +227,7 @@ public class WebSocketHandler {
             session.getRemote().sendString(new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.ERROR, "You are an observer")));
             return;
         } else if (gameData.game().gameOver) {
-            session.getRemote().sendString(new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Game is over")));
+            session.getRemote().sendString(new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Can't resign. Game is already over")));
             return;
         }
 

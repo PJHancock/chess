@@ -65,7 +65,8 @@ public class GameplayClient {
                 SET_TEXT_COLOR_BLUE + "resign " +
                 RESET_TEXT_COLOR + "- if you want to forfeit\n" +
                 SET_TEXT_COLOR_BLUE + "help " +
-                RESET_TEXT_COLOR + "- with possible commands";
+                RESET_TEXT_COLOR + "- with possible commands" +
+                "\n" + RESET_TEXT_COLOR + "[Gameplay] >>> " + SET_TEXT_COLOR_GREEN;
     }
 
     private String resign(String authToken, int gameId, String teamColor) throws DataAccessException {
@@ -80,7 +81,7 @@ public class GameplayClient {
                 ws.resign(authToken, gameId);
                 return "You resigned";
             } else if (confirmation.equalsIgnoreCase("n")) {
-                return "You did not resign";
+                return "You did not resign" + "\n" + RESET_TEXT_COLOR + "[Gameplay] >>> " + SET_TEXT_COLOR_GREEN;
             } else {
                 System.out.print("Invalid input. Please enter Y or N: ");
                 confirmation = SCANNER.nextLine();
@@ -207,9 +208,9 @@ public class GameplayClient {
 
         // Place top columns
         if (teamColor == null || teamColor.equals("white")) {
-            boardString.append(getWhiteColumns());
+            boardString.append(getWhiteColumns()).append("\n");
         } else {
-            boardString.append(getBlackColumns());
+            boardString.append(getBlackColumns()).append("\n");
         }
         for (int i = 1; i <= 8; i++) {
             if (teamColor == null || teamColor.equals("white")) {
@@ -269,7 +270,7 @@ public class GameplayClient {
                 "  " + "f" + "  " +
                 "  " + "g" + "  " +
                 "  " + "h" + "  " +
-                "   " + RESET_BG_COLOR + RESET_TEXT_COLOR + "\n";
+                "   " + RESET_BG_COLOR + RESET_TEXT_COLOR;
     }
 
     private static String getBlackColumns() {
@@ -282,7 +283,7 @@ public class GameplayClient {
                 "  " + "c" + "  " +
                 "  " + "b" + "  " +
                 "  " + "a" + "  " +
-                "   " + RESET_BG_COLOR + RESET_TEXT_COLOR + "\n";
+                "   " + RESET_BG_COLOR + RESET_TEXT_COLOR;
     }
 
     private String getPiece(ChessPiece piece, boolean highlight) {

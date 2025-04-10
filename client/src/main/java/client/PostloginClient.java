@@ -109,7 +109,7 @@ public class PostloginClient {
                 }
                 int gameId = gameIds.get(Integer.parseInt(params[0]));
                 server.join(authToken, gameId, params[1]);
-                return "Joined game " + params[0];
+                return  "Joined game " + params[0];
             }
             throw new DataAccessException(SET_TEXT_COLOR_RED + "Expected: <ID> [WHITE|BLACK]" + RESET_TEXT_COLOR);
         } catch (DataAccessException e) {
