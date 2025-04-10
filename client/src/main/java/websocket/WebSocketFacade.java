@@ -3,11 +3,9 @@ package websocket;
 import chess.ChessMove;
 import chess.ChessPosition;
 import com.google.gson.Gson;
-import model.GameData;
 import ui.DataAccessException;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
-
 import javax.websocket.*;
 import java.io.IOException;
 import java.net.URI;
@@ -31,7 +29,7 @@ public class WebSocketFacade extends Endpoint {
             this.session = container.connectToServer(this, socketURI);
 
             //set message handler
-            this.session.addMessageHandler(new MessageHandler.Whole<String>() {
+            this.session.addMessageHandler( new MessageHandler.Whole<String>() {
                 public void onMessage(String message) {
                     ServerMessage notification = gson.fromJson(message, ServerMessage.class);
                     try {
@@ -51,7 +49,7 @@ public class WebSocketFacade extends Endpoint {
     public void onOpen(Session session, EndpointConfig endpointConfig) {
     }
 
-    public void connectToGame(String authToken, int gameId) throws DataAccessException {
+    public void connectToGame(String authToken, int gameId){
         try {
             var action = new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameId);
             this.session.getBasicRemote().sendText(gson.toJson(action));

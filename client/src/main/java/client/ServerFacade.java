@@ -8,7 +8,6 @@ import model.requests.LoginRequest;
 import model.requests.RegisterRequest;
 import model.results.*;
 import ui.DataAccessException;
-
 import java.io.*;
 import java.net.*;
 import java.util.List;

@@ -1,6 +1,4 @@
 package client;
-
-
 import model.results.ListGamesData;
 import ui.DataAccessException;
 

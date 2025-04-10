@@ -3,8 +3,6 @@ package ui;
 import client.GameplayClient;
 import client.PostloginClient;
 import client.PreloginClient;
-import dataaccess.DataAccessException;
-import model.GameData;
 import websocket.NotificationHandler;
 import websocket.messages.ServerMessage;
 

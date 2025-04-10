@@ -3,7 +3,6 @@ package client;
 import model.results.LoginResult;
 import model.results.RegisterResult;
 import ui.DataAccessException;
-
 import java.util.Arrays;
 import static ui.EscapeSequences.*;
 
